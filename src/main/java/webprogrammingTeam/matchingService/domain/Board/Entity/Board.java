@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import webprogrammingTeam.matchingService.User.User;
+
 import webprogrammingTeam.matchingService.domain.Image.Entity.Image;
+import webprogrammingTeam.matchingService.domain.user.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
