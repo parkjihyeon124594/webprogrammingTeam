@@ -3,7 +3,6 @@ package webprogrammingTeam.matchingService.domain.Board.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import webprogrammingTeam.matchingService.User.User;
 import webprogrammingTeam.matchingService.domain.Board.Dto.Request.BoardSaveRequest;
 import webprogrammingTeam.matchingService.domain.Board.Dto.Response.BoardAllReadResponse;
 import webprogrammingTeam.matchingService.domain.Board.Dto.Response.BoardIdReadResponse;
@@ -12,6 +11,7 @@ import webprogrammingTeam.matchingService.domain.Board.Repository.BoardRepositor
 import webprogrammingTeam.matchingService.domain.Image.Entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.Repository.ImageRepository;
 import webprogrammingTeam.matchingService.domain.Image.Service.ImageService;
+import webprogrammingTeam.matchingService.domain.user.entity.User;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class BoardService {
 
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
-    User user ;
+    User user;
     public Long saveBoard(BoardSaveRequest boardSaveRequest, List<Image> imageList){
         Board board = Board.builder()
                 .user(user)
@@ -56,7 +56,7 @@ public class BoardService {
 
             for(Board board : BoardList){
                 responseList.add(
-                        new BoardAllReadResponse(board.getUser(), board.getId(), board.getTitle(), board.getDate())
+                        new BoardAllReadResponse(board.getId(), board.getTitle(), board.getDate())
                 );
             }
             return responseList;

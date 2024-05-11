@@ -23,6 +23,8 @@ import java.util.List;
 public class BoardController {
     private BoardService boardService;
     private ImageService imageService;
+
+
     @PostMapping()
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createBoard(
             @RequestPart(value="boardSaveRequest") BoardSaveRequest boardSaveRequest,

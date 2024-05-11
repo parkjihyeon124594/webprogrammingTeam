@@ -5,6 +5,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
+import webprogrammingTeam.matchingService.domain.Board.Entity.Board;
+import webprogrammingTeam.matchingService.domain.Review.Entity.Review;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,8 +23,10 @@ public class User {
 
     @Column(name="user_name")
     private String userName;
+
     @Column(name="user_email")
     private String email;
+
     @Column(name="user_password")
     private String userPassword;
 
@@ -26,8 +34,16 @@ public class User {
     @Column(name="role")
     private Role role;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Board> board = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Review> review = new ArrayList<>();
+
     @Builder
-    public User(String userName,String userPassword,Role role,String email){
+    public User(String userName,String userPassword, Role role,String email){
         this.userName=userName;
         this.userPassword=userPassword;
         this.role=role;
