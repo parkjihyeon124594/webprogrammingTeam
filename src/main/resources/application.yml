@@ -6,11 +6,6 @@ spring:
       client:
         registration:
           google:
-            client-id: 377262399790-22fej88tjrehtu9krk5q0aa8bv6e5lp6.apps.googleusercontent.com
-            client-secret: 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
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            scope: profile, email
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -22,8 +17,6 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/knu_linkmoa?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: knulinkmoa1234
   jwt:
     secret: kjvMLWXxW4VDgWK6Cf5QjFiDoCRrQfKDFZQQgmT8gzF2pwfQPy
 
