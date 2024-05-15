@@ -1,7 +1,6 @@
-package webprogrammingTeam.matchingService.domain.Board.Dto.Response;
+package webprogrammingTeam.matchingService.domain.board.dto.response;
 
 import lombok.Builder;
-import webprogrammingTeam.matchingService.User.User;
 
 import java.util.List;
 

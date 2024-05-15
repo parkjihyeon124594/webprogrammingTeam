@@ -1,11 +1,11 @@
-package webprogrammingTeam.matchingService.domain.Image.Entity;
+package webprogrammingTeam.matchingService.domain.Image.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import webprogrammingTeam.matchingService.domain.Board.Entity.Board;
+import webprogrammingTeam.matchingService.domain.board.entity.Board;
 
 
 @Entity

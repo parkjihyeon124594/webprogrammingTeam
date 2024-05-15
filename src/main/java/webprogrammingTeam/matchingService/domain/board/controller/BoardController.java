@@ -1,17 +1,15 @@
-package webprogrammingTeam.matchingService.domain.Board.Controller;
+package webprogrammingTeam.matchingService.domain.board.controller;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import webprogrammingTeam.matchingService.domain.Board.Dto.Request.BoardSaveRequest;
-import webprogrammingTeam.matchingService.domain.Board.Dto.Response.BoardAllReadResponse;
-import webprogrammingTeam.matchingService.domain.Board.Dto.Response.BoardIdReadResponse;
-import webprogrammingTeam.matchingService.domain.Board.Service.BoardService;
-import webprogrammingTeam.matchingService.domain.Image.Entity.Image;
-import webprogrammingTeam.matchingService.domain.Image.Service.ImageService;
+import webprogrammingTeam.matchingService.domain.board.dto.request.BoardSaveRequest;
+import webprogrammingTeam.matchingService.domain.board.dto.response.BoardAllReadResponse;
+import webprogrammingTeam.matchingService.domain.board.dto.response.BoardIdReadResponse;
+import webprogrammingTeam.matchingService.domain.board.service.BoardService;
+import webprogrammingTeam.matchingService.domain.Image.entity.Image;
+import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 
 import java.io.IOException;
@@ -23,6 +21,8 @@ import java.util.List;
 public class BoardController {
     private BoardService boardService;
     private ImageService imageService;
+
+
     @PostMapping()
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createBoard(
             @RequestPart(value="boardSaveRequest") BoardSaveRequest boardSaveRequest,

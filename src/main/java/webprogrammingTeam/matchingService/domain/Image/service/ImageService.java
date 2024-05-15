@@ -1,18 +1,17 @@
-package webprogrammingTeam.matchingService.domain.Image.Service;
+package webprogrammingTeam.matchingService.domain.Image.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import webprogrammingTeam.matchingService.domain.Board.Entity.Board;
-import webprogrammingTeam.matchingService.domain.Image.Entity.Image;
-import webprogrammingTeam.matchingService.domain.Image.Repository.ImageRepository;
+import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.Image.entity.Image;
+import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
