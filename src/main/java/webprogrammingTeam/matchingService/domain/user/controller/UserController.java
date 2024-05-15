@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import webprogrammingTeam.matchingService.domain.user.Dto.Response.UserIdReadResponse;
+import webprogrammingTeam.matchingService.domain.user.dto.response.UserIdReadResponse;
 import webprogrammingTeam.matchingService.domain.user.service.UserService;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 

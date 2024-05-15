@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
-import webprogrammingTeam.matchingService.domain.Board.Entity.Board;
-import webprogrammingTeam.matchingService.domain.Review.Entity.Review;
+import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.Review.entity.Review;
 
 import java.util.ArrayList;
 import java.util.List;
