@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Review.entity.Review;
+import webprogrammingTeam.matchingService.domain.board.dto.request.BoardUpdateRequest;
 import webprogrammingTeam.matchingService.domain.user.entity.User;
 
 import java.util.ArrayList;
@@ -58,5 +59,9 @@ public class Board {
     public void addReviewList(Review review){
         reviews.add(review);
         review.setBoard(this);
+    }
+    public void updateBoard(BoardUpdateRequest boardUpdateRequest){
+        this.title = boardUpdateRequest.title();
+        this.content = boardUpdateRequest.content();
     }
 }
