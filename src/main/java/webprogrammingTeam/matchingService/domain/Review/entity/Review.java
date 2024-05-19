@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import webprogrammingTeam.matchingService.domain.Review.dto.request.ReviewUpdateRequest;
 import webprogrammingTeam.matchingService.domain.board.entity.Board;
 import webprogrammingTeam.matchingService.domain.user.entity.User;
 
@@ -20,7 +21,7 @@ public class Review {
     private Long id;
 
     @Column(name = "rating")
-    private float rating;
+    private Rating rating;
 
     @Column(name = "content")
     private String content;
@@ -37,7 +38,7 @@ public class Review {
     private User user;
 
     @Builder
-    public Review(Board board, User user, float rating, String content, String date)
+    public Review(Board board, User user, Rating rating, String content, String date)
     {
         this.board = board;
         this.user = user;
@@ -46,4 +47,9 @@ public class Review {
         this.date = date;
     }
 
+    public void reviewUpdate(ReviewUpdateRequest reviewUpdateRequest)
+    {
+        this.rating = reviewUpdateRequest.rating();
+        this.content = reviewUpdateRequest.content();
+    }
 }

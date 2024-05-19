@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.domain.board.dto.request.BoardSaveRequest;
+import webprogrammingTeam.matchingService.domain.board.dto.request.BoardUpdateRequest;
 import webprogrammingTeam.matchingService.domain.board.dto.response.BoardAllReadResponse;
 import webprogrammingTeam.matchingService.domain.board.dto.response.BoardIdReadResponse;
 import webprogrammingTeam.matchingService.domain.board.service.BoardService;
@@ -48,6 +49,16 @@ public class BoardController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, boardIdReadResponse));
     }
 
+    @PutMapping("/{boardId}")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateBoard(
+            @RequestBody BoardUpdateRequest boardUpdateRequest,
+            @RequestParam("boardId") Long boardId
+    )throws IOException{
+        Long updateId = boardService.updateBoard(boardUpdateRequest, boardId);
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
+
+    }
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteBoard(
             @PathVariable("boardId") Long boardId){

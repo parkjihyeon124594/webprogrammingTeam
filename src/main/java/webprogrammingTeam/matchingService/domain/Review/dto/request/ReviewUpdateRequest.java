@@ -4,5 +4,5 @@ import lombok.Builder;
 import webprogrammingTeam.matchingService.domain.Review.entity.Rating;
 
 @Builder
-public record ReviewSaveRequest(Rating rating, String content, String date){
+public record ReviewUpdateRequest(Rating rating, String content) {
 }

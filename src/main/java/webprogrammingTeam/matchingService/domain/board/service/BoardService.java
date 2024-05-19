@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.board.dto.request.BoardSaveRequest;
+import webprogrammingTeam.matchingService.domain.board.dto.request.BoardUpdateRequest;
 import webprogrammingTeam.matchingService.domain.board.dto.response.BoardAllReadResponse;
 import webprogrammingTeam.matchingService.domain.board.dto.response.BoardIdReadResponse;
 import webprogrammingTeam.matchingService.domain.board.entity.Board;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardService boardService;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     LocalDateTime currentTime = LocalDateTime.now();
@@ -32,6 +34,7 @@ public class BoardService {
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
     User user;
+    @Transactional
     public Long saveBoard(BoardSaveRequest boardSaveRequest, List<Image> imageList){
         Board board = Board.builder()
                 .user(user)
@@ -79,12 +82,23 @@ public class BoardService {
             imageByteList.add(imageData);
         }
 
+
         return BoardIdReadResponse.builder()
                 .tile(board.getTitle())
                 .date(board.getDate())
                 .content(board.getContent())
                 .imagesByte(imageByteList)
                 .build();
+    }
+
+    @Transactional
+    public Long updateBoard(BoardUpdateRequest boardUpdateRequest, Long boardId)throws IOException{
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow();
+
+        board.updateBoard(boardUpdateRequest);
+
+        return board.getId();
     }
 
     @Transactional
