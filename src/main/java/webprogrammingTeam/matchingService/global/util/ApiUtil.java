@@ -1,7 +1,7 @@
 package webprogrammingTeam.matchingService.global.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.models.responses.ApiResponse;
+
 import org.springframework.http.HttpStatus;
 
 public class ApiUtil {
@@ -12,6 +12,7 @@ public class ApiUtil {
     public static <T> ApiSuccessResult<T> success(HttpStatus httpStatus) {
         return new ApiSuccessResult<>(httpStatus.value(), null);
     }
+
 
     public static <T> ApiAccessToken<T> accessToken(HttpStatus httpStatus,T response){
         return new ApiAccessToken<>(httpStatus.value(),response);

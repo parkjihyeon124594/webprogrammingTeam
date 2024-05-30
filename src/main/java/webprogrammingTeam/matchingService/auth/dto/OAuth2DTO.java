@@ -10,7 +10,6 @@ import java.util.Map;
 @Builder
 public record OAuth2DTO(Map<String,Object> attributes,String name,String email,String role) {
 
-
     public User oAuth2DtoToMember(OAuth2DTO oAuth2DTO) {
         return User.builder()
                 .userName(oAuth2DTO.name())
