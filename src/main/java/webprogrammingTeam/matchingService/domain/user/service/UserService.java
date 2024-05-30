@@ -25,8 +25,7 @@ public class UserService {
     }
 
     public UserIdReadResponse findOneUser(Long id) throws IOException{
-        User user = userRepository.findById(id)
-                .orElseThrow();
+        User user = getUserById(id);
 
         return UserIdReadResponse.builder()
                 .userName(user.getUserName())
@@ -34,6 +33,11 @@ public class UserService {
                 .build();
     }
 
+    public User getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow();
+        return user;
+    }
 
 
 }
