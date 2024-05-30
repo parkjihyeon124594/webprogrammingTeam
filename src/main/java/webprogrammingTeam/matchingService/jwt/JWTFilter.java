@@ -43,7 +43,31 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
+        // 요청이 들어오면 헤더 토큰 프로바이더로 사용하는데, SecurityContextHolder는 jwt를 단순히 디코더하는 역할을 함
+        // SecurityContextHolder는 요청이 시작할때부터 끝날때까지만, 하는거임
+        // 토큰 기반 유지에서는 로그인 유지를 하면 안됨
+        // 서버는 요청 처리 단건에 대한 플로우가 같아야된 statelss 해야함.
+        // 로그인을 하면 엑세스 토큰과 리프레시 토큰을 만들고, "로그인 유지는 프론트 측에서 해야함.
+        // 서버는 토큰을 받아서 디코더해서 인증 작업을 하는 것만 하는 역할을 해야됨. 어쎈틱케이션을 한 유저인지 아닌지를 판별하기 위한 역할을 함."
+
+
+        // SecurityContextHolder를 쓰레드 로컬에 사용하는 이유는 동시성 문제가 발생할 가능성이 있기 때문이다. => 어쎈틱케이션은 공유자원이 아니라 독립적인 공간에 넣는 이유임
+        // 쓰레드 로컬마다 다른 커넥션을 가지고 있기 때문에, 비동기 처리를 하면 롤백이 인됨.
+        //
+
+
         log.info("JWT FILTER도 실행이 되나?");
+
+        // SecurityContextHolder에 저장된 Authentication 객체 확인
+        Authentication storedAuth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (storedAuth != null && storedAuth.getPrincipal() instanceof PrincipalDetails) {
+            PrincipalDetails storedUser = (PrincipalDetails) storedAuth.getPrincipal();
+            log.info("SecurityContextHolder에 저장된 Authentication 객체 확인: 이메일 = {}", storedUser.getEmail());
+        } else {
+            log.warn("SecurityContextHolder에 Authentication 객체가 저장되지 않았습니다.");
+        }
+
         //헤더에서 access 키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("accessToken");
 

@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -71,6 +72,7 @@ public class JWTService {
     public String createRefreshToken(String email,String role) {
         return Jwts.builder()
                 .claim("category","refreshToken")
+                //.claim("UUID", UUID)
                 .claim("email",email)
                 .claim("role",role)
                 .issuedAt(new Date(System.currentTimeMillis()))

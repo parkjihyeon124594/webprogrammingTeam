@@ -11,12 +11,15 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import webprogrammingTeam.matchingService.auth.handler.CustomOAuth2SuccessHandler;
 import webprogrammingTeam.matchingService.auth.service.CustomOAuth2UserService;
+import webprogrammingTeam.matchingService.jwt.JWTFilter;
+import webprogrammingTeam.matchingService.jwt.JWTService;
 
 
 import java.util.Arrays;
@@ -28,6 +31,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final JWTService jwtService;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
@@ -66,6 +70,9 @@ public class SecurityConfig {
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
                                 .successHandler(customOAuth2SuccessHandler)
                         )
+                        .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class) // JWTFilter를 OAuth2 로그인 필터 이후에 추가
+
+
                         //.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
                         //.addFilterBefore(jwtAuthorizationFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
                         // 해당 필터의 위치는 기본적으로 스피링 시큐리티에 활성화돼 있는 로그아웃 필터를 기준으로 그 앞에다가 하면됨.
@@ -91,5 +98,10 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    @Bean
+    public JWTFilter jwtFilter(){
+        return new JWTFilter(jwtService);
     }
 }

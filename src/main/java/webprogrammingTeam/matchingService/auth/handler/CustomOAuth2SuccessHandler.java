@@ -69,11 +69,22 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         refreshService.saveRefreshEntity(email,refreshToken,role);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(oAuth2User, null, authorities);
-
-        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
+        Authentication storedAuth = SecurityContextHolder.getContext().getAuthentication();
+        if (storedAuth != null && storedAuth.getPrincipal() instanceof PrincipalDetails) {
+            PrincipalDetails storedUser = (PrincipalDetails) storedAuth.getPrincipal();
+            log.info("SecurityContextHolder에 저장된 Authentication 객체 확인: 이메일 = {}", storedUser.getEmail());
+        } else {
+            log.warn("SecurityContextHolder에 Authentication 객체가 저장되지 않았습니다.");
+        }
         //response.setHeader("Authorization-Accesstoken", accessToken);
+        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
+        //SecurityContextHolder.getContext().setAuthentication(authToken);
+
+
+
+        // SecurityContextHolder에 저장된 Authentication 객체 확인
+
+
 
         response.addCookie(jwtService.createCookie("refreshToken", refreshToken));
         response.sendRedirect("http://localhost:3000/googleLogin");

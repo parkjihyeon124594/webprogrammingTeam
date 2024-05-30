@@ -22,8 +22,9 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
-    //UsernamePasswordAuthenticationFilter는 사용자 인증 과정을 담당하는 필터
 
+
+    //UsernamePasswordAuthenticationFilter는 사용자 인증 과정을 담당하는 필터
 
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
