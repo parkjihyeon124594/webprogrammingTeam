@@ -12,8 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
-import webprogrammingTeam.matchingService.domain.user.entity.Role;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
+import webprogrammingTeam.matchingService.domain.member.entity.Role;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -122,8 +122,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String username = jwtService.getUsername(accessToken);
         String role = jwtService.getRole(accessToken);
 
-        User user = User.builder()
-                .userName(username)
+        Member member = Member.builder()
+                .memberName(username)
                 .email(email)
                 .role(Role.valueOf(String.valueOf(role)))
                 .build();
@@ -140,7 +140,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }*/
 
         //토큰 검증 완료 and SecurityContextHolder에 유저 정보가 저장된 상태
-        if(currentUser.getEmail().equals(user.getEmail()) && currentAuth!=null){
+        if(currentUser.getEmail().equals(member.getEmail()) && currentAuth!=null){
             log.info("토큰 검증 완료 and SecurityContextHolder에 유저 정보가 저장된 상태");
         }
         else{

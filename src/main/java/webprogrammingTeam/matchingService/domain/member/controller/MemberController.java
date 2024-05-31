@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.domain.user.controlelr;
+package webprogrammingTeam.matchingService.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
-import webprogrammingTeam.matchingService.jwt.JWTFilter;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/member")
 @Slf4j
 @RequiredArgsConstructor
-public class UserController {
+public class MemberController {
     @PostMapping
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> test(){
         log.info("컨트롤러 jwt 필터 테스트");
