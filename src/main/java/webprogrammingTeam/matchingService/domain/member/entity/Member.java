@@ -26,10 +26,6 @@ public class Member {
 
     @Column(name="member_email")
     private String email;
-
-    @Column(name="member_password")
-    private String memberPassword;
-
     @Enumerated(EnumType.STRING)
     @Column(name="role")
     private Role role;
@@ -43,9 +39,10 @@ public class Member {
     private List<Review> review = new ArrayList<>();
 
     @Builder
-    public Member(String memberName, String memberPassword, Role role, String email){
-        this.memberName = memberName;
-        this.memberPassword = memberPassword;
+
+    public Member(String memberName, Role role, String email){
+
+        this.memberName=memberName;
         this.role=role;
         this.email=email;
     }

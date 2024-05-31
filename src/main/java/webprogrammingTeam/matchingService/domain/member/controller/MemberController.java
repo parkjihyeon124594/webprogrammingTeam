@@ -1,33 +1,41 @@
-package webprogrammingTeam.matchingService.domain.member.controller;
+package webprogrammingTeam.matchingService.domain.user.controlelr;
 
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import webprogrammingTeam.matchingService.domain.member.dto.response.MemberIdReadResponse;
-import webprogrammingTeam.matchingService.domain.member.service.MemberService;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
-
-import java.io.IOException;
+import webprogrammingTeam.matchingService.jwt.JWTFilter;
 
 @RestController
-@RequestMapping("/member")
-public class MemberController {
-
-    private MemberService memberService;
-    @GetMapping("/{memberId}")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<MemberIdReadResponse>> getMember(
-            @PathVariable("memberId") Long memberId
-    )throws IOException {
-
-        MemberIdReadResponse memberIdReadResponse = memberService.findOneMember(memberId) ;
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, memberIdReadResponse));
+@RequestMapping("/user")
+@Slf4j
+@RequiredArgsConstructor
+public class UserController {
+    @PostMapping
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> test(){
+        log.info("컨트롤러 jwt 필터 테스트");
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
 
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> test2(
+            //@AuthenticationPrincipal PricipalDetails pricipalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+            ){
+        log.info("컨트롤러 jwt 필터 테스트");
+        log.info("principalDetails : {}",principalDetails.getEmail());
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
+    }
 
 
 }

@@ -11,24 +11,29 @@ import java.util.Collection;
 import java.util.Map;
 
 @Getter
-public class PrincipalDetails implements OAuth2User, UserDetails {
+public class PrincipalDetails implements OAuth2User{
+
 
     private Member member;
     private Map<String,Object> attributes;
 
+
+    /**
+     * 자체 로그인
+     */
+    public PrincipalDetails(Member member) {
+        this.member = member;
+    }
     /**
      * OAuth2 로그인
      */
     public PrincipalDetails(Member member, Map<String, Object> attributes) {
         this.member = member;
         this.attributes = attributes;
+
     }
 
-    @Override
-    public Map<String, Object> getAttributes() {
 
-        return null;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -43,6 +48,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         });
         return collection;
     }
+/*
 
     @Override
     public String getPassword() {
@@ -51,7 +57,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getUserName();
     }
 
     @Override
@@ -73,9 +79,20 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
     public boolean isEnabled() {
         return true;
     }
+*/
+
+    // OAuth2
 
     @Override
     public String getName() {
-        return null;
+        return member.getMemberName();
+    }
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
+
+    public String getEmail() {
+        return member.getEmail();
     }
 }
