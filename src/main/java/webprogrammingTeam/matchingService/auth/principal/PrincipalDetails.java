@@ -4,9 +4,8 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -14,14 +13,14 @@ import java.util.Map;
 @Getter
 public class PrincipalDetails implements OAuth2User, UserDetails {
 
-    private User user;
+    private Member member;
     private Map<String,Object> attributes;
 
     /**
      * OAuth2 로그인
      */
-    public PrincipalDetails(User user, Map<String, Object> attributes) {
-        this.user = user;
+    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+        this.member = member;
         this.attributes = attributes;
     }
 
@@ -39,7 +38,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return String.valueOf(user.getRole());
+                return String.valueOf(member.getRole());
             }
         });
         return collection;

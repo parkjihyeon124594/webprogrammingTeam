@@ -17,7 +17,7 @@ public class ChannelService {
     @Autowired
     public ChannelService(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
-    } // 어차피 구독 클래스는 user와 channle의 service에 종속 되어 있으니, 그냥 거기서 만들면 되는 거 아닌가? 만들라고 하고 id만 반환하면 되지.
+    } // 어차피 구독 클래스는 member와 channle의 service에 종속 되어 있으니, 그냥 거기서 만들면 되는 거 아닌가? 만들라고 하고 id만 반환하면 되지.
     // createChannel을 createSubscription이 호출하면 됨.
 
 

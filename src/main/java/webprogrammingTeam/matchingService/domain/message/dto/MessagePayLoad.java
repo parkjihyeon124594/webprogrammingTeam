@@ -10,5 +10,5 @@ public class MessagePayLoad {
     private String content;
     private boolean subscribeRequest;
     private boolean kickRequest;
-    private Long kickUserId;
+    private Long kickMemberId;
 }

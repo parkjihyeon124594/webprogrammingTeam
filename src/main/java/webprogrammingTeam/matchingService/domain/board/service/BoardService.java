@@ -12,7 +12,7 @@ import webprogrammingTeam.matchingService.domain.board.repository.BoardRepositor
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,18 +26,18 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final BoardService boardService;
+    //private final BoardService boardService;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     LocalDateTime currentTime = LocalDateTime.now();
 
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
-    User user;
+    Member member;
     @Transactional
     public Long saveBoard(BoardSaveRequest boardSaveRequest, List<Image> imageList){
         Board board = Board.builder()
-                .user(user)
+                .member(member)
                 .title(boardSaveRequest.title())
                 .content(boardSaveRequest.content())
                 .date(String.valueOf(currentTime))

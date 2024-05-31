@@ -9,9 +9,9 @@ import lombok.Setter;
 
 
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
-import webprogrammingTeam.matchingService.domain.Review.entity.Review;
+import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.board.dto.request.BoardUpdateRequest;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,8 @@ public class Board {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name="title")
     private String title;
@@ -46,8 +46,8 @@ public class Board {
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Board(User user, String title, String content, String date){
-        this.user = user;
+    public Board(Member member, String title, String content, String date){
+        this.member = member;
         this.title=title;
         this.content=content;
         this.date=date;

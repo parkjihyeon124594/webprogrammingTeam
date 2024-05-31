@@ -1,7 +1,7 @@
 package webprogrammingTeam.matchingService.domain.message.entity;
 
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +21,8 @@ public class Message {
     private Channel channel;
 
     @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
-    private User sender;
+    @JoinColumn(name = "member", nullable = false)
+    private Member sender;
 
     @Column(name = "content")
     private String content;

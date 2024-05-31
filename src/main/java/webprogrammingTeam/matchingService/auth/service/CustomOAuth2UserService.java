@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 import webprogrammingTeam.matchingService.auth.dto.GoogleResponse;
 import webprogrammingTeam.matchingService.auth.dto.OAuth2DTO;
 import webprogrammingTeam.matchingService.auth.dto.OAuth2Response;
-import webprogrammingTeam.matchingService.domain.user.repository.UserRepository;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
@@ -60,7 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .attributes(oAuth2User.getAttributes())
                 .name(oAuth2Response.getName())
                 .email(oAuth2Response.getEmail())
-                .role("ROLE_USER")
+                .role("ROLE_MEMBER")
                 .build();
     }
 

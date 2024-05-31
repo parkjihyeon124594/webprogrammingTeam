@@ -13,6 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import webprogrammingTeam.matchingService.auth.handler.CustomOAuth2SuccessHandler;
 import webprogrammingTeam.matchingService.auth.service.CustomOAuth2UserService;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,8 +48,8 @@ public class SecurityConfig {
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
                                 .successHandler(customOAuth2SuccessHandler)
                         )
-                        .addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
-                        .addFilterBefore(jwtAuthorizationFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
+                        // .addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
+                        // .addFilterBefore(jwtAuthorizationFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
                         .sessionManagement((session) -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();

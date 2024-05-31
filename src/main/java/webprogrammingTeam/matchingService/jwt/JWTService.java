@@ -2,10 +2,9 @@ package webprogrammingTeam.matchingService.jwt;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import webprogrammingTeam.matchingService.domain.user.repository.UserRepository;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -20,10 +19,10 @@ public class JWTService {
     private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60L;
     private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 14L;
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
-    public JWTService(UserRepository userRepository,@Value("${spring.jwt.secret}") String secret) {
-        this.userRepository = userRepository;
+    public JWTService(MemberRepository memberRepository, @Value("${spring.jwt.secret}") String secret) {
+        this.memberRepository = memberRepository;
         this.secretKey=new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
 
     }
