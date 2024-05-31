@@ -70,6 +70,7 @@ public class SecurityConfig {
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
                                 .successHandler(customOAuth2SuccessHandler)
                         )
+
                         .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class) // JWTFilter를 OAuth2 로그인 필터 이후에 추가
 
 

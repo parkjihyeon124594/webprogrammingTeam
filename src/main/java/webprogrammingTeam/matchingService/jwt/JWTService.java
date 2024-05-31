@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import webprogrammingTeam.matchingService.domain.user.repository.UserRepository;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,7 +26,6 @@ public class JWTService {
 
     private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60L;
     private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 14L;
-
 
 
     public JWTService(@Value("${spring.jwt.secret}") String secret) {

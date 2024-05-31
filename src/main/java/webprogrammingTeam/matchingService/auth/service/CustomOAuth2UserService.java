@@ -12,16 +12,17 @@ import webprogrammingTeam.matchingService.auth.dto.GoogleResponse;
 import webprogrammingTeam.matchingService.auth.dto.OAuth2DTO;
 import webprogrammingTeam.matchingService.auth.dto.OAuth2Response;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
-import webprogrammingTeam.matchingService.domain.user.repository.UserRepository;
-import webprogrammingTeam.matchingService.domain.user.service.UserService;
+import webprogrammingTeam.matchingService.domain.member.service.MemberService;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.member.service.MemberService;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserService userService;
+
+    private final MemberService memberService;
 
     /**
      * CustomOAuth2UserService의 loadUser 메서드
@@ -43,13 +44,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2DTO oAuth2DTO = createOAuth2DTO(oAuth2User, oAuth2Response);
 
         // oAuth2DTO 객체를 이용해서 DB에 유저 정보 저장
-        User user=userService.saveUser(oAuth2DTO);
+        Member member= memberService.saveMember(oAuth2DTO);
 
         // PricipalDetails을 리턴
-        PrincipalDetails principalDetails = new PrincipalDetails(user, oAuth2User.getAttributes());
+        PrincipalDetails principalDetails = new PrincipalDetails(member, oAuth2User.getAttributes());
         log.info("principalDetails 테스트 {}",principalDetails.getName());
         log.info("principalDetails 테스트 {}",principalDetails.getAttributes());
-        log.info("principalDetails 테스트 {}",principalDetails.getUser());
+        log.info("principalDetails 테스트 {}",principalDetails.getMember());
         log.info("principalDetails 테스트 {}",principalDetails.getEmail());
 
 
@@ -78,7 +79,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .attributes(oAuth2User.getAttributes())
                 .name(oAuth2Response.getName())
                 .email(oAuth2Response.getEmail())
-                .role("ROLE_USER")
+                .role("ROLE_MEMBER")
                 .build();
     }
 

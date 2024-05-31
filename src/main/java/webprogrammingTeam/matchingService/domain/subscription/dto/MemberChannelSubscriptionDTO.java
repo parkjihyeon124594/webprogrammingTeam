@@ -1,11 +1,13 @@
 package webprogrammingTeam.matchingService.domain.subscription.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class AddChannelAndSubscriptionRequest {
+@Setter
+public class MemberChannelSubscriptionDTO {
 
     private Long memberId;
 
-    private String channelTitle;
+    private Long channelId;
 }

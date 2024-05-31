@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> getAllMessagesByChannelId(Long channelId);
+    List<Message> getAllMessagesByChannel_ChannelId(Long channelId);
 
     void deleteByChannel_ChannelId(Long channelId);
 }

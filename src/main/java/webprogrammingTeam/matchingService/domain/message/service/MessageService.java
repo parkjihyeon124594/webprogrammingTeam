@@ -6,8 +6,8 @@ import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
 import webprogrammingTeam.matchingService.domain.message.entity.Message;
 import webprogrammingTeam.matchingService.domain.message.repository.MessageRepository;
-import webprogrammingTeam.matchingService.domain.user.entity.User;
-import webprogrammingTeam.matchingService.domain.user.service.UserService;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,22 +21,22 @@ public class MessageService {
     
     private final ChannelService channelService;
     
-    private final UserService userService;
+    private final MemberService memberService;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, ChannelService channelService, UserService userService) {
+    public MessageService(MessageRepository messageRepository, ChannelService channelService, MemberService memberService) {
         this.messageRepository = messageRepository;
         this.channelService = channelService;
-        this.userService = userService;
+        this.memberService = memberService;
     }
 
     public MessageDTO addMessage(Long channelId, Long senderId, String content) {
         Channel channel = channelService.getChannelById(channelId);
-        User user = userService.getUserById(senderId);
+        Member member = memberService.getMemberById(senderId);
         
         Message message = new Message();
         message.setChannel(channel);
-        message.setSender(user);
+        message.setSender(member);
         message.setContent(content);
         
         Message newMessage = messageRepository.save(message);
@@ -58,7 +58,7 @@ public class MessageService {
     }
 
     public List<MessageDTO> findAllMessageByChannelId(Long channelId) {
-        List<Message> allMessages = messageRepository.getAllMessagesByChannelId(channelId);
+        List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
 
         List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);
         return messageDTOList;

@@ -10,11 +10,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import webprogrammingTeam.matchingService.domain.user.repository.UserRepository;
-import webprogrammingTeam.matchingService.domain.user.service.UserService;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
+import webprogrammingTeam.matchingService.domain.member.service.MemberService;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 import webprogrammingTeam.matchingService.jwt.JWTService;
 
@@ -27,8 +26,8 @@ public class AccessTokenController {
 
     private final JWTService jwtService;
 
-    private final UserRepository userRepository;
-    private final UserService userService;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     private final AuthenticationManager authenticationManager;
 
