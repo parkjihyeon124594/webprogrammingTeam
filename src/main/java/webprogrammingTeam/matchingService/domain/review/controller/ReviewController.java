@@ -1,5 +1,7 @@
 package webprogrammingTeam.matchingService.domain.review.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/board/{boardId}/review")
+@Tag(name = "리뷰", description = "게시글의 리뷰 관련 Api")
 public class ReviewController {
 
     private ReviewService reviewService;
@@ -31,9 +34,9 @@ public class ReviewController {
      * @return 리뷰 아이디
      */
     @PostMapping()
+    @Operation(summary = "리뷰 등록", description = "리뷰를 등록하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> creatReview(
             @PathVariable("boardId") Long boardId,
-
             @RequestBody() ReviewSaveRequest reviewSaveRequest,
             Authentication authentication
 
@@ -48,6 +51,7 @@ public class ReviewController {
     }
 
     @GetMapping()
+    @Operation(summary = "한 게시글 관련 리뷰 전체 조회", description = "한 게시글에 등록된 모든 리뷰 조회하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<ReviewAllReadResponse>>> getAllReview(
             @PathVariable("boardId") Long boardId
     ){
@@ -55,8 +59,9 @@ public class ReviewController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allReview));
     }
 
-    /** 없어도 될듯 ?**/
+
     @GetMapping("/{reviewId}")
+    @Operation(summary = "리뷰 한 개 조회", description = "리뷰 수정할 때 필요")
     public ResponseEntity<ApiUtil.ApiSuccessResult<ReviewIdReadResponse>> getOneReview(
             @PathVariable("reviewId") Long reviewId
     )throws IOException{
@@ -72,6 +77,7 @@ public class ReviewController {
      * @return 리뷰 아이디
      */
     @PutMapping("/{reviewId}")
+    @Operation(summary = "리뷰 수정", description = "리뷰 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateReview(
             @PathVariable("reviewId") Long reviewId,
             @RequestBody ReviewUpdateRequest reviewUpdateRequest
@@ -88,6 +94,7 @@ public class ReviewController {
      * @return ok
      */
     @DeleteMapping("/{reviewId}")
+    @Operation(summary = "리뷰 삭제", description = "리뷰 삭제 하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteReview(
             @PathVariable("reviewId") Long reviewId){
         reviewService.deleteOneReview( reviewId);
