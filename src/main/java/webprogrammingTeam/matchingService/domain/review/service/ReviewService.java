@@ -1,6 +1,7 @@
 package webprogrammingTeam.matchingService.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -32,22 +34,23 @@ public class ReviewService {
 
 
 
-    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long boardId, String email){
-
-        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new IllegalIdentifierException("회원을 찾을 수 없습니다."));
+    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long boardId){
+        log.info("saveReview {}", boardId);
+       // Member member = memberRepository.findByEmail(email).orElseThrow(()-> new IllegalIdentifierException("회원을 찾을 수 없습니다."));
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
 
         Review review = Review.builder()
+                .title(reviewSaveRequest.title())
                 .rating(reviewSaveRequest.rating())
                 .content(reviewSaveRequest.content())
                 .date(String.valueOf(currentTime))
-                .member(member)
+               // .member(member)
                 .board(board)
                 .build();
 
         reviewRepository.save(review);
 
-
+        log.info("review.getId {}",String.valueOf(review.getId()));
         return review.getId();
 
     }

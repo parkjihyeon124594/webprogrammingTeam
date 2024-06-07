@@ -20,6 +20,9 @@ public class Review {
     @Column(name = "review_id")
     private Long id;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "rating")
     private Rating rating;
 
@@ -38,10 +41,11 @@ public class Review {
     private Member member;
 
     @Builder
-    public Review(Board board, Member member, Rating rating, String content, String date)
+    public Review(Board board, Member member, String title, Rating rating, String content, String date)
     {
         this.board = board;
         this.member = member;
+        this.title= title;
         this.rating = rating;
         this.content = content;
         this.date = date;
@@ -50,6 +54,7 @@ public class Review {
     public void reviewUpdate(ReviewUpdateRequest reviewUpdateRequest)
     {
         this.rating = reviewUpdateRequest.rating();
+        this.title = reviewUpdateRequest.title();
         this.content = reviewUpdateRequest.content();
     }
 }
