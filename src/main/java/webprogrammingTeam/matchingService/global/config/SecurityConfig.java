@@ -55,10 +55,13 @@ public class SecurityConfig {
                         .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/reissue")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/v3/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/googleLogin")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/board/**")).permitAll()
+
                                 .anyRequest().authenticated())
 
                         // oauth2Login는 스프링 시큐리티가 아니기 때문에, Authentication를 SecurityContextHolder에 저장하지는 않는다.

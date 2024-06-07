@@ -13,6 +13,7 @@ import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.board.dto.request.BoardUpdateRequest;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,20 @@ public class Board {
     @Column(name="content")
     private String content;
 
-    @Column(name="date")
-    private String date;
+    @Column(name="writing_time")
+    private String writingTime;
+
+    @Column(name="category")
+    private Category category;
+
+    @Column(name="recruitment_start_date")
+    private String recruitmentStartDate;
+
+    @Column(name="recruitment_end_date")
+    private String recruitmentEndDate;
+
+    @Column(name="program_date")
+    private String programDate;
 
     @OneToMany(mappedBy = "board",cascade = CascadeType.ALL)
     @JsonIgnore // JSON 직렬화 과정에서 무시
@@ -46,11 +59,15 @@ public class Board {
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Board(Member member, String title, String content, String date){
+    public Board(Member member, String title, String content, String writingTime, Category category, String recruitmentStartDate, String recruitmentEndDate,String programDate){
         this.member = member;
         this.title=title;
         this.content=content;
-        this.date=date;
+        this.writingTime=writingTime;
+        this.category=category;
+        this.recruitmentStartDate=recruitmentStartDate;
+        this.recruitmentEndDate=recruitmentEndDate;
+        this.programDate=programDate;
     }
 
     public void addImageList(Image image){

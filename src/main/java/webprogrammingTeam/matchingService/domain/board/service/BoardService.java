@@ -40,7 +40,11 @@ public class BoardService {
                 .member(member)
                 .title(boardSaveRequest.title())
                 .content(boardSaveRequest.content())
-                .date(String.valueOf(currentTime))
+                .writingTime(String.valueOf(currentTime))
+                .category(boardSaveRequest.category())
+                .recruitmentStartDate(boardSaveRequest.recruitmentStartDate())
+                .recruitmentEndDate(boardSaveRequest.recruitmentEndDate())
+                .programDate(boardSaveRequest.programDate())
                 .build();
         for(Image i : imageList){
             board.addImageList(i);
@@ -59,7 +63,7 @@ public class BoardService {
 
             for(Board board : BoardList){
                 responseList.add(
-                        new BoardAllReadResponse(board.getId(), board.getTitle(), board.getDate())
+                        new BoardAllReadResponse(board.getId(), board.getTitle(), board.getCategory(),board.getWritingTime())
                 );
             }
             return responseList;
@@ -84,9 +88,13 @@ public class BoardService {
 
 
         return BoardIdReadResponse.builder()
-                .tile(board.getTitle())
-                .date(board.getDate())
+                .title(board.getTitle())
+                .writingTime(board.getWritingTime())
                 .content(board.getContent())
+                .category(board.getCategory())
+                .recruitmentStartDate(board.getRecruitmentStartDate())
+                .recruitmentEndDate(board.getRecruitmentEndDate())
+                .programDate(board.getProgramDate())
                 .imagesByte(imageByteList)
                 .build();
     }

@@ -2,6 +2,8 @@ package webprogrammingTeam.matchingService.domain.board.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,19 +27,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @Tag(name = "게시글", description = "게시글 관련 Api")
+@RequiredArgsConstructor
 public class BoardController {
-    private BoardService boardService;
-    private ImageService imageService;
+    private final BoardService boardService;
+    private final ImageService imageService;
 
 
 
     @PostMapping()
     @Operation(summary = "게시글 추가", description = "게시글을 추가하는 로직")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createBoard(
             @RequestPart(value="boardSaveRequest") BoardSaveRequest boardSaveRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
-
         List<Image> listImage = imageService.saveImageList(images);
         Long saveId = boardService.saveBoard(boardSaveRequest,listImage);
 
@@ -64,7 +65,7 @@ public class BoardController {
     @Operation(summary = "게시글 수정", description = "특정 게시글을 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateBoard(
             @RequestBody BoardUpdateRequest boardUpdateRequest,
-            @RequestParam("boardId") Long boardId
+            @PathVariable("boardId") Long boardId
     )throws IOException{
         Long updateId = boardService.updateBoard(boardUpdateRequest, boardId);
 
