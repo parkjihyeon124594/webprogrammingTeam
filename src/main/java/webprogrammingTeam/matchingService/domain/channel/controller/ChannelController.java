@@ -20,7 +20,8 @@ public class ChannelController {
         return ResponseEntity.ok().body(channelTitles);
     }
 
-    // post 없음. 구독을 자동으로 해야하므로 subscription으로 채팅 생성을 옮김. 게시물에서 채팅을 생성하려면 subscriptionService 써야함.
+    //subscription이 없어도 된다?
+    @PostMapping("/public")
 
     // 채팅방 id로 채팅방 삭제 (단 실수를 방지하기 위해 연관된 메세지와 구독이 존재하면 삭제 거부)
     @DeleteMapping("/{chatId}")

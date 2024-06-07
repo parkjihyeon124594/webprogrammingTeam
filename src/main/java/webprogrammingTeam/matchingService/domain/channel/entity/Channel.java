@@ -16,4 +16,7 @@ public class Channel {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "is_public")
+    private boolean isPublic;
 }

@@ -117,11 +117,29 @@ public class MemberChannelSubscriptionService {
         memberChannelSubscriptionRepository.deleteByChannelAndMember(channel, member);
     }
 
-    public boolean isSubscriber(Long channelId, Long senderId) {
+    public boolean isParticipant(Long channelId, Long senderId) {
+        if (!channelService.getChannelById(channelId).isPublic()){
+            return isSubscriber(channelId, senderId);
+        }
+        else {
+            // error! public임
+            throw new IllegalArgumentException("This is a public channel. Access is not allowed.");
+        }
+    }
+
+    public boolean isBanned(Long channelId, Long senderId) {
+        if (channelService.getChannelById(channelId).isPublic()){
+            return isSubscriber(channelId, senderId);
+        }
+        else {
+            // error! private임
+            throw new IllegalArgumentException("This is a private channel. Access is not allowed.");
+        }
+    }
+
+    private boolean isSubscriber(Long channelId, Long senderId) {
         return memberChannelSubscriptionRepository.existsByChannelAndMember(
                 channelService.getChannelById(channelId),
                 memberService.getMemberById(senderId));
     }
-
-
 }

@@ -10,6 +10,7 @@ import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +24,14 @@ public class MessageService {
     
     private final MemberService memberService;
 
+    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
+
     @Autowired
-    public MessageService(MessageRepository messageRepository, ChannelService channelService, MemberService memberService) {
+    public MessageService(MessageRepository messageRepository, ChannelService channelService, MemberService memberService, MemberChannelSubscriptionService memberChannelSubscriptionService) {
         this.messageRepository = messageRepository;
         this.channelService = channelService;
         this.memberService = memberService;
+        this.memberChannelSubscriptionService = memberChannelSubscriptionService;
     }
 
     public MessageDTO addMessage(Long channelId, Long senderId, String content) {
@@ -57,7 +61,7 @@ public class MessageService {
         return messageDTO;
     }
 
-    public List<MessageDTO> findAllMessageByChannelId(Long channelId) {
+    public List<MessageDTO> findAllMessageByPublicChannelId(Long channelId) {
         List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
 
         List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);
@@ -69,6 +73,17 @@ public class MessageService {
                 .map(this::convertMessageToMessageDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, Long memberId) {
+        if (!memberChannelSubscriptionService.isParticipant(channelId, memberId)) {
+
+        }
+        List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
+
+        List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);
+        return messageDTOList;
+    }
+
     public void deleteAllMessageByChannelId(Long channelId) {
         messageRepository.deleteByChannel_ChannelId(channelId);
     }

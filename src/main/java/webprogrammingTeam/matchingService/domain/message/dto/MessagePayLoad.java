@@ -8,7 +8,6 @@ import lombok.Setter;
 public class MessagePayLoad {
     private Long senderId;
     private String content;
-    private boolean subscribeRequest;
-    private boolean kickRequest;
-    private Long kickMemberId;
+//    private boolean kickRequest;
+//    private Long kickMemberId;
 }
