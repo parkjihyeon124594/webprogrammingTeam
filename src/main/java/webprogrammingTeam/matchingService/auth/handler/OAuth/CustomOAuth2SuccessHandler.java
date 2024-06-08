@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.auth.handler;
+package webprogrammingTeam.matchingService.auth.handler.OAuth;
 
 
 import jakarta.servlet.ServletException;
@@ -19,6 +19,7 @@ import webprogrammingTeam.matchingService.jwt.JWTService;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -59,7 +60,12 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String email = oAuth2User.getEmail();
         String role = authorities.iterator().next().getAuthority();
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
+        // Print all attributes
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            log.info("Attribute key: {}, value: {}", entry.getKey(), entry.getValue());
+        }
         //String accessToken = jwtService.createAccessJwt(email, role);
 
         String refreshToken =  jwtService.createRefreshToken(email,role);

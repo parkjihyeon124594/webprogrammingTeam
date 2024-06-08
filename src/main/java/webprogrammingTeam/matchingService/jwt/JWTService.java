@@ -98,6 +98,14 @@ public class JWTService {
 
         cookie.setHttpOnly(true); // true 설정 시 프론트 js에서 해당 쿠키에 접근하지 못하게 막음.
         // 키 밸류 형태로 : set-cookie로 담김
+
+
+        /*
+        CookieUtils라는 유틸 클래스에서 쿠키를 저장하기 전 쿠키에 여러 가지 세팅을 해주는 메서드인데
+        setSecure는 https 통신 시에만 쿠키를 저장하게 하는 것이고
+        setHttpOnly는 자바스크립트에서는 쿠키를 꺼낼 수 없도록 하는 것이다
+        setDomain은 쿠키를 저장할 서버를 Domain으로 지정하는 것이다
+        */
         return cookie;
     }
     public boolean validateToken(String token) {
