@@ -50,7 +50,7 @@ public class AccessTokenController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("accessToken", accessToken);
-        headers.add("Set-Cookie", "refreshToken=" + refreshToken);
+        headers.add("Set-Cookie", "refreshToken =" + refreshToken);
 
         return ResponseEntity.ok().headers(headers).body(ApiUtil.success(HttpStatus.OK, "Access token 발급 완료"));
     }

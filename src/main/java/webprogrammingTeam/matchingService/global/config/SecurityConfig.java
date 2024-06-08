@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -87,10 +88,7 @@ public class SecurityConfig {
                                 .successHandler(customOAuth2SuccessHandler)
                         )
 */
-                        .addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                        .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                        //.addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class) // JWTFilter를 OAuth2 로그인 필터 이후에 추가
-
+                        .addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
                         .addFilterBefore(jwtFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
                         .sessionManagement((session) -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -104,8 +102,8 @@ public class SecurityConfig {
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setExposedHeaders(Arrays.asList("Accesstoken"));
-        config.setExposedHeaders(Arrays.asList("Refreshtoken"));
+        config.setExposedHeaders(Arrays.asList("Accesstoken","Refreshtoken"));
+
 
         config.setMaxAge(3600L); //1시간
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
