@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
 
 
 @Entity
@@ -21,8 +21,8 @@ public class Image {
     private String fileName;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "program_id")
+    private Program program;
 
     private String url;
 

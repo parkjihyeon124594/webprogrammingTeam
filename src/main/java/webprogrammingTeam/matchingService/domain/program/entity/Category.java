@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.domain.board.entity;
+package webprogrammingTeam.matchingService.domain.program.entity;
 
 import lombok.Getter;
 

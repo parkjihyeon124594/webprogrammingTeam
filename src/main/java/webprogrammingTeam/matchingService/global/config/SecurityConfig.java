@@ -60,7 +60,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/v3/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/googleLogin")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/board/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/program/**")).permitAll()
 
                                 .anyRequest().authenticated())
 

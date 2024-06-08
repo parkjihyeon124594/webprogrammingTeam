@@ -20,7 +20,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/board/{boardId}/review")
+@RequestMapping("/program/{programId}/review")
 @Tag(name = "리뷰", description = "게시글의 리뷰 관련 Api")
 @RequiredArgsConstructor
 public class ReviewController {
@@ -30,7 +30,7 @@ public class ReviewController {
 
     /**
      * 리뷰 작성
-     * @param boardId 게시물 아이디
+     * @param programId 게시물 아이디
      * @param reviewSaveRequest 리뷰 정보
 
      * @return 리뷰 아이디
@@ -38,14 +38,14 @@ public class ReviewController {
     @PostMapping()
     @Operation(summary = "리뷰 등록", description = "리뷰를 등록하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> creatReview(
-            @PathVariable("boardId") Long boardId,
+            @PathVariable("programId") Long programId,
             @RequestBody() ReviewSaveRequest reviewSaveRequest
            ) throws IOException {
 
         /**principal  email 얻기**/
       //  String email = "hh";
 
-        Long saveId = reviewService.saveReview(reviewSaveRequest, boardId);
+        Long saveId = reviewService.saveReview(reviewSaveRequest, programId);
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
@@ -53,9 +53,9 @@ public class ReviewController {
     @GetMapping()
     @Operation(summary = "한 게시글 관련 리뷰 전체 조회", description = "한 게시글에 등록된 모든 리뷰 조회하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<ReviewAllReadResponse>>> getAllReview(
-            @PathVariable("boardId") Long boardId
+            @PathVariable("programId") Long programId
     ){
-        List<ReviewAllReadResponse> allReview = reviewService.findAllReview(boardId);
+        List<ReviewAllReadResponse> allReview = reviewService.findAllReview(programId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allReview));
     }
 

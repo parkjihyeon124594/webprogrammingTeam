@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 
@@ -41,9 +41,9 @@ public class ImageService {
         return imageList;
     }
 
-    public List<Image> getImageList(Optional<Board> board)
+    public List<Image> getImageList(Optional<Program> board)
     {
-        List<Image> images = imageRepository.findByBoard(board);
+        List<Image> images = imageRepository.findByProgram(board);
 
         return images;
     }
