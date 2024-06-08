@@ -1,8 +1,11 @@
 package webprogrammingTeam.matchingService.domain.program.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
@@ -16,20 +19,23 @@ import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ProgramService {
 
     private final ProgramRepository programRepository;
     //private final programService programService;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
-    LocalDateTime currentTime = LocalDateTime.now();
+
 
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
@@ -40,8 +46,9 @@ public class ProgramService {
                 .member(member)
                 .title(programSaveRequest.title())
                 .content(programSaveRequest.content())
-                .writingTime(String.valueOf(currentTime))
+                .writingTime(writingTimeToString(LocalDateTime.now()))
                 .category(programSaveRequest.category())
+                .maximum(programSaveRequest.maximum())
                 .recruitmentStartDate(programSaveRequest.recruitmentStartDate())
                 .recruitmentEndDate(programSaveRequest.recruitmentEndDate())
                 .programDate(programSaveRequest.programDate())
@@ -92,6 +99,7 @@ public class ProgramService {
                 .writingTime(program.getWritingTime())
                 .content(program.getContent())
                 .category(program.getCategory())
+                .maximum(program.getMaximum())
                 .recruitmentStartDate(program.getRecruitmentStartDate())
                 .recruitmentEndDate(program.getRecruitmentEndDate())
                 .programDate(program.getProgramDate())
@@ -100,14 +108,24 @@ public class ProgramService {
     }
 
     @Transactional
-    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, Long programId)throws IOException{
+    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId)throws IOException{
+
         Program program = programRepository.findById(programId)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
+
+        imageRepository.deleteAllByProgramId(programId);
+
+        for(Image i : newImageList){
+            program.addImageList(i);
+        }
 
         program.updateProgram(programUpdateRequest);
 
+        programRepository.save(program);
+
         return program.getId();
     }
+
 
     @Transactional
     public void deleteProgram(Long programId){
@@ -117,5 +135,10 @@ public class ProgramService {
         programRepository.delete(program);
     }
 
+    public static String writingTimeToString(LocalDateTime writingTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return writingTime.format(formatter);
+    }
 
 }

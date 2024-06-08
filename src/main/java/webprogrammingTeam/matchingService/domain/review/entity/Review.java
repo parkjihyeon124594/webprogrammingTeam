@@ -24,7 +24,7 @@ public class Review {
     private String title;
 
     @Column(name = "rating")
-    private Rating rating;
+    private int rating;
 
     @Column(name = "content")
     private String content;
@@ -41,7 +41,7 @@ public class Review {
     private Member member;
 
     @Builder
-    public Review(Program program, Member member, String title, Rating rating, String content, String date)
+    public Review(Program program, Member member, String title, int rating, String content, String date)
     {
         this.program = program;
         this.member = member;

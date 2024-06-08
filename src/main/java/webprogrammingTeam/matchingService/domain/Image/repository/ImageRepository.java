@@ -9,4 +9,7 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByProgram(Optional<Program> program);
+    List<Image> findByProgramId(Long id);
+
+    void deleteAllByProgramId(Long id);
 }

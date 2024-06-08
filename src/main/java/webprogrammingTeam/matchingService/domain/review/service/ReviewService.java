@@ -16,6 +16,7 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
-    LocalDateTime currentTime = LocalDateTime.now();
-
 
 
     public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId){
@@ -41,7 +40,7 @@ public class ReviewService {
                 .title(reviewSaveRequest.title())
                 .rating(reviewSaveRequest.rating())
                 .content(reviewSaveRequest.content())
-                .date(String.valueOf(currentTime))
+                .date(writingTimeToString(LocalDateTime.now()))
                // .member(member)
                 .program(program)
                 .build();
@@ -99,4 +98,10 @@ public class ReviewService {
                 .orElseThrow();
         reviewRepository.delete(review);
     }
+    public static String writingTimeToString(LocalDateTime writingTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return writingTime.format(formatter);
+    }
+
 }

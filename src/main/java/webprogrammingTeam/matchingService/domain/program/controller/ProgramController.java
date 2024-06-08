@@ -57,17 +57,18 @@ public class ProgramController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, programIdReadResponse));
     }
 
+
     @PutMapping("/{programId}")
     @Operation(summary = "게시글 수정", description = "특정 게시글을 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateProgram(
-            @RequestBody ProgramUpdateRequest programUpdateRequest,
-            @PathVariable("programId") Long programId
-    )throws IOException{
-        Long updateId = programService.updateProgram(programUpdateRequest, programId);
-
+            @RequestPart(value="ProgramUpdateRequest") ProgramUpdateRequest programUpdateRequest,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @PathVariable("programId") Long programId)throws IOException{
+        List<Image> listImage = imageService.saveImageList(images);
+        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
-
     }
+
     @DeleteMapping("/{programId}")
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteProgram(

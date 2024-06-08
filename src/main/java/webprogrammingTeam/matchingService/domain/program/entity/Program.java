@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
+import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
@@ -40,6 +41,9 @@ public class Program {
     @Column(name = "category")
     private Category category;
 
+    @Column(name = "maximum")
+    private int maximum;
+
     @Column(name = "recruitment_start_date")
     private String recruitmentStartDate;
 
@@ -50,20 +54,19 @@ public class Program {
     private String programDate;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)  // Referencing the correct field
-    @JsonIgnore // JSON 직렬화 과정에서 무시
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Program(Member member, String title, String content, String writingTime, Category category, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
+    public Program(Member member, String title, String content, String writingTime, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.writingTime = writingTime;
         this.category = category;
+        this.maximum = maximum;
         this.recruitmentStartDate = recruitmentStartDate;
         this.recruitmentEndDate = recruitmentEndDate;
         this.programDate = programDate;
@@ -74,13 +77,16 @@ public class Program {
         image.setProgram(this);
     }
 
-    public void addReviewList(Review review) {
-        reviews.add(review);
-        review.setProgram(this);
-    }
+
 
     public void updateProgram(ProgramUpdateRequest programUpdateRequest) {
         this.title = programUpdateRequest.title();
         this.content = programUpdateRequest.content();
+        this.category = programUpdateRequest.category();
+        this.maximum = programUpdateRequest.maximum();
+        this.recruitmentStartDate = programUpdateRequest.recruitmentStartDate();
+        this.recruitmentEndDate = programUpdateRequest.recruitmentEndDate();
+        this.programDate = programUpdateRequest.programDate();
     }
+
 }
