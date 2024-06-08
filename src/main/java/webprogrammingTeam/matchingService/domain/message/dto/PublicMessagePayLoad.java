@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MessagePayLoad {
+public class PublicMessagePayLoad {
     private Long senderId;
     private String content;
-//    private boolean kickRequest;
-//    private Long kickMemberId;
 }

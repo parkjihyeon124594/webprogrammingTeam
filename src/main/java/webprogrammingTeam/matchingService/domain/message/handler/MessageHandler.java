@@ -1,7 +1,8 @@
 package webprogrammingTeam.matchingService.domain.message.handler;
 
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
-import webprogrammingTeam.matchingService.domain.message.dto.MessagePayLoad;
+import webprogrammingTeam.matchingService.domain.message.dto.PrivateMessagePayLoad;
+import webprogrammingTeam.matchingService.domain.message.dto.PublicMessagePayLoad;
 import webprogrammingTeam.matchingService.domain.message.service.MessageService;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,34 +26,43 @@ public class MessageHandler {
         this.memberChannelSubscriptionService = memberChannelSubscriptionService;
         this.messagingTemplate = messagingTemplate;
     }
-    // public과 private를 나누면 된다. 그러면 sub은 관리 안 해도 된다.
+    // public과 private를 나누면 된다.
 
-    // 공개 채널에 보내는 메세지 처리, sender가 ban 안 되어있으면 메세지를 보내고 아니면 클라이언트에 오류 메세지 돌려줌.
-    @MessageMapping("/chat/public/{channelId}") // ban을 추가해서 못 보내게?
-    public void handlePublicMessage(@DestinationVariable Long channelId, @Payload MessagePayLoad messagePayLoad) {
-        Long senderId = messagePayLoad.getSenderId();
+    // 공개 채널에 보내는 메시지 처리. banned member는 메세지를 보내지 못함.
+    @MessageMapping("/chat/public/{channelId}")
+    public void handlePublicMessage(@DestinationVariable Long channelId, @Payload PublicMessagePayLoad publicMessagePayLoad) {
+        Long senderId = publicMessagePayLoad.getSenderId();
 
         if (!memberChannelSubscriptionService.isBanned(channelId, senderId)) {
-            sendMessage(channelId, senderId, messagePayLoad.getContent());
+            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.getContent());
+            sendPublicMessage(channelId, savedMessageDTO);
         } else {
-            messagingTemplate.convertAndSend("/topic/errors/" + senderId, "You have been banned from this channel.");
+            sendBanErrorMessage(senderId);
         }
-
     }
 
-    @MessageMapping("/chat/private/{channelId}") // kick을 추가해서?
-    public void handlePrivateMessage(@DestinationVariable Long channelId, @Payload MessagePayLoad messagePayLoad) {
-        Long senderId = messagePayLoad.getSenderId();
+    // 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.
+    @MessageMapping("/chat/private/{channelId}")
+    public void handlePrivateMessage(@DestinationVariable Long channelId, @Payload PrivateMessagePayLoad privateMessagePayLoad) {
+        Long senderId = privateMessagePayLoad.getSenderId();
 
-        sendMessage(channelId, senderId, messagePayLoad.getContent());
+        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, privateMessagePayLoad.getContent());
+        sendPrivateMessage(channelId, savedMessageDTO);
     }
 
-    private void sendMessage(Long channelId, Long senderId, String content) {
-        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, content);
-        messagingTemplate.convertAndSend("/topic/chat/" + channelId, savedMessageDTO);
+    private void sendPublicMessage(Long channelId, MessageDTO savedMessageDTO) {
+        messagingTemplate.convertAndSend("/topic/chat/public/" + channelId, savedMessageDTO);
     }
 
-    // 강퇴 처리. 클라이언트에 메세지 송신. 아직 미구현
+    private void sendPrivateMessage(Long channelId, MessageDTO savedMessageDTO) {
+        messagingTemplate.convertAndSend("/topic/chat/private/" + channelId, savedMessageDTO);
+    }
+
+    private void sendBanErrorMessage(Long senderId) {
+        messagingTemplate.convertAndSend("/topic/errors/" + senderId, "You have been banned from this channel.");
+    }
+
+    // 강퇴 처리. 클라이언트에 메세지 송신하고 session 끊기
     private void handleKickRequest(Long channelId, Long senderId, Long targetMemberId) {
         // 권한을 어떻게?
         memberChannelSubscriptionService.kickMember(channelId, targetMemberId);

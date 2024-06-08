@@ -66,7 +66,7 @@ public class MemberChannelSubscriptionService {
 
     public ChannelDTO createChannelWithSubscription(Long memberId, String channelTitle) throws IOException {
         Member member = memberService.getMemberById(memberId);
-        Channel newChannel = channelService.createChannel(channelTitle);
+        Channel newChannel = channelService.createPrivateChannel(channelTitle);
 
         createSubscription(member.getId(), newChannel.getChannelId());
 
