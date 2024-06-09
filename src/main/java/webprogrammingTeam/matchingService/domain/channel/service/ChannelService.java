@@ -19,6 +19,12 @@ public class ChannelService {
         this.channelRepository = channelRepository;
     }
 
+    public List<ChannelTitleDTO> getAllPublicChannelTitles() {
+        return channelRepository.findAllProjectedByIsPublicTrue();
+    }
+
+    // getAllPrivateChannelTitles 는 user가 참여했는지를 확인해야하기 때문에, subscription에 있어야 됨.
+
     public Channel createPublicChannel(String title) {
         Channel channel = new Channel();
         channel.setTitle(title);
@@ -38,12 +44,6 @@ public class ChannelService {
 
         return newPrivateChannel;
     }
-
-    public List<ChannelTitleDTO> getAllPublicChannelTitles() {
-        return channelRepository.findAllProjectedByIsPublicTrue();
-    }
-
-    // getAllPrivateChannelTitles 는 user가 참여했는지를 확인해야하기 때문에, subscription에 있어야 됨.
 
     public Channel getChannelById(Long channelId) {
         return channelRepository.findById(channelId)

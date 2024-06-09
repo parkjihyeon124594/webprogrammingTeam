@@ -1,5 +1,7 @@
 package webprogrammingTeam.matchingService.domain.message.handler;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
 import webprogrammingTeam.matchingService.domain.message.dto.PrivateMessagePayLoad;
 import webprogrammingTeam.matchingService.domain.message.dto.PublicMessagePayLoad;
@@ -13,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@Tag(name = "메세지 핸들러", description = "stomp(websocket)을 통해 받은 메세지를 처리하는 핸들러")
 public class MessageHandler {
     private final MessageService messageService;
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
@@ -30,6 +33,7 @@ public class MessageHandler {
 
     // 공개 채널에 보내는 메시지 처리. banned member는 메세지를 보내지 못함.
     @MessageMapping("/chat/public/{channelId}")
+    @Operation(summary = "공개 채널의 메세지 처리", description = "공개 채널의 메세지를 처리하는 로직")
     public void handlePublicMessage(@DestinationVariable Long channelId, @Payload PublicMessagePayLoad publicMessagePayLoad) {
         Long senderId = publicMessagePayLoad.getSenderId();
 
@@ -43,6 +47,7 @@ public class MessageHandler {
 
     // 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.
     @MessageMapping("/chat/private/{channelId}")
+    @Operation(summary = "비밀 채널의 메세지 처리", description = "비밀 채널의 메세지를 처리하는 로직")
     public void handlePrivateMessage(@DestinationVariable Long channelId, @Payload PrivateMessagePayLoad privateMessagePayLoad) {
         Long senderId = privateMessagePayLoad.getSenderId();
 

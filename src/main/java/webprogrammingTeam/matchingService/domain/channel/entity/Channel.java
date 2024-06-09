@@ -19,4 +19,6 @@ public class Channel {
 
     @Column(name = "is_public")
     private boolean isPublic;
+
+    // 그냥 board를 가져와서 저장할까?
 }
