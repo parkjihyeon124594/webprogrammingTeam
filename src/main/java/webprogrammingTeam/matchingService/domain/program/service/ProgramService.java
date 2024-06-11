@@ -46,7 +46,6 @@ public class ProgramService {
                 .member(member)// 글을 쓴 사람이다.
                 .title(programSaveRequest.title())
                 .content(programSaveRequest.content())
-                .writingTime(writingTimeToString(LocalDateTime.now()))
                 .category(programSaveRequest.category())
                 .maximum(programSaveRequest.maximum())
                 .recruitmentStartDate(programSaveRequest.recruitmentStartDate())

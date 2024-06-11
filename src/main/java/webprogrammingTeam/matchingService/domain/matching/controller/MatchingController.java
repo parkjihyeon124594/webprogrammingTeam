@@ -29,6 +29,6 @@ public class MatchingController {
             @PathVariable("programId") Long programId
     ) throws IOException {
         matchingRepository.findAllMemberByProgramId(programId);
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED));
     }
 }

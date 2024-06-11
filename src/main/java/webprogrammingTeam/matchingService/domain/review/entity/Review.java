@@ -9,12 +9,13 @@ import lombok.Setter;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class Review {
+public class Review extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
