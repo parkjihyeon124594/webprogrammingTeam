@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    SPORTS, COMPUTER
+    SPORTS, COMPUTER, ART
 }

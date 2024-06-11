@@ -43,7 +43,7 @@ public class ProgramService {
     @Transactional
     public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList){
         Program program = Program.builder()
-                .member(member)
+                .member(member)// 글을 쓴 사람이다.
                 .title(programSaveRequest.title())
                 .content(programSaveRequest.content())
                 .writingTime(writingTimeToString(LocalDateTime.now()))
