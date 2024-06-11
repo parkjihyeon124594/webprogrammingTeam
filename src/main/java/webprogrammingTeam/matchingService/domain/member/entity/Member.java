@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
-import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class Member {
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
-    private List<Board> board = new ArrayList<>();
+    private List<Program> board = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")

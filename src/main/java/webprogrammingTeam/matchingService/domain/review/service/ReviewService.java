@@ -1,7 +1,7 @@
 package webprogrammingTeam.matchingService.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewSaveRequest;
@@ -10,53 +10,53 @@ import webprogrammingTeam.matchingService.domain.review.dto.response.ReviewAllRe
 import webprogrammingTeam.matchingService.domain.review.dto.response.ReviewIdReadResponse;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.review.respository.ReviewRepository;
-import webprogrammingTeam.matchingService.domain.board.entity.Board;
-import webprogrammingTeam.matchingService.domain.board.repository.BoardRepository;
-import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
-    private final BoardRepository boardRepository;
-    LocalDateTime currentTime = LocalDateTime.now();
+    private final ProgramRepository programRepository;
 
 
-
-    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long boardId, String email){
-
-        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new IllegalIdentifierException("회원을 찾을 수 없습니다."));
-        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId){
+        log.info("saveReview {}", programId);
+       // Member member = memberRepository.findByEmail(email).orElseThrow(()-> new IllegalIdentifierException("회원을 찾을 수 없습니다."));
+        Program program = programRepository.findById(programId).orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
 
         Review review = Review.builder()
+                .title(reviewSaveRequest.title())
                 .rating(reviewSaveRequest.rating())
                 .content(reviewSaveRequest.content())
-                .date(String.valueOf(currentTime))
-                .member(member)
-                .board(board)
+                .date(writingTimeToString(LocalDateTime.now()))
+               // .member(member)
+                .program(program)
                 .build();
 
         reviewRepository.save(review);
 
-
+        log.info("review.getId {}",String.valueOf(review.getId()));
         return review.getId();
 
     }
 
-    public List<ReviewAllReadResponse> findAllReview(Long boardId){
+    public List<ReviewAllReadResponse> findAllReview(Long programId){
         try{
 
-            Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-            List<Review> reviewList = reviewRepository.findByBoard(board);
+            Program program = programRepository.findById(programId).orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+            List<Review> reviewList = reviewRepository.findByProgram(program);
 
             List<ReviewAllReadResponse> responseList = new ArrayList<>();
 
@@ -98,4 +98,10 @@ public class ReviewService {
                 .orElseThrow();
         reviewRepository.delete(review);
     }
+    public static String writingTimeToString(LocalDateTime writingTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return writingTime.format(formatter);
+    }
+
 }
