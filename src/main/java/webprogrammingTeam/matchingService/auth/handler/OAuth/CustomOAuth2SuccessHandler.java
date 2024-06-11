@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.auth.handler;
+package webprogrammingTeam.matchingService.auth.handler.OAuth;
 
 
 import jakarta.servlet.ServletException;
@@ -19,6 +19,7 @@ import webprogrammingTeam.matchingService.jwt.JWTService;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -37,9 +38,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     // 5.refresh Token을 검증하고 access token을 헤더에 담아서 발급
 
 
-    // onAuthenticationSuccess 메서드 :
-    // 1.인증이 성공했을 때 사용자 정보를 나타내는 Authentication 객체를 활용
-    // 2.성공적인 인증 후 추가적인 사용자 정의 로직을 수행
 
     private final JWTService jwtService;
     private final RefreshService refreshService;
@@ -55,20 +53,26 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
+
         PrincipalDetails oAuth2User = (PrincipalDetails) authentication.getPrincipal();
         Collection<? extends GrantedAuthority> authorities =oAuth2User.getAuthorities();
 
 
         String email = oAuth2User.getEmail();
         String role = authorities.iterator().next().getAuthority();
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
+        // Print all attributes
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            log.info("Attribute key: {}, value: {}", entry.getKey(), entry.getValue());
+        }
         //String accessToken = jwtService.createAccessJwt(email, role);
 
         String refreshToken =  jwtService.createRefreshToken(email,role);
-
         refreshService.saveRefreshEntity(email,refreshToken,role);
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(oAuth2User, null, authorities);
+        //Authentication authToken = new UsernamePasswordAuthenticationToken(oAuth2User, null, authorities);
+
         Authentication storedAuth = SecurityContextHolder.getContext().getAuthentication();
         if (storedAuth != null && storedAuth.getPrincipal() instanceof PrincipalDetails) {
             PrincipalDetails storedUser = (PrincipalDetails) storedAuth.getPrincipal();

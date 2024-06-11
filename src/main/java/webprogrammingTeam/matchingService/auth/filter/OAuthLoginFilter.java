@@ -1,3 +1,4 @@
+/*
 package webprogrammingTeam.matchingService.auth.filter;
 
 import jakarta.servlet.FilterChain;
@@ -21,7 +22,7 @@ import java.util.Collection;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+public class OAuthLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
     //UsernamePasswordAuthenticationFilter는 사용자 인증 과정을 담당하는 필터
@@ -46,13 +47,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         return authenticationManager.authenticate(authToken);
     }
 
-    /**
+    */
+/**
      *
      * @param request
      * @param response
      * @param chain
      * @param authentication Authentication 객체에서 현재 세션에 로그인된 사용자
-     */
+     *//*
+
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
@@ -93,3 +96,4 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
 }
+*/

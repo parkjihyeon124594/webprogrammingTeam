@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Getter
-public class PrincipalDetails implements OAuth2User{
+public class PrincipalDetails implements OAuth2User,UserDetails{
 
 
     private Member member;
@@ -48,16 +48,16 @@ public class PrincipalDetails implements OAuth2User{
         });
         return collection;
     }
-/*
+
 
     @Override
     public String getPassword() {
-        return null;
+        return member.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return member.getMemberName();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PrincipalDetails implements OAuth2User{
     public boolean isEnabled() {
         return true;
     }
-*/
+
 
     // OAuth2
 

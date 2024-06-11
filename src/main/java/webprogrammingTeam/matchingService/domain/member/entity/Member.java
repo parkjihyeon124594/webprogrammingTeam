@@ -21,14 +21,30 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="member_name")
+    @Column(name="memberName")
     private String memberName;
 
     @Column(name="member_email")
     private String email;
+
     @Enumerated(EnumType.STRING)
     @Column(name="role")
     private Role role;
+
+    @Column(name="birth")
+    private String birth;
+
+    @Column(name="gener")
+    private String gender;
+
+    @Column(name="latitude")
+    private Double latitdue;
+
+    @Column(name="longitude")
+    private Double longitude;
+
+    @Column(name = "password")
+    private String password;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
@@ -39,12 +55,16 @@ public class Member {
     private List<Review> review = new ArrayList<>();
 
     @Builder
-
-    public Member(String memberName, Role role, String email){
+    public Member(String memberName, Role role, String email,String birth,String gener,String password,Double latitdue,Double longitude){
 
         this.memberName=memberName;
         this.role=role;
+        this.birth =birth;
+        this.gender =gener;
+        this.password=password;
         this.email=email;
+        this.latitdue=latitdue;
+        this.longitude=longitude;
     }
 
 

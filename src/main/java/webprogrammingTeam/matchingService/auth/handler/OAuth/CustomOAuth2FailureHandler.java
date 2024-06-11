@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.auth.handler;
+package webprogrammingTeam.matchingService.auth.handler.OAuth;
 
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 

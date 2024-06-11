@@ -27,14 +27,7 @@ public class ReissueController {
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response){
 
         // refresh token 획득
-        String refreshToken =null;
-
-        Cookie[] cookies = request.getCookies();
-        for(Cookie cookie: cookies){
-            if(cookie.getName().equals("refreshToken")){
-                refreshToken = cookie.getValue();
-            }
-        }
+        String refreshToken =request.getHeader("Refreshtoken");
 
         if(refreshToken == null){
             //response status code
@@ -75,8 +68,8 @@ public class ReissueController {
         refreshService.saveRefreshEntity(email,newRefresh,role);
 
         //response
-        response.setHeader("accessToken",newAccess);
-        response.addCookie(jwtService.createCookie("refreshToken=", newRefresh));
+        response.setHeader("Accesstoken", newAccess);
+        response.setHeader("Refreshtokn",newRefresh);
 
         return new ResponseEntity<>(HttpStatus.OK);
 
