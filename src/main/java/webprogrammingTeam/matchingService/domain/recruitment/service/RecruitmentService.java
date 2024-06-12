@@ -2,7 +2,9 @@ package webprogrammingTeam.matchingService.domain.recruitment.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.recruitment.dto.MemberProgramRecruitmentResponse;
 import webprogrammingTeam.matchingService.domain.recruitment.dto.ProgramRecruitmentResponse;
 
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final MemberRepository memberRepository;
@@ -31,22 +34,32 @@ public class RecruitmentService {
 
     //사용자가 프로그램에 지원하는 로직
     @Transactional
-    public Long recruitmentProgram(RecruitmentRequest recruitmentRequest, String email) throws AccessDeniedException {
-        Member member = memberRepository.findById(recruitmentRequest.memberId()).get();
-        Program program = programRepository.findById(recruitmentRequest.programId()).get();
+    public Long recruitmentProgram(Long programId, String email) throws AccessDeniedException {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+        Program program = programRepository.findById(programId).get();
 
         if(!member.getEmail().equals(email)){
             throw new AccessDeniedException("본인만 프로그램을 신청할 수 있습니다");
+        }
+
+        if(program.getMember().getEmail().equals(email)){
+            throw new AccessDeniedException("개최자는 본인 프로그램을 신청할 수 없습니다.");
         }
 
         if(recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null){
             throw new AccessDeniedException("신청 하셨던 프로그램입니다.");
         }
 
-
-        Long current_cnt = recruitmentRepository.countByProgramId(recruitmentRequest.programId());
+        /*
+        Long current_cnt = recruitmentRepository.countByProgramId(programId);
+        log.info("current_cnt {}", current_cnt);
 
         if(current_cnt >= program.getMaximum() ){
+            throw new IllegalStateException("프로그램 정원이 초과되었습니다.");
+        }*/
+
+        if(!program.getOpen().equals(Open.OPEN))
+        {
             throw new IllegalStateException("프로그램 정원이 초과되었습니다.");
         }
 
@@ -56,9 +69,38 @@ public class RecruitmentService {
                 .build();
 
         recruitmentRepository.save(recruitment);
+        log.info("program.getMaximum(): {}",program.getMaximum());
+        log.info("recruitmentRepository.countByProgramId(programId)),{}",recruitmentRepository.countByProgramId(programId));
+        // 추가됨으로써 정원이 차면 closed 로..
+        if(program.getMaximum() == recruitmentRepository.countByProgramId(programId))
+        {
+            program.updateOpen(Open.CLOSED);
+        }
 
         return recruitment.getId();
     }
+
+    //지원 취소
+    public void recruitmentCancel(Long programId, String email) throws AccessDeniedException {
+
+        Member member = memberRepository.findByEmail(email).get();
+        Recruitment recruitment = recruitmentRepository.findByProgramIdAndMemberId(programId, member.getId());
+        if( recruitment ==null){
+            throw new IllegalStateException("프로그램을 신청하지 않았습니다.");
+        }
+        //지원자 목록에서 삭제하기
+        recruitmentRepository.deleteById(recruitment.getId());
+
+        //모집중 변경
+        Program program = programRepository.findById(programId).orElseThrow();
+        log.info("program을 신청한 신청자 수 : {}",recruitmentRepository.countByProgramId(programId));
+        if(recruitmentRepository.countByProgramId(programId)< program.getMaximum()){
+            program.updateOpen(Open.OPEN);
+        }
+        programRepository.save(program);
+        log.info("모집중 변경 open {}",program.getOpen());
+    }
+
 
 
     //프로그램의 지원자 리스트
@@ -69,13 +111,12 @@ public class RecruitmentService {
         Program program = programRepository.findById(programId).get();
         if(!program.getMember().getEmail().equals(email))
         {
-            throw new AccessDeniedException("신청 하셨던 프로그램입니다.");
+            throw new AccessDeniedException("권한이 없습니다.");
         }
 
-
         try{
-            List<Member> memberList = recruitmentRepository.findAllMemberByProgramId(programId);
 
+            List<Member> memberList = recruitmentRepository.findAllMemberByProgramId(programId);
             List<ProgramRecruitmentResponse> responseList = new ArrayList<>();
 
             for(Member member : memberList){
@@ -83,6 +124,7 @@ public class RecruitmentService {
                         new ProgramRecruitmentResponse(member.getMemberName(), member.getEmail(), member.getBirth(), member.getGender())
                 );
             }
+            log.info("responseList 지원자 리스트 {}", responseList);
             return responseList;
         }catch(Exception e){
         }
@@ -91,15 +133,13 @@ public class RecruitmentService {
     }
 
     //사용자가 지원한 프로그램 리스트
-    public List<MemberProgramRecruitmentResponse> findAllProgramByMemberId(Long memberId, String email)throws IOException
+    public List<MemberProgramRecruitmentResponse> findAllProgramByMemberEmail(String email)throws IOException
     {
-        Member member = memberRepository.findById(memberId).orElseThrow();
-        if(!member.getEmail().equals(email))
-        {
-            throw new AccessDeniedException("본인만 참여 리스트를 확인할 수 있습니다.");
-        }
+        Member member = memberRepository.findByEmail(email).get();
+        List<Program> programList2 = recruitmentRepository.findAllProgramByMemberId(member.getId());
+        log.info("내가 지원한 프로그램들: {}",programList2);
         try{
-            List<Program> programList = recruitmentRepository.findAllProgramByMemberId(memberId);
+           List<Program> programList = recruitmentRepository.findAllProgramByMemberId(member.getId());
 
             List<MemberProgramRecruitmentResponse> responseList = new ArrayList<>();
 

@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
-import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
-import webprogrammingTeam.matchingService.domain.participation.entity.Participation;
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
@@ -40,6 +37,7 @@ public class Program extends BaseTimeEntity {
     private String content;
 
     @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(name = "maximum")
@@ -55,6 +53,7 @@ public class Program extends BaseTimeEntity {
     private String programDate;
 
     @Column(name = "open")
+    @Enumerated(EnumType.STRING)
     private Open open;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)  // Referencing the correct field
@@ -63,8 +62,8 @@ public class Program extends BaseTimeEntity {
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
-    private List<Participation> participations = new ArrayList<>();
+//    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
+//    private List<Participation> participations = new ArrayList<>();
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Recruitment> recruitments = new ArrayList<>();
@@ -99,4 +98,7 @@ public class Program extends BaseTimeEntity {
         this.open = programUpdateRequest.open();
     }
 
+    public void updateOpen(Open open){
+        this.open=open;
+    }
 }

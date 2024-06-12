@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
-import webprogrammingTeam.matchingService.domain.participation.repository.ParticipationRepository;
+import webprogrammingTeam.matchingService.domain.recruitment.repository.RecruitmentRepository;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewSaveRequest;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewUpdateRequest;
 import webprogrammingTeam.matchingService.domain.review.dto.response.ReviewAllReadResponse;
@@ -32,7 +32,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
-    private final ParticipationRepository participationRepository;
+    private final RecruitmentRepository recruitmentRepository;
 
     public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId, String email) throws AccessDeniedException {
         log.info("saveReview {}", programId);
@@ -45,7 +45,7 @@ public class ReviewService {
                 .orElseThrow(()-> new IllegalArgumentException("ReviewService/saveReview/member을 찾을 수 없습니다."));
 
         //참여자였던 사람만 review 작성 가능
-        if( participationRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null)
+        if( recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null)
         {
             throw new AccessDeniedException("참여한 프로그램에 리뷰를 쓸 수 있음.");
         }
