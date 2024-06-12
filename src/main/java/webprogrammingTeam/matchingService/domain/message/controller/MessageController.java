@@ -3,6 +3,9 @@ package webprogrammingTeam.matchingService.domain.message.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
 import webprogrammingTeam.matchingService.domain.message.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +35,12 @@ public class MessageController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allMessages));
     }
 
-    @GetMapping("/private_channel/{channelId}/member/{memberId}")
+    @GetMapping("/private_channel/{channelId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀 채널의 모든 메세지 조회", description = "비밀 채널의 모든 메세지를 조회하는 로직, 채널 입장시 사용")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPrivateChannelId(@PathVariable Long channelId,
-                                                                             @PathVariable Long memberId) {
+                                                                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long memberId = principalDetails.getMember().getId();
         List<MessageDTO> allMessages = messageService.findAllMessageByPrivateChannelId(channelId, memberId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allMessages));
     }
@@ -43,9 +48,8 @@ public class MessageController {
     // post 없음. message handler가 메세지 송신과 수신을 처리함.
 
 
-    // delete는 member의 권한을 확인해야 함.
-
     // 메세지 id로 메세지 삭제 (공개, 비공개 나눠야 할 수도 있음)
+    // sender 확인 필요
     @DeleteMapping("/{messageId}")
     @Operation(summary = "메세지 하나 삭제", description = "하나의 메세지를 삭제하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteMessage(@PathVariable Long messageId) {

@@ -44,7 +44,7 @@ public class MessageService {
     }
 
     public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, Long memberId) {
-        if (memberChannelSubscriptionService.isParticipant(channelId, memberId)) {
+        if (memberChannelSubscriptionService.isSubscriber(channelId, memberId)) {
             List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
 
             List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);

@@ -12,7 +12,7 @@ public class MessageDTO {
 
     private Long channelId;
 
-    private Long senderId;
+    private String senderName;
 
     private String content;
 }
