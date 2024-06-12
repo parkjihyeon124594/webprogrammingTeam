@@ -4,5 +4,5 @@ import lombok.Builder;
 import webprogrammingTeam.matchingService.domain.program.entity.Category;
 
 @Builder
-public record ProgramAllReadResponse(Long id, String title, Category category, String writingTime) {
+public record ProgramAllReadResponse(Long id, String title, Category category, java.time.LocalDateTime writingTime) {
 }

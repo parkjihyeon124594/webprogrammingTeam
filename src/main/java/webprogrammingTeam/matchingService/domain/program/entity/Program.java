@@ -24,6 +24,7 @@ public class Program extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="program_id")
     private Long id;
 
     @ManyToOne

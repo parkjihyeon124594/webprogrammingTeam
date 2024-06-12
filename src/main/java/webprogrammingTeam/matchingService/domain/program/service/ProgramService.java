@@ -69,7 +69,7 @@ public class ProgramService {
 
             for(Program program : programList){
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(),program.getWritingTime())
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(),program.getCreateDate())
                 );
             }
             return responseList;
@@ -95,7 +95,6 @@ public class ProgramService {
 
         return ProgramIdReadResponse.builder()
                 .title(program.getTitle())
-                .writingTime(program.getWritingTime())
                 .content(program.getContent())
                 .category(program.getCategory())
                 .maximum(program.getMaximum())
@@ -139,5 +138,7 @@ public class ProgramService {
 
         return writingTime.format(formatter);
     }
+
+
 
 }

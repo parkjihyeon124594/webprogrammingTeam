@@ -45,7 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //헤더에서 access 키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("Accesstoken");
-        log.info("access token : {} ",accessToken);
+        log.info("jwt doFilterInternal access token : {} ",accessToken);
 
         /*
          요청이 들어오면 헤더 토큰 프로바이더로 사용하는데, SecurityContextHolder는 jwt를 단순히 디코더하는 역할을 함
@@ -63,6 +63,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         // SecurityContextHolder에 저장된 Authentication 객체 확인
+/*
         Authentication storedAuth = SecurityContextHolder.getContext().getAuthentication();
 
         if (storedAuth != null && storedAuth.getPrincipal() instanceof PrincipalDetails) {
@@ -71,9 +72,11 @@ public class JWTFilter extends OncePerRequestFilter {
         } else {
             log.warn("SecurityContextHolder에 Authentication 객체가 저장되지 않았습니다.");
         }
+*/
 
         //헤더에서 access 키에 담긴 토큰을 꺼냄
         //String accessToken = request.getHeader("accessToken");
+
 
         // access token이 없다면 다음 필터로 넘김
         if(accessToken ==null){
@@ -81,7 +84,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        /*// 토큰 만료 여부 확인
+        // 토큰 만료 여부 확인
         // 만료시 다음 필터로 넘기지 않고 status code 반환
 
         try{
@@ -99,18 +102,8 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰이 access 인지 확인 (발급 시 페이로드에 명시함)
         String category = jwtService.getCategory(accessToken);
 
-        if(!category.equals("access")){
+        if(!category.equals("accessToken")){
 
-            // response body
-            PrintWriter writer =response.getWriter();
-            writer.print("invalid access token");
-
-            // response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }*/
-
-        if(jwtService.validateToken(accessToken) == false){
             // response body
             PrintWriter writer =response.getWriter();
             writer.print("invalid access token");
@@ -120,46 +113,33 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+
         // 모든 토큰 검증을 마친 후 access token이 정상적이라면 username, role 값 획득
 
         String email = jwtService.getEmail(accessToken);
-        String username = jwtService.getUsername(accessToken);
         String role = jwtService.getRole(accessToken);
+        log.info("jwt filer 의 이메일 {} ",email);
 
         Member member = Member.builder()
-                .memberName(username)
                 .email(email)
                 .role(Role.valueOf(String.valueOf(role)))
                 .build();
 
         // SecurityContextHolder에서 인증 정보 가져오기
-        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        /*Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails currentUser = (PrincipalDetails) currentAuth.getPrincipal();
-
-        /*if (currentAuth != null) {
-            PrincipalDetails currentUser = (PrincipalDetails) currentAuth.getPrincipal();
-            log.info("Current User Email: {}", currentUser.getEmail());
-        } else {
-            log.warn("SecurityContextHolder에 인증 정보가 없습니다.");
-        }*/
-
-        //토큰 검증 완료 and SecurityContextHolder에 유저 정보가 저장된 상태
-        if(currentUser.getEmail().equals(member.getEmail()) && currentAuth!=null){
-            log.info("토큰 검증 완료 and SecurityContextHolder에 유저 정보가 저장된 상태");
-        }
-        else{
-            // response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-/*        // User 객체를 생성하고, PrincipalDetails 객체를 생성함.
+*/
+        // User 객체를 생성하고, PrincipalDetails 객체를 생성함.
         // 그 후, UsernamePasswordAuthenticationToken에 넣어서 로그인을 진행하면됨.
-        PrincipalDetails principalDetails = new PrincipalDetails(user);
+
+        PrincipalDetails principalDetails = new PrincipalDetails(member);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
 
         // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
-        SecurityContextHolder.getContext().setAuthentication(authToken);*/
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+
 
         filterChain.doFilter(request, response);
 

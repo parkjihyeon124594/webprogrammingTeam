@@ -30,15 +30,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     //UsernamePasswordAuthenticationFilter는 사용자 인증 과정을 담당하는 필터입
     //SimpleUrlAuthenticationSuccessHandler는 인증 성공 후 처리를 담당하는 핸들러
 
-    //인증 성공 후 =>
-    // 1.authentication 객체를 SecurityContextHolder에 담음
-    // 2.refreshToken도 DB에 저장
-    // 3.response의 cookie에 refreshToken을 담아서 보냄
-    // 4.redirect로 보내고 => 다시 그 redirect 주소로 http 요청을 보냄
-    // 5.refresh Token을 검증하고 access token을 헤더에 담아서 발급
-
-
-
     private final JWTService jwtService;
     private final RefreshService refreshService;
 
@@ -80,14 +71,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         } else {
             log.warn("SecurityContextHolder에 Authentication 객체가 저장되지 않았습니다.");
         }
-        //response.setHeader("Authorization-Accesstoken", accessToken);
-        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
-        //SecurityContextHolder.getContext().setAuthentication(authToken);
-
-
-
-        // SecurityContextHolder에 저장된 Authentication 객체 확인
-
 
 
         response.addCookie(jwtService.createCookie("refreshToken", refreshToken));
