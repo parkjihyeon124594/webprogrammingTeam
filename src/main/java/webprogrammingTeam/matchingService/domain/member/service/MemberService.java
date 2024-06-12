@@ -30,7 +30,6 @@ public class MemberService {
             throw new RuntimeException("member email이 이미 존재합니다");
         }
 
-
         Member member=Member.builder()
                 .memberName(memberCreateRequest.memberName())
                 .email(memberCreateRequest.email())

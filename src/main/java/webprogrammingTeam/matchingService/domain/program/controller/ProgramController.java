@@ -5,8 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
@@ -31,12 +34,15 @@ public class ProgramController {
 
 
     @PostMapping()
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "게시글 추가", description = "게시글을 추가하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createProgram(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
         List<Image> listImage = imageService.saveImageList(images);
-        Long saveId = programService.saveProgram(programSaveRequest,listImage);
+        Long saveId = programService.saveProgram(programSaveRequest,listImage,principalDetails.getMember());
+
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
@@ -59,21 +65,26 @@ public class ProgramController {
 
 
     @PutMapping("/{programId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "게시글 수정", description = "특정 게시글을 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateProgram(
             @RequestPart(value="ProgramUpdateRequest") ProgramUpdateRequest programUpdateRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @PathVariable("programId") Long programId)throws IOException{
+            @PathVariable("programId") Long programId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    )throws IOException{
         List<Image> listImage = imageService.saveImageList(images);
-        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId);
+        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId, principalDetails.getMember());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
     }
 
     @DeleteMapping("/{programId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteProgram(
-            @PathVariable("programId") Long programId){
-        programService.deleteProgram(programId);
+            @PathVariable("programId") Long programId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails)throws IOException{
+        programService.deleteProgram(programId, principalDetails.getMember());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
 

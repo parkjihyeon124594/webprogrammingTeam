@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
+import webprogrammingTeam.matchingService.domain.participation.entity.Participation;
+import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
+
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
@@ -18,7 +21,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Program extends BaseTimeEntity {
 
@@ -59,6 +61,12 @@ public class Program extends BaseTimeEntity {
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
+    private List<Participation> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
+    private List<Recruitment> recruitments = new ArrayList<>();
+
     @Builder
     public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
         this.member = member;
@@ -75,7 +83,6 @@ public class Program extends BaseTimeEntity {
         images.add(image);
         image.setProgram(this);
     }
-
 
 
     public void updateProgram(ProgramUpdateRequest programUpdateRequest) {

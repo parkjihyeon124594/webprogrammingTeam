@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.participation.repository.ParticipationRepository;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewSaveRequest;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewUpdateRequest;
 import webprogrammingTeam.matchingService.domain.review.dto.response.ReviewAllReadResponse;
@@ -15,6 +17,7 @@ import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepos
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,19 +32,27 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
+    private final ParticipationRepository participationRepository;
 
-
-    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId){
+    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId, Member member) throws AccessDeniedException {
         log.info("saveReview {}", programId);
-       // Member member = memberRepository.findByEmail(email).orElseThrow(()-> new IllegalIdentifierException("회원을 찾을 수 없습니다."));
-        Program program = programRepository.findById(programId).orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+
+
+        Program program = programRepository.findById(programId)
+                .orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+
+        //참여자였던 사람만 review 작성 가능
+        if( participationRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null)
+        {
+            throw new AccessDeniedException("참여한 프로그램에 리뷰를 쓸 수 있음.");
+        }
 
         Review review = Review.builder()
                 .title(reviewSaveRequest.title())
                 .rating(reviewSaveRequest.rating())
                 .content(reviewSaveRequest.content())
                 .date(writingTimeToString(LocalDateTime.now()))
-               // .member(member)
+                .member(member)
                 .program(program)
                 .build();
 
@@ -84,10 +95,13 @@ public class ReviewService {
     }
 
     @Transactional
-    public Long updateReview( Long reviewId, ReviewUpdateRequest reviewUpdateRequest)throws IOException{
+    public Long updateReview( Long reviewId, ReviewUpdateRequest reviewUpdateRequest, Member member)throws IOException{
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow();
 
+        if(!review.getMember().equals(member)){
+
+        }
         review.reviewUpdate(reviewUpdateRequest);
         return review.getId();
     }
