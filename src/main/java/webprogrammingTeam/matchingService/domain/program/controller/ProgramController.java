@@ -41,20 +41,20 @@ public class ProgramController {
             @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
         List<Image> listImage = imageService.saveImageList(images);
-        Long saveId = programService.saveProgram(programSaveRequest,listImage,principalDetails.getMember());
+        Long saveId = programService.saveProgram(programSaveRequest,listImage,principalDetails.getEmail());
 
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
 
-    @GetMapping()
+    @GetMapping("/view")
     @Operation(summary = "모든 게시글 조회", description = "모든 게시글을 조회하는 로직, 메인 게시판 용도")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramAllReadResponse>>> getAllProgram(){
         List<ProgramAllReadResponse> allProgram = programService.findAllProgram();
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allProgram));
     }
 
-    @GetMapping("/{programId}")
+    @GetMapping("/view/{programId}")
     @Operation(summary = "게시글 하나 조회", description = "하나의 게시글을 조회하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<ProgramIdReadResponse>> getProgram(
             @PathVariable("programId") Long programId
@@ -74,7 +74,7 @@ public class ProgramController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     )throws IOException{
         List<Image> listImage = imageService.saveImageList(images);
-        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId, principalDetails.getMember());
+        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
     }
 
@@ -84,7 +84,7 @@ public class ProgramController {
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteProgram(
             @PathVariable("programId") Long programId,
             @AuthenticationPrincipal PrincipalDetails principalDetails)throws IOException{
-        programService.deleteProgram(programId, principalDetails.getMember());
+        programService.deleteProgram(programId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
 

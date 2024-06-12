@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
@@ -36,13 +37,15 @@ public class ProgramService {
     //private final programService programService;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
-
-
+    private final MemberRepository memberRepository;
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
 
     @Transactional
-    public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList, Member member){
+    public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList, String email){
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("member 이 없습니다"));
+        log.info("saveProgram : member name,{}",member.getMemberName());
 
         Program program = Program.builder()
                 .member(member)// 글을 쓴 사람이다.
@@ -84,7 +87,6 @@ public class ProgramService {
         Program program = programRepository.findById(id)
                 .orElseThrow();
 
-
         List<Image> imageList =  imageService.getImageList(Optional.ofNullable(program));
 
         List<byte[]> imageByteList = new ArrayList<>();
@@ -109,12 +111,13 @@ public class ProgramService {
     }
 
     @Transactional
-    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId, Member member)throws IOException{
+    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId, String email)throws IOException{
 
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
 
-        if(!program.getMember().equals(member)){
+        //Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("member 이 없습니다"));
+        if(!program.getMember().getEmail().equals(email)){
             throw new AccessDeniedException("program을 수정할 권한이 없습니다.");
         }
 
@@ -133,10 +136,10 @@ public class ProgramService {
 
 
     @Transactional
-    public void deleteProgram(Long programId, Member member) throws AccessDeniedException {
+    public void deleteProgram(Long programId,String email) throws AccessDeniedException {
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
-        if(!program.getMember().equals(member)){
+        if(!program.getMember().getEmail().equals(email)){
             throw new AccessDeniedException("program을 삭제할 권한이 없습니다.");
         }
         programRepository.delete(program);

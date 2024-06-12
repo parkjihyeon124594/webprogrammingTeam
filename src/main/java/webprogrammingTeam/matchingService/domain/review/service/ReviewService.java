@@ -34,12 +34,15 @@ public class ReviewService {
     private final ProgramRepository programRepository;
     private final ParticipationRepository participationRepository;
 
-    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId, Member member) throws AccessDeniedException {
+    public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId, String email) throws AccessDeniedException {
         log.info("saveReview {}", programId);
 
 
         Program program = programRepository.findById(programId)
                 .orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("ReviewService/saveReview/member을 찾을 수 없습니다."));
 
         //참여자였던 사람만 review 작성 가능
         if( participationRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null)
@@ -95,21 +98,24 @@ public class ReviewService {
     }
 
     @Transactional
-    public Long updateReview( Long reviewId, ReviewUpdateRequest reviewUpdateRequest, Member member)throws IOException{
+    public Long updateReview( Long reviewId, ReviewUpdateRequest reviewUpdateRequest, String email)throws IOException{
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow();
 
-        if(!review.getMember().equals(member)){
-
+        if(!review.getMember().getEmail().equals(email)){
+            throw new AccessDeniedException("본인만 리뷰를 수정할 수 있습니다.");
         }
         review.reviewUpdate(reviewUpdateRequest);
         return review.getId();
     }
 
     @Transactional
-    public void deleteOneReview(Long reviewId){
+    public void deleteOneReview(Long reviewId, String email)throws IOException{
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow();
+        if(!review.getMember().getEmail().equals(email)){
+            throw new AccessDeniedException("본인만 리뷰를 삭제할 수 있습니다.");
+        }
         reviewRepository.delete(review);
     }
     public static String writingTimeToString(LocalDateTime writingTime) {

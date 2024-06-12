@@ -13,6 +13,8 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +49,13 @@ public class ParticipationService {
     }
 
     //프로그램 참여자 리스트
-    public List<ProgramParticipationResponse> findAllMemberByProgramId(Long programId){
+    public List<ProgramParticipationResponse> findAllMemberByProgramId(Long programId, String email)throws IOException {
 
+        Program program = programRepository.findById(programId).orElseThrow();
+        if(!program.getMember().getEmail().equals(email))
+        {
+            throw new AccessDeniedException("개최자만 리스트를 확인할 수 있습니다.");
+        }
         try{
             List<Member> memberList = participationRepository.findAllMemberByProgramId(programId);
 
@@ -67,8 +74,13 @@ public class ParticipationService {
 
     }
 
-    public List<MemberProgramHistoryResponse> findAllProgramByMemberId(Long memberId)
+    public List<MemberProgramHistoryResponse> findAllProgramByMemberId(Long memberId, String email)throws IOException
     {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        if(!member.getEmail().equals(email))
+        {
+            throw new AccessDeniedException("본인만 참여 리스트를 확인할 수 있습니다.");
+        }
         try{
             List<Program> programList = participationRepository.findAllProgramByMemberId(memberId);
 
