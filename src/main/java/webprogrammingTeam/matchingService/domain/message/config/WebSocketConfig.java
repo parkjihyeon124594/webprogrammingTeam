@@ -33,6 +33,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-        registration.addDecoratorFactory((WebSocketHandlerDecoratorFactory) subscriptionInterceptor);
+        registration.addDecoratorFactory(subscriptionInterceptor);
     }
 }
