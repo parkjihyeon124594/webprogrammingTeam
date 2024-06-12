@@ -16,6 +16,9 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
     List<Program> findAllProgramByMemberId(Long memberId);
 
     Recruitment findByProgramIdAndMemberId(Long programId, Long memberId);
+
+    Long countByProgramId(Long programId);
+
 //   void save(Program program, Member member);
 //    void deleteAllByMemberId(Long memberId);
 }

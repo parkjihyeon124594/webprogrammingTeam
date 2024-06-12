@@ -54,6 +54,9 @@ public class Program extends BaseTimeEntity {
     @Column(name = "program_date")
     private String programDate;
 
+    @Column(name = "open")
+    private Open open;
+
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)  // Referencing the correct field
     private List<Image> images = new ArrayList<>();
 
@@ -67,7 +70,7 @@ public class Program extends BaseTimeEntity {
     private List<Recruitment> recruitments = new ArrayList<>();
 
     @Builder
-    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
+    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -76,6 +79,7 @@ public class Program extends BaseTimeEntity {
         this.recruitmentStartDate = recruitmentStartDate;
         this.recruitmentEndDate = recruitmentEndDate;
         this.programDate = programDate;
+        this.open = open;
     }
 
     public void addImageList(Image image) {
@@ -92,6 +96,7 @@ public class Program extends BaseTimeEntity {
         this.recruitmentStartDate = programUpdateRequest.recruitmentStartDate();
         this.recruitmentEndDate = programUpdateRequest.recruitmentEndDate();
         this.programDate = programUpdateRequest.programDate();
+        this.open = programUpdateRequest.open();
     }
 
 }

@@ -45,7 +45,7 @@ public class ProgramService {
     public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList, String email){
 
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("member 이 없습니다"));
-        log.info("saveProgram : member name,{}",member.getMemberName());
+
 
         Program program = Program.builder()
                 .member(member)// 글을 쓴 사람이다.
@@ -56,6 +56,7 @@ public class ProgramService {
                 .recruitmentStartDate(programSaveRequest.recruitmentStartDate())
                 .recruitmentEndDate(programSaveRequest.recruitmentEndDate())
                 .programDate(programSaveRequest.programDate())
+                .open(programSaveRequest.open())
                 .build();
         for(Image i : imageList){
             program.addImageList(i);
@@ -74,7 +75,7 @@ public class ProgramService {
 
             for(Program program : programList){
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(),program.getCreateDate())
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate())
                 );
             }
             return responseList;
@@ -106,6 +107,7 @@ public class ProgramService {
                 .recruitmentStartDate(program.getRecruitmentStartDate())
                 .recruitmentEndDate(program.getRecruitmentEndDate())
                 .programDate(program.getProgramDate())
+                .open(program.getOpen())
                 .imagesByte(imageByteList)
                 .build();
     }

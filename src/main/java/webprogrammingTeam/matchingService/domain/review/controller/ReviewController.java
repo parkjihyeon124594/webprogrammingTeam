@@ -55,7 +55,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
 
-    @GetMapping()
+    @GetMapping("/view")
     @Operation(summary = "한 게시글 관련 리뷰 전체 조회", description = "한 게시글에 등록된 모든 리뷰 조회하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<ReviewAllReadResponse>>> getAllReview(
             @PathVariable("programId") Long programId
@@ -65,7 +65,7 @@ public class ReviewController {
     }
 
 
-    @GetMapping("/{reviewId}")
+    @GetMapping("/view/{reviewId}")
     @Operation(summary = "리뷰 한 개 조회", description = "리뷰 수정할 때 필요")
     public ResponseEntity<ApiUtil.ApiSuccessResult<ReviewIdReadResponse>> getOneReview(
             @PathVariable("reviewId") Long reviewId

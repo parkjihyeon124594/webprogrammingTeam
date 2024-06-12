@@ -28,6 +28,8 @@ public class RecruitmentService {
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
 
+
+    //사용자가 프로그램에 지원하는 로직
     @Transactional
     public Long recruitmentProgram(RecruitmentRequest recruitmentRequest, String email) throws AccessDeniedException {
         Member member = memberRepository.findById(recruitmentRequest.memberId()).get();
@@ -39,6 +41,13 @@ public class RecruitmentService {
 
         if(recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null){
             throw new AccessDeniedException("신청 하셨던 프로그램입니다.");
+        }
+
+
+        Long current_cnt = recruitmentRepository.countByProgramId(recruitmentRequest.programId());
+
+        if(current_cnt >= program.getMaximum() ){
+            throw new IllegalStateException("프로그램 정원이 초과되었습니다.");
         }
 
         Recruitment recruitment = Recruitment.builder()
