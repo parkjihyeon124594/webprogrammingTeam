@@ -14,6 +14,7 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +29,11 @@ public class RecruitmentService {
     private final ProgramRepository programRepository;
 
     @Transactional
-    public Long recruitmentProgram(RecruitmentRequest recruitmentRequest, Member princialMember) throws AccessDeniedException {
+    public Long recruitmentProgram(RecruitmentRequest recruitmentRequest, String email) throws AccessDeniedException {
         Member member = memberRepository.findById(recruitmentRequest.memberId()).get();
         Program program = programRepository.findById(recruitmentRequest.programId()).get();
 
-        if(!member.equals(princialMember)){
+        if(!member.getEmail().equals(email)){
             throw new AccessDeniedException("본인만 프로그램을 신청할 수 있습니다");
         }
 
@@ -52,12 +53,12 @@ public class RecruitmentService {
 
 
     //프로그램의 지원자 리스트
-    public List<ProgramRecruitmentResponse> findAllMemberByProgramId(Long programId, Member princialMember) throws AccessDeniedException {
+    public List<ProgramRecruitmentResponse> findAllMemberByProgramId(Long programId, String email) throws AccessDeniedException {
 
         //프로그램 개최자만 확인할 수 있음.
         //프로그램 있는지 확인해주세용..........
         Program program = programRepository.findById(programId).get();
-        if(!program.getMember().equals(princialMember))
+        if(!program.getMember().getEmail().equals(email))
         {
             throw new AccessDeniedException("신청 하셨던 프로그램입니다.");
         }
@@ -81,8 +82,13 @@ public class RecruitmentService {
     }
 
     //사용자가 지원한 프로그램 리스트
-    public List<MemberProgramRecruitmentResponse> findAllProgramByMemberId(Long memberId)
+    public List<MemberProgramRecruitmentResponse> findAllProgramByMemberId(Long memberId, String email)throws IOException
     {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        if(!member.getEmail().equals(email))
+        {
+            throw new AccessDeniedException("본인만 참여 리스트를 확인할 수 있습니다.");
+        }
         try{
             List<Program> programList = recruitmentRepository.findAllProgramByMemberId(memberId);
 

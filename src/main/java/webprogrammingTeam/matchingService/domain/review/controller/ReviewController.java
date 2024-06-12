@@ -50,7 +50,7 @@ public class ReviewController {
         /**principal  email 얻기**/
       //  String email = "hh";
 
-        Long saveId = reviewService.saveReview(reviewSaveRequest, programId, principalDetails.getMember());
+        Long saveId = reviewService.saveReview(reviewSaveRequest, programId, principalDetails.getEmail());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
@@ -89,7 +89,7 @@ public class ReviewController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody ReviewUpdateRequest reviewUpdateRequest
             )throws IOException{
-        Long updateId = reviewService.updateReview(reviewId, reviewUpdateRequest,principalDetails.getMember());
+        Long updateId = reviewService.updateReview(reviewId, reviewUpdateRequest,principalDetails.getEmail());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
     }
@@ -101,10 +101,12 @@ public class ReviewController {
      * @return ok
      */
     @DeleteMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "리뷰 삭제", description = "리뷰 삭제 하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteReview(
-            @PathVariable("reviewId") Long reviewId){
-        reviewService.deleteOneReview( reviewId);
+            @PathVariable("reviewId") Long reviewId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+        reviewService.deleteOneReview( reviewId, principalDetails.getEmail());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }

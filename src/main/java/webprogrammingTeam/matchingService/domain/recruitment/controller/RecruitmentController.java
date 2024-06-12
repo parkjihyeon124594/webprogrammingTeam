@@ -31,7 +31,7 @@ public class RecruitmentController {
             @RequestPart(value="RecruitmentRequest") RecruitmentRequest recruitmentRequest,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) throws IOException {
-        Long recruitmentId = recruitmentService.recruitmentProgram(recruitmentRequest, principalDetails.getMember());
+        Long recruitmentId = recruitmentService.recruitmentProgram(recruitmentRequest, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,recruitmentId));
     }
 
@@ -42,16 +42,18 @@ public class RecruitmentController {
             @PathVariable("programId") Long programId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) throws IOException {
-        List<ProgramRecruitmentResponse> memberList = recruitmentService.findAllMemberByProgramId(programId, principalDetails.getMember());
+        List<ProgramRecruitmentResponse> memberList = recruitmentService.findAllMemberByProgramId(programId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,memberList));
     }
 
     @GetMapping("/programs/{memberId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 멤버가 지원한 프로그램 리스트", description = "특정 회원의 지원한 프로그램 리스트 얻는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<MemberProgramRecruitmentResponse>>> getAllProgramByMember(
-            @PathVariable("memberId") Long memberId
+            @PathVariable("memberId") Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) throws IOException {
-        List<MemberProgramRecruitmentResponse> programList = recruitmentService.findAllProgramByMemberId(memberId);
+        List<MemberProgramRecruitmentResponse> programList = recruitmentService.findAllProgramByMemberId(memberId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programList));
     }
 
