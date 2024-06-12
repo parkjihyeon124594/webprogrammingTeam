@@ -18,8 +18,10 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +37,29 @@ public class ReviewService {
     private final RecruitmentRepository recruitmentRepository;
 
     public Long saveReview(ReviewSaveRequest reviewSaveRequest,Long programId, String email) throws AccessDeniedException {
-        log.info("saveReview {}", programId);
-
 
         Program program = programRepository.findById(programId)
                 .orElseThrow(()-> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
 
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(()-> new IllegalArgumentException("ReviewService/saveReview/member을 찾을 수 없습니다."));
 
+        log.info("user ID {}, program ID{}", member.getId(), program.getId());
+        log.info("recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId())::::{}",recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()).getId());
         //참여자였던 사람만 review 작성 가능
-        if( recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null)
+        if(recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) == null)
         {
             throw new AccessDeniedException("참여한 프로그램에 리뷰를 쓸 수 있음.");
+        }
+
+        //모집 기간이후인지 확인
+        if(LocalDate.now().isBefore(convertStringToLocalDate(program.getProgramDate()))){
+            throw new AccessDeniedException("프로그램 참여를 한 후에 리뷰를 작성할 수 있습니다.");
+        }
+
+        if(reviewRepository.findByProgramIdAndMemberId(programId, member.getId()) != null){
+            throw new AccessDeniedException("리뷰를 이미 작성하였습니다");
         }
 
         Review review = Review.builder()
@@ -64,6 +76,26 @@ public class ReviewService {
         log.info("review.getId {}",String.valueOf(review.getId()));
         return review.getId();
 
+    }
+
+    //시간 포함
+    private LocalDateTime convertStringToLocalDateTime(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try {
+            return LocalDateTime.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            System.err.println("옳지 않은 데이터 형식: " + dateStr);
+            return null;
+        }
+    }
+    private LocalDate convertStringToLocalDate(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        try {
+            return LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            System.err.println("옳지 않은 데이터 형식: " + dateStr);
+            return null;
+        }
     }
 
     public List<ReviewAllReadResponse> findAllReview(Long programId){

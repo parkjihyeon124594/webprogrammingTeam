@@ -46,10 +46,6 @@ public class ReviewController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody() ReviewSaveRequest reviewSaveRequest
            ) throws IOException {
-
-        /**principal  email 얻기**/
-      //  String email = "hh";
-
         Long saveId = reviewService.saveReview(reviewSaveRequest, programId, principalDetails.getEmail());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
