@@ -1,3 +1,4 @@
+/*
 package webprogrammingTeam.matchingService.auth.service;
 
 
@@ -24,13 +25,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberService memberService;
 
-    /**
+    */
+/**
      * CustomOAuth2UserService의 loadUser 메서드
      * => OAuth2 로그인 과정에서 loadUser 메서드가 반환하는 객체는 Authentication 객체의 Principal로 설정됨.
      * @param userRequest
      * @return
      * @throws OAuth2AuthenticationException
-     */
+     *//*
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
         // 상위 클래스의 메서드를 호출하여 OAuth2User를 반환함.
@@ -46,6 +49,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // oAuth2DTO 객체를 이용해서 DB에 유저 정보 저장
         Member member= memberService.saveMember(oAuth2DTO);
 
+
         // PricipalDetails을 리턴
         PrincipalDetails principalDetails = new PrincipalDetails(member, oAuth2User.getAttributes());
         log.info("principalDetails 테스트 {}",principalDetails.getName());
@@ -57,23 +61,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         return principalDetails;
     }
-    /**
+    */
+/**
      *
      * @param oAuth2User resource server로 부터 받아온 user 정보(속성)
      * @return oAuth2Response
-     */
+     *//*
+
     private static OAuth2Response getOAuth2Response(OAuth2User oAuth2User) {
         OAuth2Response oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         return oAuth2Response;
     }
 
-    /**
+    */
+/**
      * OAuth2DTo 생성
      *
      * @param oAuth2User
      * @param oAuth2Response
      * @return
-     */
+     *//*
+
     private static OAuth2DTO createOAuth2DTO(OAuth2User oAuth2User, OAuth2Response oAuth2Response) {
         return OAuth2DTO.builder()
                 .attributes(oAuth2User.getAttributes())
@@ -86,3 +94,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 
 }
+*/

@@ -23,8 +23,4 @@ public class RefreshService {
         refreshRepository.save(refreshEntity);
     }
 
-    @Transactional
-    public void deleteRefreshEntity(String refreshToken){
-        refreshRepository.deleteByRefresh(refreshToken);
-    }
 }
