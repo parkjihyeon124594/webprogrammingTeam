@@ -6,6 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PrivateMessagePayLoad {
-    private Long senderId;
     private String content;
 }
