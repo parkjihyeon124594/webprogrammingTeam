@@ -21,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public class ImageService {
-    private static final String STORAGE_LOCATION = "/Users/gyuri/Desktop/webtest";
+    private static final String STORAGE_LOCATION = "/Users/parkjihyeon/Desktop/image";
     private final ImageRepository imageRepository;
 
     public List<Image> saveImageList(List<MultipartFile> multipartFiles) throws IOException {

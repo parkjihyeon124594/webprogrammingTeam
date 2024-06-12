@@ -6,6 +6,6 @@ import webprogrammingTeam.matchingService.domain.program.entity.Open;
 
 import java.time.LocalDateTime;
 
-@Builder
-public record ProgramAllReadResponse(Long id, String title, Category category, Open open, LocalDateTime writingTime) {
+
+public record ProgramCategoryReadResponse(Long id, String title, Category category, Open open, LocalDateTime writingTime) {
 }

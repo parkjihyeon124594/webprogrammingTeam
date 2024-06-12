@@ -40,6 +40,7 @@ public class Program extends BaseTimeEntity {
     private String content;
 
     @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(name = "maximum")
@@ -55,6 +56,7 @@ public class Program extends BaseTimeEntity {
     private String programDate;
 
     @Column(name = "open")
+    @Enumerated(EnumType.STRING)
     private Open open;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)  // Referencing the correct field

@@ -10,6 +10,8 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
+import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryDateDescResponse;
+import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryReadResponse;
 import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramIdReadResponse;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -151,6 +154,20 @@ public class ProgramService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         return writingTime.format(formatter);
+    }
+
+    public List<ProgramCategoryReadResponse> programListToProgramCategoryReadResponseList(List<Program> programs) {
+
+
+        return programs.stream()
+                .map(program -> new ProgramCategoryReadResponse(
+                                        program.getId(),
+                        program.getTitle(),
+                        program.getCategory(),
+                        program.getOpen(),
+                        program.getCreateDate()
+                                ))
+                .collect(Collectors.toList());
     }
 
 
