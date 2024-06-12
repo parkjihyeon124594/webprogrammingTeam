@@ -1,9 +1,6 @@
 package webprogrammingTeam.matchingService.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +21,8 @@ public class JWTService {
 
     private SecretKey secretKey;
 
-    private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60L;
+    //private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60L;
+    private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 14L;
     private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 14L;
 
 
@@ -65,7 +63,7 @@ public class JWTService {
                 .claim("role",role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
-                .signWith(secretKey)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
     public String createRefreshToken(String email,String role) {
@@ -76,7 +74,7 @@ public class JWTService {
                 .claim("role",role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-                .signWith(secretKey)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 

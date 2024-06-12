@@ -2,7 +2,6 @@ package webprogrammingTeam.matchingService.auth.controller;
 
 
 import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +63,8 @@ public class ReissueController {
         String newRefresh = jwtService.createRefreshToken(email,role);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
-        refreshService.deleteRefreshEntity(refreshToken);
+
+        refreshRepository.deleteByRefresh(refreshToken);
         refreshService.saveRefreshEntity(email,newRefresh,role);
 
         //response

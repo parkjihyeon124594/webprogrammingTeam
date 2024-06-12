@@ -36,7 +36,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(memberCreateRequest.password()))
                 .birth(memberCreateRequest.birth())
                 .gender(memberCreateRequest.gender())
-                .latitdue(memberCreateRequest.latitude())
+                .latitude(memberCreateRequest.latitude())
                 .longitude(memberCreateRequest.longitude())
                 .role(Role.ROLE_MEMBER)
                 .build();

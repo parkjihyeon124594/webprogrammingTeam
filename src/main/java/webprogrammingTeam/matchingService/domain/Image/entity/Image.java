@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Image {
+public class Image extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

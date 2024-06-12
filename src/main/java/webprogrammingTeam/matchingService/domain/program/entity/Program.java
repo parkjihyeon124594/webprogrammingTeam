@@ -12,7 +12,9 @@ import webprogrammingTeam.matchingService.domain.participation.entity.Participat
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
-import webprogrammingTeam.matchingService.domain.member.entity.Member; // 수정된 부분
+
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +22,11 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Program {
+public class Program extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "program_id")
+    @Column(name="program_id")
     private Long id;
 
     @ManyToOne
@@ -37,8 +39,6 @@ public class Program {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "writing_time")
-    private String writingTime;
 
     @Column(name = "category")
     private Category category;
@@ -68,11 +68,10 @@ public class Program {
     private List<Recruitment> recruitments = new ArrayList<>();
 
     @Builder
-    public Program(Member member, String title, String content, String writingTime, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
+    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate) {
         this.member = member;
         this.title = title;
         this.content = content;
-        this.writingTime = writingTime;
         this.category = category;
         this.maximum = maximum;
         this.recruitmentStartDate = recruitmentStartDate;
