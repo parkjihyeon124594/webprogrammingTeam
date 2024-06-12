@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewUpdateRequest;
 import webprogrammingTeam.matchingService.domain.review.dto.response.ReviewIdReadResponse;
 import webprogrammingTeam.matchingService.domain.review.dto.request.ReviewSaveRequest;
@@ -36,16 +39,18 @@ public class ReviewController {
      * @return 리뷰 아이디
      */
     @PostMapping()
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "리뷰 등록", description = "리뷰를 등록하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> creatReview(
             @PathVariable("programId") Long programId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody() ReviewSaveRequest reviewSaveRequest
            ) throws IOException {
 
         /**principal  email 얻기**/
       //  String email = "hh";
 
-        Long saveId = reviewService.saveReview(reviewSaveRequest, programId);
+        Long saveId = reviewService.saveReview(reviewSaveRequest, programId, principalDetails.getMember());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
     }
@@ -77,12 +82,14 @@ public class ReviewController {
      * @return 리뷰 아이디
      */
     @PutMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "리뷰 수정", description = "리뷰 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateReview(
             @PathVariable("reviewId") Long reviewId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody ReviewUpdateRequest reviewUpdateRequest
             )throws IOException{
-        Long updateId = reviewService.updateReview(reviewId, reviewUpdateRequest);
+        Long updateId = reviewService.updateReview(reviewId, reviewUpdateRequest,principalDetails.getMember());
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
     }

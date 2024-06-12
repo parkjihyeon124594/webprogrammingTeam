@@ -30,13 +30,12 @@ public class MemberService {
             throw new RuntimeException("member email이 이미 존재합니다");
         }
 
-
         Member member=Member.builder()
                 .memberName(memberCreateRequest.memberName())
                 .email(memberCreateRequest.email())
                 .password(passwordEncoder.encode(memberCreateRequest.password()))
                 .birth(memberCreateRequest.birth())
-                .gener(memberCreateRequest.gender())
+                .gender(memberCreateRequest.gender())
                 .latitdue(memberCreateRequest.latitude())
                 .longitude(memberCreateRequest.longitude())
                 .role(Role.ROLE_MEMBER)

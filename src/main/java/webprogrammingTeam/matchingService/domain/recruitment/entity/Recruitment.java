@@ -1,22 +1,19 @@
-package webprogrammingTeam.matchingService.domain.matching.entity;
+package webprogrammingTeam.matchingService.domain.recruitment.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import lombok.*;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Matching {
+public class Recruitment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "program_member_id")
+    @Column(name = "recruitment_id")
     private Long id;
 
     @ManyToOne
@@ -26,5 +23,12 @@ public class Matching {
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")
     private Member member;
+
+    @Builder
+    public Recruitment(Program program, Member member)
+    {
+        this.program=program;
+        this.member=member;
+    }
 
 }

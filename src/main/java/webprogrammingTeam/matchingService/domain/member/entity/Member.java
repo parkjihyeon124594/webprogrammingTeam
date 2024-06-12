@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
+import webprogrammingTeam.matchingService.domain.participation.entity.Participation;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(name="memberName")
@@ -34,7 +37,7 @@ public class Member {
     @Column(name="birth")
     private String birth;
 
-    @Column(name="gener")
+    @Column(name="gender")
     private String gender;
 
     @Column(name="latitude")
@@ -48,25 +51,27 @@ public class Member {
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
-    private List<Program> board = new ArrayList<>();
+    private List<Program> program = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Review> review = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Participation> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Recruitment> recruitments = new ArrayList<>();
     @Builder
-    public Member(String memberName, Role role, String email,String birth,String gener,String password,Double latitdue,Double longitude){
+    public Member(String memberName, Role role, String email,String birth,String gender,String password,Double latitdue,Double longitude){
 
         this.memberName=memberName;
         this.role=role;
         this.birth =birth;
-        this.gender =gener;
+        this.gender =gender;
         this.password=password;
         this.email=email;
         this.latitdue=latitdue;
         this.longitude=longitude;
     }
-
-
-
 }

@@ -18,6 +18,7 @@ import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,9 +40,10 @@ public class ProgramService {
 
 
     //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
-    Member member;
+
     @Transactional
-    public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList){
+    public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList, Member member){
+
         Program program = Program.builder()
                 .member(member)// 글을 쓴 사람이다.
                 .title(programSaveRequest.title())
@@ -95,6 +97,7 @@ public class ProgramService {
 
 
         return ProgramIdReadResponse.builder()
+                .memberEmail(program.getMember().getEmail())
                 .title(program.getTitle())
                 .writingTime(program.getWritingTime())
                 .content(program.getContent())
@@ -108,10 +111,14 @@ public class ProgramService {
     }
 
     @Transactional
-    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId)throws IOException{
+    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId, Member member)throws IOException{
 
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
+
+        if(!program.getMember().equals(member)){
+            throw new AccessDeniedException("program을 수정할 권한이 없습니다.");
+        }
 
         imageRepository.deleteAllByProgramId(programId);
 
@@ -128,10 +135,12 @@ public class ProgramService {
 
 
     @Transactional
-    public void deleteProgram(Long programId){
+    public void deleteProgram(Long programId, Member member) throws AccessDeniedException {
         Program program = programRepository.findById(programId)
-                .orElseThrow();
-
+                .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
+        if(!program.getMember().equals(member)){
+            throw new AccessDeniedException("program을 삭제할 권한이 없습니다.");
+        }
         programRepository.delete(program);
     }
 
