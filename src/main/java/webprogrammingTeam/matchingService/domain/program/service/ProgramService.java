@@ -34,18 +34,15 @@ import java.util.Optional;
 public class ProgramService {
 
     private final ProgramRepository programRepository;
-    //private final programService programService;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
 
-    //Controller에서 인증된 user 정보를 얻어옴.고쳐야됌.
 
     @Transactional
-    public Long saveProgram(ProgramSaveRequest programSaveRequest, List<Image> imageList, String email){
+    public Long saveProgram(ProgramSaveRequest programSaveRequest, MultipartFile[] imageList, String email) throws IOException {
 
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("member 이 없습니다"));
-
 
         Program program = Program.builder()
                 .member(member)// 글을 쓴 사람이다.
@@ -58,9 +55,9 @@ public class ProgramService {
                 .programDate(programSaveRequest.programDate())
                 .open(programSaveRequest.open())
                 .build();
-        for(Image i : imageList){
-            program.addImageList(i);
-        }
+
+        imageService.uploadImages(program, imageList);
+
         programRepository.save(program);
 
         return program.getId();
@@ -68,14 +65,22 @@ public class ProgramService {
     }
 
     public List<ProgramAllReadResponse> findAllProgram() {
+        List<Program> programList2 = programRepository.findAll();
+        Image image2 = imageRepository.findFirstImageByProgram(programList2.get(0).getId());
+        log.info( "imageRepository.findTopByProgramOrderByIdAsc(program) {} ", image2.getImage_id());
         try{
             List<Program> programList = programRepository.findAll();
+            log.info("programList{} ", programList);
 
             List<ProgramAllReadResponse> responseList = new ArrayList<>();
 
             for(Program program : programList){
+                Image image = imageRepository.findFirstImageByProgram(program.getId());
+                log.info( "imageRepository.findTopByProgramOrderByIdAsc(program) {} ", image.getImage_id());
+                String imageUrl = image.getUrl();
+
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate())
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl)
                 );
             }
             return responseList;
@@ -90,13 +95,11 @@ public class ProgramService {
 
         List<Image> imageList =  imageService.getImageList(Optional.ofNullable(program));
 
-        List<byte[]> imageByteList = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
 
-        for(Image i : imageList){
-            byte[] imageData = imageService.downloadImage(i);
-            imageByteList.add(imageData);
+        for(Image image: imageList){
+            imageUrls.add(image.getUrl());
         }
-
 
         return ProgramIdReadResponse.builder()
                 .memberEmail(program.getMember().getEmail())
@@ -108,12 +111,12 @@ public class ProgramService {
                 .recruitmentEndDate(program.getRecruitmentEndDate())
                 .programDate(program.getProgramDate())
                 .open(program.getOpen())
-                .imagesByte(imageByteList)
+                .images(imageUrls)
                 .build();
     }
 
     @Transactional
-    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, List<Image> newImageList, Long programId, String email)throws IOException{
+    public Long updateProgram(ProgramUpdateRequest programUpdateRequest, MultipartFile[] newImageList, Long programId, String email)throws IOException{
 
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new NoSuchElementException("program이 없습니다"));
@@ -125,9 +128,7 @@ public class ProgramService {
 
         imageRepository.deleteAllByProgramId(programId);
 
-        for(Image i : newImageList){
-            program.addImageList(i);
-        }
+        imageService.uploadImages(program, newImageList);
 
         program.updateProgram(programUpdateRequest);
 

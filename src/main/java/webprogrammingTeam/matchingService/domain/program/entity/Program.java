@@ -62,9 +62,6 @@ public class Program extends BaseTimeEntity {
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
-//    private List<Participation> participations = new ArrayList<>();
-
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Recruitment> recruitments = new ArrayList<>();
 

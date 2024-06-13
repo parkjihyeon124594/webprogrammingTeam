@@ -39,9 +39,9 @@ public class ProgramController {
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createProgram(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
-        List<Image> listImage = imageService.saveImageList(images);
-        Long saveId = programService.saveProgram(programSaveRequest,listImage,principalDetails.getEmail());
+            @RequestPart(value = "images", required = false) MultipartFile[] images) throws IOException {
+
+        Long saveId = programService.saveProgram(programSaveRequest,images,principalDetails.getEmail());
 
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
@@ -69,12 +69,11 @@ public class ProgramController {
     @Operation(summary = "게시글 수정", description = "특정 게시글을 수정하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> updateProgram(
             @RequestPart(value="ProgramUpdateRequest") ProgramUpdateRequest programUpdateRequest,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @RequestPart(value = "images", required = false) MultipartFile[] images,
             @PathVariable("programId") Long programId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     )throws IOException{
-        List<Image> listImage = imageService.saveImageList(images);
-        Long updateId = programService.updateProgram(programUpdateRequest, listImage, programId, principalDetails.getEmail());
+        Long updateId = programService.updateProgram(programUpdateRequest, images, programId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, updateId));
     }
 

@@ -77,7 +77,7 @@ public class RecruitmentService {
             program.updateOpen(Open.CLOSED);
         }
 
-        return recruitment.getId();
+        return  recruitmentRepository.countByProgramId(programId);
     }
 
     //지원 취소
