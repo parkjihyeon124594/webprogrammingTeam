@@ -89,7 +89,7 @@ public class ReviewService {
         }
     }
     private LocalDate convertStringToLocalDate(String dateStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             return LocalDate.parse(dateStr, formatter);
         } catch (DateTimeParseException e) {
@@ -108,7 +108,7 @@ public class ReviewService {
 
             for(Review review : reviewList){
                 responseList.add(
-                        new ReviewAllReadResponse(review.getRating(), review.getContent(), review.getDate())
+                        new ReviewAllReadResponse(review.getId(),review.getRating(), review.getContent(), review.getDate())
                 );
             }
 
@@ -123,6 +123,8 @@ public class ReviewService {
                 .orElseThrow();
 
         return ReviewIdReadResponse.builder()
+                .reviewId(review.getId())
+                .title(review.getTitle())
                 .rating(review.getRating())
                 .content(review.getContent())
                 .date(review.getDate())
