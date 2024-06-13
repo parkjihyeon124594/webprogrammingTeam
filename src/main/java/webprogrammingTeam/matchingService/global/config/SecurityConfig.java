@@ -83,7 +83,10 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/member/signup")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/view/**")).permitAll()
+
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
+
+
                                 .anyRequest().authenticated())
 
 

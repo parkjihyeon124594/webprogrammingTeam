@@ -20,19 +20,30 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/recruitment")
+@RequestMapping("/program/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
-    @GetMapping()
+    @PostMapping("/{programId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "사용자의 프로그램 신청", description = "사용자가 프로그램을 신청하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> Recruitment(
-            @RequestPart(value="RecruitmentRequest") RecruitmentRequest recruitmentRequest,
+            @PathVariable("programId") Long programId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) throws IOException {
-        Long recruitmentId = recruitmentService.recruitmentProgram(recruitmentRequest, principalDetails.getEmail());
+        Long recruitmentId = recruitmentService.recruitmentProgram(programId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,recruitmentId));
+    }
+
+    @PostMapping("/cancel/{programId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "사용자의 프로그램 신청 취소", description = "사용자가 프로그램을 신청을 취소하는 로직")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> RecruitmentCancel(
+            @PathVariable("programId") Long programId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) throws IOException {
+        recruitmentService.recruitmentCancel(programId, principalDetails.getEmail());
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
 
     @GetMapping("/members/{programId}")
@@ -46,6 +57,17 @@ public class RecruitmentController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,memberList));
     }
 
+    @GetMapping("/programs")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "사용자가 지원한 프로그램 리스트", description = "특정 회원의 지원한 프로그램 리스트 얻는 로직")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MemberProgramRecruitmentResponse>>> getAllProgramByMember(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) throws IOException {
+        List<MemberProgramRecruitmentResponse> programList = recruitmentService.findAllProgramByMemberEmail(principalDetails.getEmail());
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programList));
+    }
+
+    /* Admin?
     @GetMapping("/programs/{memberId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 멤버가 지원한 프로그램 리스트", description = "특정 회원의 지원한 프로그램 리스트 얻는 로직")
@@ -55,7 +77,7 @@ public class RecruitmentController {
     ) throws IOException {
         List<MemberProgramRecruitmentResponse> programList = recruitmentService.findAllProgramByMemberId(memberId, principalDetails.getEmail());
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programList));
-    }
+    } */
 
 
 }
