@@ -29,9 +29,10 @@ public class Image extends BaseTimeEntity {
 
 
     @Builder
-    public Image(String fileName,String url){
+    public Image(String fileName,String url, Program program){
         this.fileName=fileName;
         this.url =url;
+        this.program=program;
     }
 
     public void update() {

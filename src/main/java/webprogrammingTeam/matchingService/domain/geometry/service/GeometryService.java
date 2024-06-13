@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
+import webprogrammingTeam.matchingService.domain.geometry.dto.response.GeometryResponse;
 import webprogrammingTeam.matchingService.domain.geometry.entity.Direction;
 import webprogrammingTeam.matchingService.domain.geometry.entity.Location;
 import webprogrammingTeam.matchingService.domain.geometry.util.GeometryUtil;
@@ -18,6 +20,7 @@ import java.util.List;
 public class GeometryService {
 
     private final ProgramRepository programRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional(readOnly = true)
     public List<Program> findProgramsNearMember(Double memberLatitude, Double memberLongitude) {
@@ -42,5 +45,20 @@ public class GeometryService {
 
         return programs;
     }
+
+    public List<GeometryResponse> programToGeometryResponse(List<Program> programs){
+
+        return programs.stream()
+                        .map(program -> new GeometryResponse(
+                                program.getId(),
+                                program.getLatitude(),
+                                program.getLongitude(),
+                                imageRepository.findFirstImageByProgram(program.getId()).getUrl()
+                        ))
+                        .toList();
+
+    }
+
+
 
 }

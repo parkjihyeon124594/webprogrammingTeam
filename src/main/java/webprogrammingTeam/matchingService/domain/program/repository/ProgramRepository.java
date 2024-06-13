@@ -7,10 +7,13 @@ import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 
+
 import java.util.List;
 
 
 public interface ProgramRepository extends JpaRepository<Program, Long> {
+
+    List<Program> findAllByMemberId(Long id);
 
     // 1.특정 카테고리에 속하는 프로그램 검색
     @Query(value = "SELECT p FROM Program p WHERE p.category =:category")
@@ -31,3 +34,4 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
 
 }
+
