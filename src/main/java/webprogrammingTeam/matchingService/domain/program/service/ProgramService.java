@@ -60,6 +60,8 @@ public class ProgramService {
                 .recruitmentEndDate(programSaveRequest.recruitmentEndDate())
                 .programDate(programSaveRequest.programDate())
                 .open(programSaveRequest.open())
+                .latitude(programSaveRequest.latitude())
+                .longitude(programSaveRequest.longitude())
                 .build();
         for(Image i : imageList){
             program.addImageList(i);

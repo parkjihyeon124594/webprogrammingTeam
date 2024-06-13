@@ -25,4 +25,9 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
     @Query(value ="SELECT p FROM Program p WHERE p.open ='OPEN'")
     List<Program> findByOpenIsOpen();
 
+    // 4.사용자 반경 5km의 프로그램 찾기
+    List<Program> findByLatitudeBetweenAndLongitudeBetween(Double minLat, Double maxLat, Double minLon, Double maxLon);
+
+
+
 }

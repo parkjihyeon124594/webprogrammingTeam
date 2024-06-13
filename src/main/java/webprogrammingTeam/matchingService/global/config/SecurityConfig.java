@@ -97,9 +97,17 @@ public class SecurityConfig {
                                 .successHandler(customOAuth2SuccessHandler)
                         )
 */
+
+
+
+                        // CustomJsonUsernamePasswordAuthenticationFilter 등록
                         .addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
+                        // JWTFilter 등록
                         .addFilterBefore(jwtFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
+                        // CustomLogoutFilter 등록 (특정 URL에만 적용하도록 설정)
                         .addFilterBefore(new CustomLogoutFilter(jwtService,refreshRepository), LogoutFilter.class)
+
+
                         .sessionManagement((session) -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();

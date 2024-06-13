@@ -2,6 +2,7 @@ package webprogrammingTeam.matchingService.domain.member.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.member.entity.Role;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
+import java.awt.*;
 import java.io.IOException;
 
 @Service

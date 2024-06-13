@@ -1,6 +1,5 @@
 package webprogrammingTeam.matchingService.domain.program.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Program extends BaseTimeEntity {
+public class Program extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +55,14 @@ public class Program extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Open open;
 
+    @Column(name="latitude")
+    private Double latitude;
+
+    @Column(name="longitude")
+    private Double longitude;
+
+
+
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)  // Referencing the correct field
     private List<Image> images = new ArrayList<>();
 
@@ -69,7 +76,7 @@ public class Program extends BaseTimeEntity {
     private List<Recruitment> recruitments = new ArrayList<>();
 
     @Builder
-    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open) {
+    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -79,6 +86,8 @@ public class Program extends BaseTimeEntity {
         this.recruitmentEndDate = recruitmentEndDate;
         this.programDate = programDate;
         this.open = open;
+        this.latitude=latitude;
+        this.longitude=longitude;
     }
 
     public void addImageList(Image image) {
