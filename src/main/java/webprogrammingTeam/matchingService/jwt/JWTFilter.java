@@ -104,7 +104,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰이 access 인지 확인 (발급 시 페이로드에 명시함)
         String category = jwtService.getCategory(accessToken);
 
-        if(!category.equals("accessToken")){
+        if(!category.equals("Accesstoken")){
 
             // response body
             PrintWriter writer =response.getWriter();

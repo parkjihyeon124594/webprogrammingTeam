@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import webprogrammingTeam.matchingService.global.exception.ErrorCode;
 
 public enum RefreshErrorcode implements ErrorCode {
-    Refresh_NOT_FOUND(HttpStatus.NOT_FOUND,"NoneExistent RefreshToken");
+    REFRESH_NOT_FOUND(HttpStatus.NOT_FOUND,"NoneExistent RefreshToken");
     private final HttpStatus status;
     private final String message;
 

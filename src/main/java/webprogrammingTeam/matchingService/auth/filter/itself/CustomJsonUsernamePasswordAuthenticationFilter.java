@@ -1,4 +1,4 @@
-package webprogrammingTeam.matchingService.auth.filter;
+package webprogrammingTeam.matchingService.auth.filter.itself;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
