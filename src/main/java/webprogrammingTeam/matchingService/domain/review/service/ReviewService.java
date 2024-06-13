@@ -108,7 +108,7 @@ public class ReviewService {
 
             for(Review review : reviewList){
                 responseList.add(
-                        new ReviewAllReadResponse(review.getId(),review.getRating(), review.getContent(), review.getDate())
+                        new ReviewAllReadResponse(review.getId(), review.getTitle(), review.getRating(), review.getContent(), review.getDate())
                 );
             }
 

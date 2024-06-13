@@ -8,5 +8,5 @@ import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import java.util.List;
 
 @Builder
-public record ProgramIdReadResponse(Long programId,String memberEmail, String title, String writingTime, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open, List<String> images) {
+public record ProgramIdReadResponse(Long programId,String memberEmail, String title, String writingTime, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open, List<String> images, int recruitment) {
 }
