@@ -37,4 +37,5 @@ out/
 ### VS Code ###
 .vscode/
 
-/src/main/resources/webpro-425010-67b4bf8c116d.json
+/src/main/res
+ources/webpro-425010-67b4bf8c116d.json
