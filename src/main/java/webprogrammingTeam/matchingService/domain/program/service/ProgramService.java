@@ -65,10 +65,7 @@ public class ProgramService {
     }
 
     public List<ProgramAllReadResponse> findAllProgram() {
-        List<Program> programList2 = programRepository.findAll();
-        Image image2 = imageRepository.findFirstImageByProgram(programList2.get(0).getId());
-        log.info( "imageRepository.findTopByProgramOrderByIdAsc(program) {} ", image2.getImage_id());
-        try{
+         try{
             List<Program> programList = programRepository.findAll();
             log.info("programList{} ", programList);
 
@@ -102,6 +99,7 @@ public class ProgramService {
         }
 
         return ProgramIdReadResponse.builder()
+                .programId(program.getId())
                 .memberEmail(program.getMember().getEmail())
                 .title(program.getTitle())
                 .content(program.getContent())
@@ -115,6 +113,25 @@ public class ProgramService {
                 .build();
     }
 
+    public List<ProgramAllReadResponse> findAllMyPrograms(String email) throws IOException{
+        try{
+            Member member = memberRepository.findByEmail(email).orElseThrow();
+            List<Program> programList = programRepository.findAllByMemberId(member.getId());
+
+            List<ProgramAllReadResponse> responseList = new ArrayList<>();
+
+            for(Program program : programList){
+                Image image = imageRepository.findFirstImageByProgram(program.getId());
+                String imageUrl = image.getUrl();
+                responseList.add(
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl)
+                );
+            }
+            return responseList;
+        }catch(Exception e){
+        }
+        return null;
+    }
     @Transactional
     public Long updateProgram(ProgramUpdateRequest programUpdateRequest, MultipartFile[] newImageList, Long programId, String email)throws IOException{
 

@@ -63,6 +63,16 @@ public class ProgramController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, programIdReadResponse));
     }
 
+    @GetMapping("/mine")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "내가 쓴 모든 프로그램 조회", description = "내가 쓴 모든 프로그램 조회")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramAllReadResponse>>> getMyPrograms(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    )throws IOException{
+        List<ProgramAllReadResponse> programAllReadResponse = programService.findAllMyPrograms(principalDetails.getEmail());
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, programAllReadResponse));
+    }
+
 
     @PutMapping("/{programId}")
     @PreAuthorize("isAuthenticated()")
