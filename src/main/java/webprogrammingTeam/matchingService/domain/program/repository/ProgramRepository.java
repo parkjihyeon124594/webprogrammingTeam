@@ -17,7 +17,7 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
 
     // 2. 작성일자를 기준으로 최신순 프로그램 조회
-    @Query(value ="SELECT p FROM Program p ORDER BY createDate DESC")
+    @Query(value ="SELECT p FROM Program p ORDER BY 'createDate' DESC")
     List<Program> findByCreateDateOrderByDesc();
 
     // 3.현재 진행 중인 프로그램만 조회
