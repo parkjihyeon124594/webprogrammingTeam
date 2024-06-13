@@ -124,6 +124,7 @@ public class ReviewService {
 
         return ReviewIdReadResponse.builder()
                 .reviewId(review.getId())
+                .title(review.getTitle())
                 .rating(review.getRating())
                 .content(review.getContent())
                 .date(review.getDate())
