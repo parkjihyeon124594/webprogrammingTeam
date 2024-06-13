@@ -58,6 +58,7 @@ public class ProgramService {
                 .open(programSaveRequest.open())
                 .latitude(programSaveRequest.latitude())
                 .longitude(programSaveRequest.longitude())
+                .recruitment(0)
                 .build();
 
         imageService.uploadImages(program, imageList);
@@ -80,7 +81,7 @@ public class ProgramService {
                 String imageUrl = image.getUrl();
 
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl)
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl, program.getRecruitment())
                 );
             }
             return responseList;
@@ -113,6 +114,7 @@ public class ProgramService {
                 .programDate(program.getProgramDate())
                 .open(program.getOpen())
                 .images(imageUrls)
+                .recruitment(program.getRecruitment())
                 .build();
     }
 
@@ -127,7 +129,7 @@ public class ProgramService {
                 Image image = imageRepository.findFirstImageByProgram(program.getId());
                 String imageUrl = image.getUrl();
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl)
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl, program.getRecruitment())
                 );
             }
             return responseList;
