@@ -29,7 +29,9 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] excludePathLists = {"/login", "/favicon.ico",
-                "/oauth2/authorization/google", "/login/oauth2/code/google","/member/signup","/login", "/program/view/**", "/program/{programId}/review/view/**"};
+
+                "/oauth2/authorization/google", "/login/oauth2/code/google","/member/signup","/login", "/program/view/**","/program/category/**"};
+
         String path = request.getRequestURI();
 
         if (path.startsWith("/auth") || path.startsWith("/v3")) {
@@ -102,7 +104,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰이 access 인지 확인 (발급 시 페이로드에 명시함)
         String category = jwtService.getCategory(accessToken);
 
-        if(!category.equals("accessToken")){
+        if(!category.equals("Accesstoken")){
 
             // response body
             PrintWriter writer =response.getWriter();

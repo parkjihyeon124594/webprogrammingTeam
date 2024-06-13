@@ -8,27 +8,26 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import webprogrammingTeam.matchingService.auth.filter.CustomJsonUsernamePasswordAuthenticationFilter;
+import webprogrammingTeam.matchingService.auth.filter.itself.CustomJsonUsernamePasswordAuthenticationFilter;
+import webprogrammingTeam.matchingService.auth.filter.itself.CustomLogoutFilter;
 import webprogrammingTeam.matchingService.auth.handler.Itself.LoginFailureHandler;
 import webprogrammingTeam.matchingService.auth.handler.Itself.LoginSuccessHandler;
 
 import webprogrammingTeam.matchingService.auth.service.LoginService;
+import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshRepository;
 import webprogrammingTeam.matchingService.domain.refresh.service.RefreshService;
 import webprogrammingTeam.matchingService.jwt.JWTFilter;
 import webprogrammingTeam.matchingService.jwt.JWTService;
@@ -48,6 +47,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
+    private final RefreshRepository refreshRepository;
 /*
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -82,8 +82,12 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/googleLogin")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/member/signup")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                                //.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/view/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
+
+                                .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
+
+
                                 .anyRequest().authenticated())
 
 
@@ -93,8 +97,17 @@ public class SecurityConfig {
                                 .successHandler(customOAuth2SuccessHandler)
                         )
 */
+
+
+
+                        // CustomJsonUsernamePasswordAuthenticationFilter 등록
                         .addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
+                        // JWTFilter 등록
                         .addFilterBefore(jwtFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
+                        // CustomLogoutFilter 등록 (특정 URL에만 적용하도록 설정)
+                        .addFilterBefore(new CustomLogoutFilter(jwtService,refreshRepository), LogoutFilter.class)
+
+
                         .sessionManagement((session) -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();

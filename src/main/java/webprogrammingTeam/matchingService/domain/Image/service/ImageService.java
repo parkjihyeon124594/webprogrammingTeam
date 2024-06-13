@@ -28,6 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class ImageService {
+
     private final Storage storage;
 
     private String bucketName = "matching_service";
