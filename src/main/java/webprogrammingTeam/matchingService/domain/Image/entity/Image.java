@@ -5,14 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import webprogrammingTeam.matchingService.domain.board.entity.Board;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Image {
+public class Image extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,8 @@ public class Image {
     private String fileName;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "program_id")
+    private Program program;
 
     private String url;
 
@@ -33,5 +34,8 @@ public class Image {
         this.url =url;
     }
 
+    public void update() {
+
+    }
 }
 

@@ -6,11 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.member.dto.request.MemberCreateRequest;
+import webprogrammingTeam.matchingService.domain.member.service.MemberService;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 
 @RestController
@@ -18,11 +17,17 @@ import webprogrammingTeam.matchingService.global.util.ApiUtil;
 @Slf4j
 @RequiredArgsConstructor
 public class MemberController {
-    @PostMapping
-    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> test(){
-        log.info("컨트롤러 jwt 필터 테스트");
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
+
+    private final MemberService memberService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> signup(
+            @RequestBody MemberCreateRequest memberCreateRequest
+            ){
+        Long id = memberService.signUpMember(memberCreateRequest);
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,id));
     }
+
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -35,6 +40,8 @@ public class MemberController {
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
+
+
 
 
 }

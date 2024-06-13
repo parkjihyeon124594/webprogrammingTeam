@@ -5,11 +5,12 @@ import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
 @Entity
 @Getter
 @Setter
-public class MemberChannelSubscription {
+public class MemberChannelSubscription extends BaseTimeEntity {
     // 유저와 채팅방 사이의 다대다 관계
 
     @Id
