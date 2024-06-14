@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshRepository;
+import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshtokenRepository;
 import webprogrammingTeam.matchingService.domain.refresh.service.RefreshService;
 import webprogrammingTeam.matchingService.jwt.JWTService;
 
@@ -18,7 +18,7 @@ import webprogrammingTeam.matchingService.jwt.JWTService;
 public class ReissueController {
 
     private final JWTService jwtService;
-    private final RefreshRepository refreshRepository;
+    private final RefreshtokenRepository refreshtokenRepository;
     private final RefreshService refreshService;
 
 
@@ -48,7 +48,7 @@ public class ReissueController {
         }
 
         //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshRepository.existsByRefresh(refreshToken);
+        Boolean isExist = refreshtokenRepository.existsByRefresh(refreshToken);
 
         if(!isExist){
             return new ResponseEntity<>("invalid refresh token",HttpStatus.BAD_REQUEST);
@@ -64,7 +64,7 @@ public class ReissueController {
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 
-        refreshRepository.deleteByRefresh(refreshToken);
+        refreshtokenRepository.deleteByRefresh(refreshToken);
         refreshService.saveRefreshEntity(email,newRefresh,role);
 
         //response

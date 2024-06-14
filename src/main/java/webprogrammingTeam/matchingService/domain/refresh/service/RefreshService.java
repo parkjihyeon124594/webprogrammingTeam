@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.refresh.entity.RefreshEntity;
-import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshRepository;
+import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshtokenRepository;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshService {
 
-    private final RefreshRepository refreshRepository;
+    private final RefreshtokenRepository refreshtokenRepository;
     @Transactional
     public void saveRefreshEntity(String email, String refresh,String role) {
 
@@ -20,7 +20,7 @@ public class RefreshService {
                 .role(role)
                 .build();
 
-        refreshRepository.save(refreshEntity);
+        refreshtokenRepository.save(refreshEntity);
     }
 
 }

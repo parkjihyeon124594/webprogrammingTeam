@@ -1,11 +1,12 @@
 package webprogrammingTeam.matchingService.domain.refresh.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.refresh.entity.RefreshEntity;
 
 
-public interface RefreshRepository extends JpaRepository<RefreshEntity,Long> {
+public interface RefreshtokenRepository extends CrudRepository<RefreshEntity,Long> {
 
     Boolean existsByRefresh(String refresh);
 
