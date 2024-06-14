@@ -54,7 +54,7 @@ public class ReviewService {
         }
 
         //모집 기간이후인지 확인
-        if(LocalDate.now().isBefore(convertStringToLocalDate(program.getProgramDate()))){
+        if(LocalDateTime.now().isBefore(convertStringToLocalDateTime(program.getProgramDate()))){
             throw new AccessDeniedException("프로그램 참여를 한 후에 리뷰를 작성할 수 있습니다.");
         }
 
@@ -80,7 +80,7 @@ public class ReviewService {
 
     //시간 포함
     private LocalDateTime convertStringToLocalDateTime(String dateStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
             return LocalDateTime.parse(dateStr, formatter);
         } catch (DateTimeParseException e) {
@@ -88,15 +88,15 @@ public class ReviewService {
             return null;
         }
     }
-    private LocalDate convertStringToLocalDate(String dateStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        try {
-            return LocalDate.parse(dateStr, formatter);
-        } catch (DateTimeParseException e) {
-            System.err.println("옳지 않은 데이터 형식: " + dateStr);
-            return null;
-        }
-    }
+//    private LocalDate convertStringToLocalDate(String dateStr) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        try {
+//            return LocalDate.parse(dateStr, formatter);
+//        } catch (DateTimeParseException e) {
+//            System.err.println("옳지 않은 데이터 형식: " + dateStr);
+//            return null;
+//        }
+//    }
 
     public List<ReviewAllReadResponse> findAllReview(Long programId){
         try{

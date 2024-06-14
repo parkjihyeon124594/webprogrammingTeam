@@ -71,13 +71,13 @@ public class RecruitmentService {
         recruitmentRepository.save(recruitment);
         log.info("program.getMaximum(): {}",program.getMaximum());
         log.info("recruitmentRepository.countByProgramId(programId)),{}",recruitmentRepository.countByProgramId(programId));
-        // 추가됨으로써 정원이 차면 closed 로..
-        if(program.getMaximum() == recruitmentRepository.countByProgramId(programId))
+        program.updateRecruitment();
+        if(program.getMaximum() == program.getRecruitment())
         {
             program.updateOpen(Open.CLOSED);
         }
 
-        return  recruitmentRepository.countByProgramId(programId);
+        return recruitment.getId();
     }
 
     //지원 취소

@@ -8,6 +8,7 @@ import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -31,6 +32,11 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
     // 4.사용자 반경 5km의 프로그램 찾기
     List<Program> findByLatitudeBetweenAndLongitudeBetween(Double minLat, Double maxLat, Double minLon, Double maxLon);
 
+
+//    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED' ")
+//    List<Program> findProgramsToClose(@Param("now") LocalDate now);
+    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED'")
+    List<Program> findProgramsToClose(@Param("now") String now);
 
 
 }
