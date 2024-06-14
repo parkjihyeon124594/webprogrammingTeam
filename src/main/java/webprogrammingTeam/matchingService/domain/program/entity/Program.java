@@ -61,6 +61,9 @@ public class Program extends BaseTimeEntity{
     @Column(name="longitude")
     private Double longitude;
 
+    @Column(name = "program_address")
+    private String programAddress;
+
     @Column(name = "recruitment")
     private int recruitment;
 
@@ -74,7 +77,7 @@ public class Program extends BaseTimeEntity{
     private List<Recruitment> recruitments = new ArrayList<>();
 
     @Builder
-    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude, int recruitment) {
+    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude, int recruitment, String programAddress) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -87,6 +90,7 @@ public class Program extends BaseTimeEntity{
         this.latitude=latitude;
         this.longitude=longitude;
         this.recruitment = recruitment;
+        this.programAddress = programAddress;
     }
 
     public void addImageList(Image image) {
