@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+/src/main/resources/application.yml
 ### STS ###
 .apt_generated
 .classpath
@@ -35,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/src/main/res
+ources/webpro-425010-67b4bf8c116d.json
