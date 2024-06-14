@@ -35,7 +35,7 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
 //    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED' ")
 //    List<Program> findProgramsToClose(@Param("now") LocalDate now);
-    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED'")
+    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate <= :now AND p.open != 'CLOSED'")
     List<Program> findProgramsToClose(@Param("now") String now);
 
 
