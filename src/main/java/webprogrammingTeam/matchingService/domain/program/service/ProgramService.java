@@ -84,7 +84,7 @@ public class ProgramService {
                 String imageUrl = image.getUrl();
 
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program))
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program), ratingCnt(program.getId()))
                 );
             }
             return responseList;
@@ -93,6 +93,9 @@ public class ProgramService {
         return null;
     }
 
+    public int ratingCnt(Long programId){
+        return reviewRepository.countReviewsByProgramId(programId);
+    }
     public ProgramIdReadResponse findOneProgram(Long id)throws IOException{
         Program program = programRepository.findById(id)
                 .orElseThrow();
@@ -145,7 +148,7 @@ public class ProgramService {
                 Image image = imageRepository.findFirstImageByProgram(program.getId());
                 String imageUrl = image.getUrl();
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program))
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program),ratingCnt(program.getId()))
                 );
             }
             return responseList;

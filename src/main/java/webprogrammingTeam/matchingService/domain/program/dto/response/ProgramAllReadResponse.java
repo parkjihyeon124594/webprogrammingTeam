@@ -5,5 +5,5 @@ import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 
 @Builder
-public record ProgramAllReadResponse(Long id, String title, Category category, Open open, String writingTime, String imageUrl, int recruitment, double avgRating) {
+public record ProgramAllReadResponse(Long id, String title, Category category, Open open, String writingTime, String imageUrl, int recruitment, double avgRating, int ratingCnt) {
 }

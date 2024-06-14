@@ -1,6 +1,7 @@
 package webprogrammingTeam.matchingService.domain.recruitment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/program/recruitment")
+@Tag(name = "프로그램 지원", description = "프로그램 지원에 관련 Api")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
