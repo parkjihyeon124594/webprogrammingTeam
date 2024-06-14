@@ -109,4 +109,5 @@ public class Program extends BaseTimeEntity{
     public void updateOpen(Open open){
         this.open=open;
     }
+    public void updateRecruitment(){ this.recruitment++;}
 }
