@@ -59,6 +59,7 @@ public class ProgramService {
                 .latitude(programSaveRequest.latitude())
                 .longitude(programSaveRequest.longitude())
                 .recruitment(0)
+                .programAddress(programSaveRequest.programAddress())
                 .build();
 
         imageService.uploadImages(program, imageList);
