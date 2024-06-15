@@ -97,12 +97,21 @@ class MemberChannelSubscriptionServiceTest {
 
     @Test
     void testCreateSubscription() throws IOException {
+        // Mock 객체 설정
         when(memberService.getMemberById(1L)).thenReturn(member);
         when(channelService.getChannelById(1L)).thenReturn(channel);
-        when(memberChannelSubscriptionRepository.save(any(MemberChannelSubscription.class))).thenReturn(subscription);
+        when(memberChannelSubscriptionRepository.save(any(MemberChannelSubscription.class)))
+                .thenAnswer(invocation -> {
+                    MemberChannelSubscription subscription = invocation.getArgument(0);
+                    subscription.setSubscriptionId(1L); // subscriptionId 설정
+                    return subscription;
+                });
 
+        // 메서드 호출 및 검증
         Long subscriptionId = memberChannelSubscriptionService.createSubscription(1L, 1L);
+        System.out.printf(String.valueOf(subscriptionId));
         assertNotNull(subscriptionId);
+        assertEquals(Long.valueOf(1L), subscriptionId);
     }
 
     @Test

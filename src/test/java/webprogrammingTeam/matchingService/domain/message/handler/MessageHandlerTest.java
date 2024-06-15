@@ -7,13 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
 import webprogrammingTeam.matchingService.domain.message.dto.PrivateMessagePayLoad;
 import webprogrammingTeam.matchingService.domain.message.dto.PublicMessagePayLoad;
@@ -55,8 +53,11 @@ public class MessageHandlerTest {
         PublicMessagePayLoad payload = new PublicMessagePayLoad();
         payload.setContent(content);
 
+        Member member = mock(Member.class);
+        when(member.getId()).thenReturn(senderId);
+
         PrincipalDetails principalDetails = mock(PrincipalDetails.class);
-        when(principalDetails.getMember().getId()).thenReturn(senderId);
+        when(principalDetails.getMember()).thenReturn(member);
 
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setChannelId(channelId);
@@ -83,8 +84,11 @@ public class MessageHandlerTest {
         PublicMessagePayLoad payload = new PublicMessagePayLoad();
         payload.setContent(content);
 
+        Member member = mock(Member.class);
+        when(member.getId()).thenReturn(senderId);
+
         PrincipalDetails principalDetails = mock(PrincipalDetails.class);
-        when(principalDetails.getMember().getId()).thenReturn(senderId);
+        when(principalDetails.getMember()).thenReturn(member);
 
         when(memberChannelSubscriptionService.isSubscriber(channelId, senderId)).thenReturn(false);
 
@@ -106,8 +110,11 @@ public class MessageHandlerTest {
         PrivateMessagePayLoad payload = new PrivateMessagePayLoad();
         payload.setContent(content);
 
+        Member member = mock(Member.class);
+        when(member.getId()).thenReturn(senderId);
+
         PrincipalDetails principalDetails = mock(PrincipalDetails.class);
-        when(principalDetails.getMember().getId()).thenReturn(senderId);
+        when(principalDetails.getMember()).thenReturn(member);
 
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setChannelId(channelId);
