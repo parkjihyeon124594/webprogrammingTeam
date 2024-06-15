@@ -37,9 +37,15 @@ public class ProgramController {
 
 
     @GetMapping("/data/category-age")
-    @Operation(summary = "데이터 조회", description = "카테고리 별로 연령 조회 ")
+    @Operation(summary = "카테고리 별로 연령 참여율 데이터 조회", description = "카테고리 별로 연령 조회 ")
     public ResponseEntity<ApiUtil.ApiSuccessResult<CategoryAgeGroupListResponse>> getProgramDataCategoryAge(){
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programService.getAgeGroupCountsByCategory()));
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programService.findParticipantCountsByCategoryAndAgeGruoup()));
+    }
+
+    @GetMapping("/data/age-category")
+    @Operation(summary = "연령 별로 카테고리 참여율 데이터 조회", description = "연령 별로 카테고리 참여율 데이터 조회")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<Test>>> findParticipantCountsByAgeGroupAndCategory(){
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programService.findParticipantCountsByAgeGroupAndCategory()));
     }
 
     @GetMapping("/data/monthly-category")
