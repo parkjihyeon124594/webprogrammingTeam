@@ -30,7 +30,8 @@ public class JWTFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] excludePathLists = {"/login", "/favicon.ico",
 
-                "/oauth2/authorization/google", "/login/oauth2/code/google","/member/signup","/login", "/program/view/**","/program/category/**"};
+                "/oauth2/authorization/google", "/login/oauth2/code/google","/member/signup","/login", "/program/view/**","/program/category/**",
+                "/test","program/data/**"};
 
         String path = request.getRequestURI();
 

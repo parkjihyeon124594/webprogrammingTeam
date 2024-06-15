@@ -27,7 +27,7 @@ import webprogrammingTeam.matchingService.auth.handler.Itself.LoginFailureHandle
 import webprogrammingTeam.matchingService.auth.handler.Itself.LoginSuccessHandler;
 
 import webprogrammingTeam.matchingService.auth.service.LoginService;
-import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshRepository;
+import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshtokenRepository;
 import webprogrammingTeam.matchingService.domain.refresh.service.RefreshService;
 import webprogrammingTeam.matchingService.jwt.JWTFilter;
 import webprogrammingTeam.matchingService.jwt.JWTService;
@@ -47,7 +47,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
-    private final RefreshRepository refreshRepository;
+    private final RefreshtokenRepository refreshtokenRepository;
 /*
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -82,9 +82,12 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/googleLogin")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/member/signup")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                                //.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/view/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/test")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/program/data/**")).permitAll()
+
                                 .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
+
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
 
 
@@ -103,7 +106,7 @@ public class SecurityConfig {
                         // JWTFilter 등록
                         .addFilterBefore(jwtFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class)
                         // CustomLogoutFilter 등록 (특정 URL에만 적용하도록 설정)
-                        .addFilterBefore(new CustomLogoutFilter(jwtService,refreshRepository), LogoutFilter.class)
+                        .addFilterBefore(new CustomLogoutFilter(jwtService, refreshtokenRepository), LogoutFilter.class)
 
 
                         .sessionManagement((session) -> session

@@ -43,6 +43,7 @@ public class BatchConfig {
     job은 하나의 완전한 배치의 작업 단위
     step은 실제로 수행되는 개별 작업 단위*/
 
+
     @Bean
     public Job updateProgramStatusJob() {
         //첫 번째 매개변수는 작업의 이름

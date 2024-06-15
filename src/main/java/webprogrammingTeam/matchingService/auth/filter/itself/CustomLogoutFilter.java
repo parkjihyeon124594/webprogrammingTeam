@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.GenericFilterBean;
-import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshRepository;
+import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshtokenRepository;
 import webprogrammingTeam.matchingService.jwt.JWTService;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTService jwtService;
-    private final RefreshRepository refreshRepository;
+    private final RefreshtokenRepository refreshtokenRepository;
     @Override
     //dofilter에서 public과 private으로 두 번 선언해서 public에서 private을 꺼내쓰는 방식의 이유
     // 1.(HttpServletRequest) 와 (HttpServletResponse) 캐스팅하기 편리하게 만든 부분도 있고 private으로 로직 자체를 보호하기 위함
@@ -80,7 +80,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // DB에 저장돼 있는지 확인
-        Boolean isExist = refreshRepository.existsByRefresh(refresh);
+        Boolean isExist = refreshtokenRepository.existsByRefresh(refresh);
         if (!isExist) {// DB에 없다면 이미 로그아웃이 된 상태이기 때문에 더 이상 진행하지 않음.
 
             //response status code
@@ -89,7 +89,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         //로그아웃 진행
-        refreshRepository.deleteByRefresh(refresh);
+        refreshtokenRepository.deleteByRefresh(refresh);
 
         response.setStatus(HttpServletResponse.SC_OK);
 

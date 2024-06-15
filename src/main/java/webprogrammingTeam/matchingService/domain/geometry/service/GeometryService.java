@@ -9,7 +9,7 @@ import webprogrammingTeam.matchingService.domain.geometry.dto.response.GeometryR
 import webprogrammingTeam.matchingService.domain.geometry.entity.Direction;
 import webprogrammingTeam.matchingService.domain.geometry.entity.Location;
 import webprogrammingTeam.matchingService.domain.geometry.util.GeometryUtil;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryReadResponse;
+
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;

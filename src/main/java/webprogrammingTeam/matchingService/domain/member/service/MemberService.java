@@ -36,7 +36,7 @@ public class MemberService {
                 .memberName(memberCreateRequest.memberName())
                 .email(memberCreateRequest.email())
                 .password(passwordEncoder.encode(memberCreateRequest.password()))
-                .birth(memberCreateRequest.birth())
+                .age(memberCreateRequest.age())
                 .gender(memberCreateRequest.gender())
                 .latitude(memberCreateRequest.latitude())
                 .longitude(memberCreateRequest.longitude())
