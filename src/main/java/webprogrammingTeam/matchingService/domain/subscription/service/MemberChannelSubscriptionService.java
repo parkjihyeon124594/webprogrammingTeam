@@ -63,6 +63,16 @@ public class MemberChannelSubscriptionService {
                 .collect(Collectors.toList());
     }
 
+    public Long createPrivateChannelAndSubscription(String title, List<Long> memberIds) throws IOException {
+        Channel newPrivateChannel = channelService.createPrivateChannel(title);
+
+        for (Long memberId : memberIds) {
+            createSubscription(memberId, newPrivateChannel.getChannelId());
+        }
+
+        return newPrivateChannel.getChannelId();
+    }
+
     public Long createSubscription(Long memberId, Long channelId) throws IOException {
         Member member = memberService.getMemberById(memberId);
         Channel channel = channelService.getChannelById(channelId);
