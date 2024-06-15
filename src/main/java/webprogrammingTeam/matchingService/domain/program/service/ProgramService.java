@@ -1,7 +1,6 @@
 package webprogrammingTeam.matchingService.domain.program.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,9 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryReadResponse;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramIdReadResponse;
+import webprogrammingTeam.matchingService.domain.program.dto.response.*;
+import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
@@ -23,10 +21,7 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +35,56 @@ public class ProgramService {
     private final ImageService imageService;
     private final MemberRepository memberRepository;
 
+
+    public List<MonthlyCategoryCountResponse> getMonthlyCategoryCounts() {
+        List<Object[]> results = programRepository.findMonthlyCategoryCounts();
+        // 스트림 연산을 통해 DTO로 변환하여 반환
+        return results.stream()
+                .map(this::mapToMonthlyCategoryCountDTO)
+                .collect(Collectors.toList());
+    }
+    private MonthlyCategoryCountResponse mapToMonthlyCategoryCountDTO(Object[] result) {
+        // 각 Object 배열에서 데이터 추출
+        return new MonthlyCategoryCountResponse(
+                (String) result[0],    // month
+                (String) result[1],    // category
+                (Long) result[2]       // programCount
+        );
+    }
+    public CategoryAgeGroupListResponse getAgeGroupCountsByCategory() {
+        List<Object[]> rawData = programRepository.findAgeGroupCountsByCategory();
+        List<CategoryAgeGroupResponse> ageGroupDTOs = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            String city = (String) row[0];
+            String category = (String) row[1];
+            int teen = ((Number) row[2]).intValue();
+            int twenties = ((Number) row[3]).intValue();
+            int thirties = ((Number) row[4]).intValue();
+            int forties = ((Number) row[5]).intValue();
+            int fifties = ((Number) row[6]).intValue();
+            int sixties = ((Number) row[7]).intValue();
+            int seventies = ((Number) row[8]).intValue();
+            int eighties = ((Number) row[9]).intValue();
+
+            CategoryAgeGroupResponse categoryAgeGroupResponse = CategoryAgeGroupResponse.builder()
+                    .city(city)
+                    .category(String.valueOf(category))
+                    .teen(teen)
+                    .twenties(twenties)
+                    .thirties(thirties)
+                    .forties(forties)
+                    .fifties(fifties)
+                    .sixties(sixties)
+                    .seventies(seventies)
+                    .eighties(eighties)
+                    .build();
+
+            ageGroupDTOs.add(categoryAgeGroupResponse);
+        }
+
+        return new CategoryAgeGroupListResponse(ageGroupDTOs);
+    }
 
     @Transactional
     public Long saveProgram(ProgramSaveRequest programSaveRequest, MultipartFile[] imageList, String email) throws IOException {
@@ -177,11 +222,11 @@ public class ProgramService {
         return writingTime.format(formatter);
     }
 
-    public List<ProgramCategoryReadResponse> programListToProgramCategoryReadResponseList(List<Program> programs) {
+    public List<CategoryProgramReadResponse> programListToProgramCategoryReadResponseList(List<Program> programs) {
 
 
         return programs.stream()
-                .map(program -> new ProgramCategoryReadResponse(
+                .map(program -> new CategoryProgramReadResponse(
                         program.getId(),
                         program.getTitle(),
                         program.getCategory(),

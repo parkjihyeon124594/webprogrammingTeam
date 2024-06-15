@@ -121,7 +121,7 @@ public class RecruitmentService {
 
             for(Member member : memberList){
                 responseList.add(
-                        new ProgramRecruitmentResponse(member.getMemberName(), member.getEmail(), member.getBirth(), member.getGender())
+                        new ProgramRecruitmentResponse(member.getMemberName(), member.getEmail(), member.getAge(), member.getGender())
                 );
             }
             log.info("responseList 지원자 리스트 {}", responseList);

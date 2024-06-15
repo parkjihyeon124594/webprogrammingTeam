@@ -4,5 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    SPORTS, COMPUTER, ART
+    SPORTS, COMPUTER, ART;
+
+    public static Category[] getAllCategories() {
+        return values();
+    }
 }

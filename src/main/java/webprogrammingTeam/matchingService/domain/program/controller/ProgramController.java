@@ -11,15 +11,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
-import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryReadResponse;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramIdReadResponse;
+import webprogrammingTeam.matchingService.domain.program.dto.response.*;
 import webprogrammingTeam.matchingService.domain.program.entity.Category;
-import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.program.service.ProgramService;
@@ -38,6 +34,20 @@ public class ProgramController {
     private final ProgramService programService;
     private final ImageService imageService;
     private final ProgramRepository programRepository;
+
+
+    @GetMapping("/data/category-age")
+    @Operation(summary = "데이터 조회", description = "카테고리 별로 연령 조회 ")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<CategoryAgeGroupListResponse>> getProgramDataCategoryAge(){
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programService.getAgeGroupCountsByCategory()));
+    }
+
+    @GetMapping("/data/monthly-category")
+    @Operation(summary = "데이터 조회 ",description = "월별 카테고리 현황 조회")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MonthlyCategoryCountResponse>>> getProgramDataMonthlyCategory(){
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programService.getMonthlyCategoryCounts()));
+    }
 
 
 
@@ -73,38 +83,38 @@ public class ProgramController {
 
     @GetMapping("/category/{category}")
     @Operation(summary = "카테고리 별 게시글 조회", description = "카테고리 별 게시글 조회하는 로직")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramCategoryReadResponse>>> getCategoryProgram(
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<CategoryProgramReadResponse>>> getCategoryProgram(
             @PathVariable("category") String categoryStr)
     {
         Category category = Category.valueOf(categoryStr);
-        List<ProgramCategoryReadResponse> programCategoryReadResponse = programService.programListToProgramCategoryReadResponseList(
+        List<CategoryProgramReadResponse> categoryProgramReadResponse = programService.programListToProgramCategoryReadResponseList(
                 programRepository.findByCategory(category)
         );
 
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programCategoryReadResponse));
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, categoryProgramReadResponse));
     }
 
     @GetMapping("/category/date")
     @Operation(summary = "최신순 게시글 조회", description = "최신순 게시글 조회하는 로직")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramCategoryReadResponse>>> getCategoryDateDescProgram(){
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<CategoryProgramReadResponse>>> getCategoryDateDescProgram(){
 
         List<Program> dateDescProgram = programRepository.findByCreateDateOrderByDesc();
-        List<ProgramCategoryReadResponse> programCategoryReadResponse = programService.programListToProgramCategoryReadResponseList(dateDescProgram);
+        List<CategoryProgramReadResponse> categoryProgramReadResponse = programService.programListToProgramCategoryReadResponseList(dateDescProgram);
 
 
         log.info("program controller list size {}",dateDescProgram.size());
-        log.info("program controller programCategoryReadResponse list size {}",programCategoryReadResponse.size());
+        log.info("program controller programCategoryReadResponse list size {}", categoryProgramReadResponse.size());
 
 
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programCategoryReadResponse));
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, categoryProgramReadResponse));
     }
 
     @GetMapping("/category/open")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramCategoryReadResponse>>> getCategoryOpenProgram(){
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<CategoryProgramReadResponse>>> getCategoryOpenProgram(){
         List<Program> openProgram = programRepository.findByOpenIsOpen();
-        List<ProgramCategoryReadResponse> programCategoryReadResponse = programService.programListToProgramCategoryReadResponseList(openProgram);
+        List<CategoryProgramReadResponse> categoryProgramReadResponse = programService.programListToProgramCategoryReadResponseList(openProgram);
 
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,programCategoryReadResponse));
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, categoryProgramReadResponse));
     }
 
     @GetMapping("/mine")

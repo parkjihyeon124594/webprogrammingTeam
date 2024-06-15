@@ -37,8 +37,8 @@ public class Member extends BaseTimeEntity {
     @Column(name="role")
     private Role role;
 
-    @Column(name="birth")
-    private String birth;
+    @Column(name="age")
+    private int age;
 
     @Column(name="gender")
     private String gender;
@@ -68,12 +68,12 @@ public class Member extends BaseTimeEntity {
     private List<Recruitment> recruitments = new ArrayList<>();
   
     @Builder
-    public Member(String memberName, Role role, String email,String birth,String gender,String password,Double latitude,Double longitude){
+    public Member(String memberName, Role role, String email,int age,String gender,String password,Double latitude,Double longitude){
 
 
         this.memberName=memberName;
         this.role=role;
-        this.birth =birth;
+        this.age =age;
         this.gender =gender;
         this.password=password;
         this.email=email;
