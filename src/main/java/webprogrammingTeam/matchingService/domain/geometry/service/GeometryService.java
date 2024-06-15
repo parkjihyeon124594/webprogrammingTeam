@@ -9,10 +9,16 @@ import webprogrammingTeam.matchingService.domain.geometry.dto.response.GeometryR
 import webprogrammingTeam.matchingService.domain.geometry.entity.Direction;
 import webprogrammingTeam.matchingService.domain.geometry.entity.Location;
 import webprogrammingTeam.matchingService.domain.geometry.util.GeometryUtil;
+import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramCategoryReadResponse;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
+import webprogrammingTeam.matchingService.domain.review.entity.Review;
+import webprogrammingTeam.matchingService.domain.review.respository.ReviewRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +27,7 @@ public class GeometryService {
 
     private final ProgramRepository programRepository;
     private final ImageRepository imageRepository;
+    private final ReviewRepository reviewRepository;
 
     @Transactional(readOnly = true)
     public List<Program> findProgramsNearMember(Double memberLatitude, Double memberLongitude) {
@@ -46,18 +53,43 @@ public class GeometryService {
         return programs;
     }
 
+    public double calculateAvgRating(Program program){
+        double avg = 0;
+
+        List<Review> reviewList = reviewRepository.findByProgram(program);
+
+        for(Review review:reviewList){
+            avg += (double)review.getRating();
+        }
+
+        return avg/reviewList.size();
+    }
+    public static String writingTimeToString(LocalDateTime writingTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return writingTime.format(formatter);
+    }
     public List<GeometryResponse> programToGeometryResponse(List<Program> programs){
 
         return programs.stream()
-                        .map(program -> new GeometryResponse(
-                                program.getId(),
-                                program.getLatitude(),
-                                program.getLongitude(),
-                                imageRepository.findFirstImageByProgram(program.getId()).getUrl()
-                        ))
-                        .toList();
+                .map(program -> new GeometryResponse(
+                        program.getId(),
+                        program.getTitle(),
+                        program.getCategory(),
+                        program.getOpen(),
+                        writingTimeToString(program.getCreateDate()),
+                        imageRepository.findAllByProgramId(program.getId()).get(0).getUrl(),
+                        program.getRecruitment(),
+                        calculateAvgRating(program),
+                        ratingCnt(program.getId())
+                ))
+                .collect(Collectors.toList());
 
     }
+    public int ratingCnt(Long programId){
+        return reviewRepository.countReviewsByProgramId(programId);
+    }
+
 
 
 

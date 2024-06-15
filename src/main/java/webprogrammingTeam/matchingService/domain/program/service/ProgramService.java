@@ -73,6 +73,7 @@ public class ProgramService {
     }
 
     public List<ProgramAllReadResponse> findAllProgram() {
+
          try{
             List<Program> programList = programRepository.findAll();
             log.info("programList{} ", programList);
@@ -80,7 +81,7 @@ public class ProgramService {
             List<ProgramAllReadResponse> responseList = new ArrayList<>();
 
             for(Program program : programList){
-                Image image = imageRepository.findFirstImageByProgram(program.getId());
+                Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
                 String imageUrl = image.getUrl();
 
                 responseList.add(
@@ -89,6 +90,7 @@ public class ProgramService {
             }
             return responseList;
         }catch(Exception e){
+             log.info("불러오기 실패");
         }
         return null;
     }
@@ -203,10 +205,13 @@ public class ProgramService {
                         program.getTitle(),
                         program.getCategory(),
                         program.getOpen(),
-                        program.getCreateDate(),
-                        imageRepository.findFirstImageByProgram(program.getId()).getUrl()
-                                ))
-                .collect(Collectors.toList());
+                        writingTimeToString(program.getCreateDate()),
+                        imageRepository.findAllByProgramId(program.getId()).get(0).getUrl(),
+                        program.getRecruitment(),
+                        calculateAvgRating(program),
+                        ratingCnt(program.getId())
+                ))
+                        .collect(Collectors.toList());
     }
 
 
