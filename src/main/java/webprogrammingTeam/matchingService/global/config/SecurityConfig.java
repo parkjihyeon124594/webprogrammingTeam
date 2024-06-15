@@ -84,7 +84,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                                 //.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/view/**")).permitAll()
-
+                                .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
 
 
@@ -97,8 +97,6 @@ public class SecurityConfig {
                                 .successHandler(customOAuth2SuccessHandler)
                         )
 */
-
-
 
                         // CustomJsonUsernamePasswordAuthenticationFilter 등록
                         .addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)

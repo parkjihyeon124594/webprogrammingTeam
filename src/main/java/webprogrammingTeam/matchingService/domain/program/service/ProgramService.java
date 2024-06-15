@@ -18,6 +18,8 @@ import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.review.entity.Review;
+import webprogrammingTeam.matchingService.domain.review.respository.ReviewRepository;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -39,7 +41,7 @@ public class ProgramService {
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
-
+    private final ReviewRepository reviewRepository;
 
     @Transactional
     public Long saveProgram(ProgramSaveRequest programSaveRequest, MultipartFile[] imageList, String email) throws IOException {
@@ -71,6 +73,7 @@ public class ProgramService {
     }
 
     public List<ProgramAllReadResponse> findAllProgram() {
+
          try{
             List<Program> programList = programRepository.findAll();
             log.info("programList{} ", programList);
@@ -78,19 +81,23 @@ public class ProgramService {
             List<ProgramAllReadResponse> responseList = new ArrayList<>();
 
             for(Program program : programList){
-                Image image = imageRepository.findFirstImageByProgram(program.getId());
+                Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
                 String imageUrl = image.getUrl();
 
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl, program.getRecruitment())
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program), ratingCnt(program.getId()))
                 );
             }
             return responseList;
         }catch(Exception e){
+             log.info("불러오기 실패");
         }
         return null;
     }
 
+    public int ratingCnt(Long programId){
+        return reviewRepository.countReviewsByProgramId(programId);
+    }
     public ProgramIdReadResponse findOneProgram(Long id)throws IOException{
         Program program = programRepository.findById(id)
                 .orElseThrow();
@@ -110,13 +117,26 @@ public class ProgramService {
                 .content(program.getContent())
                 .category(program.getCategory())
                 .maximum(program.getMaximum())
+                .writingTime(writingTimeToString(program.getCreateDate()))
                 .recruitmentStartDate(program.getRecruitmentStartDate())
                 .recruitmentEndDate(program.getRecruitmentEndDate())
                 .programDate(program.getProgramDate())
                 .open(program.getOpen())
                 .images(imageUrls)
                 .recruitment(program.getRecruitment())
+                .avgRating(calculateAvgRating(program))
                 .build();
+    }
+    public double calculateAvgRating(Program program){
+        double avg = 0;
+
+        List<Review> reviewList = reviewRepository.findByProgram(program);
+
+        for(Review review:reviewList){
+            avg += (double)review.getRating();
+        }
+
+        return avg/reviewList.size();
     }
 
     public List<ProgramAllReadResponse> findAllMyPrograms(String email) throws IOException{
@@ -130,7 +150,7 @@ public class ProgramService {
                 Image image = imageRepository.findFirstImageByProgram(program.getId());
                 String imageUrl = image.getUrl();
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), program.getCreateDate(), imageUrl, program.getRecruitment())
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program),ratingCnt(program.getId()))
                 );
             }
             return responseList;
@@ -179,17 +199,19 @@ public class ProgramService {
 
     public List<ProgramCategoryReadResponse> programListToProgramCategoryReadResponseList(List<Program> programs) {
 
-
         return programs.stream()
                 .map(program -> new ProgramCategoryReadResponse(
                         program.getId(),
                         program.getTitle(),
                         program.getCategory(),
                         program.getOpen(),
-                        program.getCreateDate(),
-                        imageRepository.findFirstImageByProgram(program.getId()).getUrl()
-                                ))
-                .collect(Collectors.toList());
+                        writingTimeToString(program.getCreateDate()),
+                        imageRepository.findAllByProgramId(program.getId()).get(0).getUrl(),
+                        program.getRecruitment(),
+                        calculateAvgRating(program),
+                        ratingCnt(program.getId())
+                ))
+                        .collect(Collectors.toList());
     }
 
 
