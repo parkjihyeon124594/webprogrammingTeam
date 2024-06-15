@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 
 import webprogrammingTeam.matchingService.domain.geometry.entity.Location;
+import webprogrammingTeam.matchingService.domain.notification.entity.Notification;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
@@ -61,12 +62,13 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Review> review = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//    private List<Participation> participations = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Recruitment> recruitments = new ArrayList<>();
-  
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications = new ArrayList<>();
+
     @Builder
     public Member(String memberName, Role role, String email,int age,String gender,String password,Double latitude,Double longitude){
 

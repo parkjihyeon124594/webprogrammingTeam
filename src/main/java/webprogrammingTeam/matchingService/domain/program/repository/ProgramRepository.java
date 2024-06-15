@@ -34,8 +34,6 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
 
 
-    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED'")
-    List<Program> findProgramsToClose(@Param("now") String now);
 
 
     // 5.카테고리 + 연령 데이터 집계
@@ -64,6 +62,12 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "GROUP BY DATE_FORMAT(STR_TO_DATE(p.program_date, '%Y-%m-%d %H:%i'), '%Y-%m'), p.category " +
             "ORDER BY month, category", nativeQuery = true)
     List<Object[]> findMonthlyCategoryCounts();
+
+
+//    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate < :now AND p.open != 'CLOSED' ")
+//    List<Program> findProgramsToClose(@Param("now") LocalDate now);
+    @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate <= :now AND p.open != 'CLOSED'")
+    List<Program> findProgramsToClose(@Param("now") String now);
 
 }
 

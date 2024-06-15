@@ -15,7 +15,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query(value = "SELECT * FROM image WHERE program_id = :programId ORDER BY image_id", nativeQuery = true)
     Image findFirstImageByProgram(@Param("programId") Long programId);
 
-
+    List<Image> findAllByProgramId(Long programId);
     List<Image> findByProgram(Optional<Program> program);
     List<Image> findByProgramId(Long id);
 

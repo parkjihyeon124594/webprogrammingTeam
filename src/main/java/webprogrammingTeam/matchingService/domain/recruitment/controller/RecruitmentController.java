@@ -1,6 +1,7 @@
 package webprogrammingTeam.matchingService.domain.recruitment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/program/recruitment")
 @Slf4j
+@Tag(name = "프로그램 지원", description = "프로그램 지원에 관련 Api")
+
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
     private final MemberRepository memberRepository;
