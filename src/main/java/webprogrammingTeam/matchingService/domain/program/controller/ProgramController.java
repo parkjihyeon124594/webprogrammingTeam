@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
+import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramAgeDataByCityAndCategoryRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
@@ -41,6 +42,18 @@ public class ProgramController {
     private final ProgramRepository programRepository;
     private final BucketService bucketService;
 
+
+    @GetMapping("/data/city-category-age")
+    @Operation(summary = "도시와 카테고리를 파라미터로 받아 연령별 참여율 데이터 조회",description = "연령별 참여율 데이터 조회")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<CategoryAgeGroupListResponse>> getProgramAgeDataByCityAndCategory(
+            // @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
+            @RequestBody ProgramAgeDataByCityAndCategoryRequest programAgeDataByCityAndCategoryRequest
+            ){
+        CategoryAgeGroupListResponse categoryAgeGroupResponses = programService.findByCityAndCategory(programAgeDataByCityAndCategoryRequest.city(),programAgeDataByCityAndCategoryRequest.category());
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,categoryAgeGroupResponses));
+
+    }
 
     @GetMapping("/data/category-age")
     @Operation(summary = "카테고리 별로 연령 참여율 데이터 조회", description = "카테고리 별로 연령 조회 ")
@@ -76,6 +89,7 @@ public class ProgramController {
         log.info("접근 IP = {}", request.getRemoteAddr());
 
         if (bucket.tryConsume(1)) { // 1개 사용 요청
+            log.info("프로그램 생성됨");
             Long saveId = programService.saveProgram(programSaveRequest,images,principalDetails.getEmail());
             return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
         }
