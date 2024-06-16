@@ -34,8 +34,6 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
 
 
-
-
     // 5.카테고리 + 연령 데이터 집계
     @Query(value = "SELECT SUBSTRING_INDEX(p.program_address, ' ', 1) AS city, " +
             "       p.category, " +
@@ -52,6 +50,60 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "JOIN Member m ON r.member_id = m.member_id " +
             "GROUP BY city,p.category", nativeQuery = true)
     List<Object[]> findAgeGroupCountsByCategory();
+
+    //카테고리별 연령대 참여율
+    @Query(value = "SELECT p.category, " +
+            "      SUM(CASE WHEN m.age BETWEEN 10 AND 19 THEN 1 ELSE 0 END) AS teen, " +
+            "       SUM(CASE WHEN m.age BETWEEN 20 AND 29 THEN 1 ELSE 0 END) AS twenties, " +
+            "       SUM(CASE WHEN m.age BETWEEN 30 AND 39 THEN 1 ELSE 0 END) AS thirties, " +
+            "       SUM(CASE WHEN m.age BETWEEN 40 AND 49 THEN 1 ELSE 0 END) AS forties, " +
+            "       SUM(CASE WHEN m.age BETWEEN 50 AND 59 THEN 1 ELSE 0 END) AS fifties, " +
+            "       SUM(CASE WHEN m.age BETWEEN 60 AND 69 THEN 1 ELSE 0 END) AS sixties, " +
+            "       SUM(CASE WHEN m.age BETWEEN 70 AND 79 THEN 1 ELSE 0 END) AS seventies, " +
+            "       SUM(CASE WHEN m.age BETWEEN 80 AND 89 THEN 1 ELSE 0 END) AS eighties " +
+            "FROM Program p " +
+            "JOIN Recruitment r ON p.program_id = r.program_id " +
+            "JOIN Member m ON r.member_id = m.member_id " +
+            "GROUP BY p.category", nativeQuery = true)
+    List<Object[]> findParticipantCountsByCategoryAndAgeGroup();
+
+
+
+
+    // 나이대별 카테고리 참여율 조회
+//    @Query(value = "SELECT m.age AS age_group, " +
+//            "       SUM(CASE WHEN p.category = 'Sports' THEN 1 ELSE 0 END) AS sports, " +
+//            "       SUM(CASE WHEN p.category = 'Computer' THEN 1 ELSE 0 END) AS computer, " +
+//            "       SUM(CASE WHEN p.category = 'Art' THEN 1 ELSE 0 END) AS art " +
+//            "FROM Program p " +
+//            "JOIN Recruitment r ON p.program_id = r.program_id " +
+//            "JOIN Member m ON r.member_id = m.member_id " +
+//            "GROUP BY age_group", nativeQuery = true)
+//    List<Object[]> findParticipantCountsByAgeGroupAndCategory();
+
+
+    @Query(value = "SELECT " +
+            "   CASE " +
+            "       WHEN m.age BETWEEN 10 AND 19 THEN 'teenager' " +
+            "       WHEN m.age BETWEEN 20 AND 29 THEN 'twenties' " +
+            "       WHEN m.age BETWEEN 30 AND 39 THEN 'thirties' " +
+            "       WHEN m.age BETWEEN 40 AND 49 THEN 'forties' " +
+            "       WHEN m.age BETWEEN 50 AND 59 THEN 'fifties' " +
+            "       WHEN m.age BETWEEN 60 AND 69 THEN 'sixties' " +
+            "       WHEN m.age BETWEEN 70 AND 79 THEN 'seventies' " +
+            "       WHEN m.age BETWEEN 80 AND 89 THEN 'eighties' " +
+            "       ELSE 'unknown' " +
+            "   END AS age_group, " +
+            "   SUM(CASE WHEN p.category = 'Sports' THEN 1 ELSE 0 END) AS sports, " +
+            "   SUM(CASE WHEN p.category = 'Computer' THEN 1 ELSE 0 END) AS computer, " +
+            "   SUM(CASE WHEN p.category = 'Art' THEN 1 ELSE 0 END) AS art " +
+            "FROM Program p " +
+            "JOIN Recruitment r ON p.program_id = r.program_id " +
+            "JOIN Member m ON r.member_id = m.member_id " +
+            "GROUP BY age_group", nativeQuery = true)
+    List<Object[]> findParticipantCountsByAgeGroupAndCategory();
+
+
 
     // 6.월별 프로그램 집계
     @Query(value = "SELECT " +

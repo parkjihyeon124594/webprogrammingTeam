@@ -108,6 +108,10 @@ public class Program extends BaseTimeEntity{
         this.recruitmentEndDate = programUpdateRequest.recruitmentEndDate();
         this.programDate = programUpdateRequest.programDate();
         this.open = programUpdateRequest.open();
+        this.longitude = programUpdateRequest.longitude();
+        this.latitude = programUpdateRequest.latitude();
+        this.programAddress = programUpdateRequest.programAddress();
+
     }
 
     public void updateOpen(Open open){
