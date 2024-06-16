@@ -9,7 +9,6 @@ import webprogrammingTeam.matchingService.domain.member.repository.MemberReposit
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
-import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
@@ -22,6 +21,7 @@ import webprogrammingTeam.matchingService.domain.review.respository.ReviewReposi
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,6 +88,65 @@ public class ProgramService {
         return new CategoryAgeGroupListResponse(ageGroupDTOs);
     }
 
+    //연령대별 카테고리 참여율
+    public List<Test> findParticipantCountsByAgeGroupAndCategory() {
+        List<Object[]> rawData = programRepository.findParticipantCountsByAgeGroupAndCategory();
+
+
+        List<Test> testList = new ArrayList<>();
+        for (Object[] row : rawData) {
+            log.info("들어오긴함22.");
+            String age= (String) row[0];
+            int sports = ((Number) row[1]).intValue();
+            int computer = ((Number) row[2]).intValue();
+            int art = ((Number) row[3]).intValue();
+
+            Test test = Test.builder()
+                    .age(age)
+                    .sports(sports)
+                    .computer(computer)
+                    .art(art)
+                    .build();
+
+            testList.add(test);
+        }
+
+        return testList;
+    }
+    public CategoryAgeGroupListResponse findParticipantCountsByCategoryAndAgeGruoup() {
+        List<Object[]> rawData = programRepository.findParticipantCountsByCategoryAndAgeGroup();
+        List<CategoryAgeGroupResponse> ageGroupDTOs = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            log.info("들어오긴함.");
+            String category = (String) row[0];
+            int teen = ((Number) row[1]).intValue();
+            int twenties = ((Number) row[2]).intValue();
+            int thirties = ((Number) row[3]).intValue();
+            int forties = ((Number) row[4]).intValue();
+            int fifties = ((Number) row[5]).intValue();
+            int sixties = ((Number) row[6]).intValue();
+            int seventies = ((Number) row[7]).intValue();
+            int eighties = ((Number) row[8]).intValue();
+
+            CategoryAgeGroupResponse categoryAgeGroupResponse = CategoryAgeGroupResponse.builder()
+                    .city(null)
+                    .category(String.valueOf(category))
+                    .teen(teen)
+                    .twenties(twenties)
+                    .thirties(thirties)
+                    .forties(forties)
+                    .fifties(fifties)
+                    .sixties(sixties)
+                    .seventies(seventies)
+                    .eighties(eighties)
+                    .build();
+
+            ageGroupDTOs.add(categoryAgeGroupResponse);
+        }
+
+        return new CategoryAgeGroupListResponse(ageGroupDTOs);
+    }
     @Transactional
     public Long saveProgram(ProgramSaveRequest programSaveRequest, MultipartFile[] imageList, String email) throws IOException {
 
@@ -99,9 +158,9 @@ public class ProgramService {
                 .content(programSaveRequest.content())
                 .category(programSaveRequest.category())
                 .maximum(programSaveRequest.maximum())
-                .recruitmentStartDate(programSaveRequest.recruitmentStartDate())
-                .recruitmentEndDate(programSaveRequest.recruitmentEndDate())
-                .programDate(programSaveRequest.programDate())
+                .recruitmentStartDate(convertStringToCustomFormat(programSaveRequest.recruitmentStartDate()))
+                .recruitmentEndDate(convertStringToCustomFormat(programSaveRequest.recruitmentEndDate()))
+                .programDate(convertStringToCustomFormat(programSaveRequest.programDate()))
                 .open(programSaveRequest.open())
                 .latitude(programSaveRequest.latitude())
                 .longitude(programSaveRequest.longitude())
@@ -237,8 +296,16 @@ public class ProgramService {
     }
 
     public static String writingTimeToString(LocalDateTime writingTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                .withZone(ZoneId.of("Asia/Seoul"));
 
+        log.info("시간 {}",writingTime.atZone(ZoneId.of("Asia/Seoul")).format(formatter));
+        return writingTime.atZone(ZoneId.of("Asia/Seoul")).format(formatter);
+    }
+
+    public static String convertStringToCustomFormat(String writingTimeStr) {
+        LocalDateTime writingTime = LocalDateTime.parse(writingTimeStr);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return writingTime.format(formatter);
     }
 
