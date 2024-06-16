@@ -51,6 +51,24 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "GROUP BY city,p.category", nativeQuery = true)
     List<Object[]> findAgeGroupCountsByCategory();
 
+
+    //6. 도시,카테고리를 파라미터로 받아서 연령별 이용 데이터 집계
+    @Query(value = "SELECT " +
+            "SUM(CASE WHEN m.age BETWEEN 10 AND 19 THEN 1 ELSE 0 END) AS teen, " +
+            "SUM(CASE WHEN m.age BETWEEN 20 AND 29 THEN 1 ELSE 0 END) AS twenties, " +
+            "SUM(CASE WHEN m.age BETWEEN 30 AND 39 THEN 1 ELSE 0 END) AS thirties, " +
+            "SUM(CASE WHEN m.age BETWEEN 40 AND 49 THEN 1 ELSE 0 END) AS forties, " +
+            "SUM(CASE WHEN m.age BETWEEN 50 AND 59 THEN 1 ELSE 0 END) AS fifties, " +
+            "SUM(CASE WHEN m.age BETWEEN 60 AND 69 THEN 1 ELSE 0 END) AS sixties, " +
+            "SUM(CASE WHEN m.age BETWEEN 70 AND 79 THEN 1 ELSE 0 END) AS seventies, " +
+            "SUM(CASE WHEN m.age BETWEEN 80 AND 89 THEN 1 ELSE 0 END) AS eighties " +
+            "FROM Program p " +
+            "JOIN Recruitment r ON p.program_id = r.program_id " +
+            "JOIN Member m ON r.member_id = m.member_id " +
+            "WHERE SUBSTRING_INDEX(p.program_address, ' ', 1) LIKE CONCAT(:city, '%') " +
+            "AND p.category = :category", nativeQuery = true)
+    List<Object[]> findAgeGroupCountsByCityAndCategory(@Param("city") String city, @Param("category") String category);
+
     //카테고리별 연령대 참여율
     @Query(value = "SELECT p.category, " +
             "      SUM(CASE WHEN m.age BETWEEN 10 AND 19 THEN 1 ELSE 0 END) AS teen, " +
@@ -80,7 +98,6 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 //            "JOIN Member m ON r.member_id = m.member_id " +
 //            "GROUP BY age_group", nativeQuery = true)
 //    List<Object[]> findParticipantCountsByAgeGroupAndCategory();
-
 
     @Query(value = "SELECT " +
             "   CASE " +
@@ -120,6 +137,8 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 //    List<Program> findProgramsToClose(@Param("now") LocalDate now);
     @Query("SELECT p FROM Program p WHERE p.recruitmentEndDate <= :now AND p.open != 'CLOSED'")
     List<Program> findProgramsToClose(@Param("now") String now);
+
+
 
 }
 

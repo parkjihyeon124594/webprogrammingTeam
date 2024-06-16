@@ -1,6 +1,8 @@
 package webprogrammingTeam.matchingService.domain.program.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 
 @Builder
 public record CategoryAgeGroupResponse(

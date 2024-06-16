@@ -1,7 +1,10 @@
 package webprogrammingTeam.matchingService.domain.program.controller;
 
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.BucketState;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
+import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramAgeDataByCityAndCategoryRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
@@ -19,6 +23,8 @@ import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.program.service.ProgramService;
+import webprogrammingTeam.matchingService.global.rateLimiting.exception.RateLimiterException;
+import webprogrammingTeam.matchingService.global.rateLimiting.service.BucketService;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 
 import java.io.IOException;
@@ -34,7 +40,20 @@ public class ProgramController {
     private final ProgramService programService;
     private final ImageService imageService;
     private final ProgramRepository programRepository;
+    private final BucketService bucketService;
 
+
+    @GetMapping("/data/city-category-age")
+    @Operation(summary = "도시와 카테고리를 파라미터로 받아 연령별 참여율 데이터 조회",description = "연령별 참여율 데이터 조회")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<CategoryAgeGroupListResponse>> getProgramAgeDataByCityAndCategory(
+            // @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
+            @RequestBody ProgramAgeDataByCityAndCategoryRequest programAgeDataByCityAndCategoryRequest
+            ){
+        CategoryAgeGroupListResponse categoryAgeGroupResponses = programService.findByCityAndCategory(programAgeDataByCityAndCategoryRequest.city(),programAgeDataByCityAndCategoryRequest.category());
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,categoryAgeGroupResponses));
+
+    }
 
     @GetMapping("/data/category-age")
     @Operation(summary = "카테고리 별로 연령 참여율 데이터 조회", description = "카테고리 별로 연령 조회 ")
@@ -61,14 +80,22 @@ public class ProgramController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "게시글 추가", description = "게시글을 추가하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createProgram(
+            HttpServletRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
             @RequestPart(value = "images", required = false) MultipartFile[] images) throws IOException {
 
-        Long saveId = programService.saveProgram(programSaveRequest,images,principalDetails.getEmail());
+        Bucket bucket = bucketService.resolveBucket(request);
+        log.info("접근 IP = {}", request.getRemoteAddr());
+
+        if (bucket.tryConsume(1)) { // 1개 사용 요청
+            log.info("프로그램 생성됨");
+            Long saveId = programService.saveProgram(programSaveRequest,images,principalDetails.getEmail());
+            return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
+        }
 
 
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.CREATED,saveId));
+            return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.valueOf(RateLimiterException.TOO_MANY_REQUEST)));
     }
 
     @GetMapping("/view")

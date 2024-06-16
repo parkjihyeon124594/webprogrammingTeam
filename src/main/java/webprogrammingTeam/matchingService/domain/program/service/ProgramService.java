@@ -38,6 +38,42 @@ public class ProgramService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
 
+    public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
+        List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
+        List<CategoryAgeGroupResponse> ageGroupDTOs = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            //String category = (String) row[0];
+            int teen = ((Number) row[0]).intValue();
+            int twenties = ((Number) row[1]).intValue();
+            int thirties = ((Number) row[2]).intValue();
+            int forties = ((Number) row[3]).intValue();
+            int fifties = ((Number) row[4]).intValue();
+            int sixties = ((Number) row[5]).intValue();
+            int seventies = ((Number) row[6]).intValue();
+            int eighties = ((Number) row[7]).intValue();
+
+            CategoryAgeGroupResponse categoryAgeGroupResponse = CategoryAgeGroupResponse.builder()
+                    .city(city)
+                    .category(String.valueOf(parameterCategory))
+                    .teen(teen)
+                    .twenties(twenties)
+                    .thirties(thirties)
+                    .forties(forties)
+                    .fifties(fifties)
+                    .sixties(sixties)
+                    .seventies(seventies)
+                    .eighties(eighties)
+                    .build();
+
+            ageGroupDTOs.add(categoryAgeGroupResponse);
+        }
+
+        return new CategoryAgeGroupListResponse(ageGroupDTOs);
+    }
+
+
+
     public List<MonthlyCategoryCountResponse> getMonthlyCategoryCounts() {
         List<Object[]> results = programRepository.findMonthlyCategoryCounts();
         // 스트림 연산을 통해 DTO로 변환하여 반환
@@ -95,7 +131,6 @@ public class ProgramService {
 
         List<Test> testList = new ArrayList<>();
         for (Object[] row : rawData) {
-            log.info("들어오긴함22.");
             String age= (String) row[0];
             int sports = ((Number) row[1]).intValue();
             int computer = ((Number) row[2]).intValue();
@@ -118,7 +153,6 @@ public class ProgramService {
         List<CategoryAgeGroupResponse> ageGroupDTOs = new ArrayList<>();
 
         for (Object[] row : rawData) {
-            log.info("들어오긴함.");
             String category = (String) row[0];
             int teen = ((Number) row[1]).intValue();
             int twenties = ((Number) row[2]).intValue();
