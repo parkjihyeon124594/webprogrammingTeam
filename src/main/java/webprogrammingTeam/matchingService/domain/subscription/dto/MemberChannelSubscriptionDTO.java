@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class MemberChannelSubscriptionDTO {
 
-    private Long memberId;
+    private String memberName;
 
     private Long channelId;
 }

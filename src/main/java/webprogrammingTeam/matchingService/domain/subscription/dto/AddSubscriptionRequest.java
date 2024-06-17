@@ -4,8 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class AddSubscriptionRequest {
-
-    private Long memberId;
-
     private Long channelId;
 }

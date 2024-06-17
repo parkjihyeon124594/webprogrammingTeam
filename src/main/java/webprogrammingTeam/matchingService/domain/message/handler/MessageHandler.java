@@ -1,7 +1,13 @@
 package webprogrammingTeam.matchingService.domain.message.handler;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
-import webprogrammingTeam.matchingService.domain.message.dto.MessagePayLoad;
+import webprogrammingTeam.matchingService.domain.message.dto.PrivateMessagePayLoad;
+import webprogrammingTeam.matchingService.domain.message.dto.PublicMessagePayLoad;
 import webprogrammingTeam.matchingService.domain.message.service.MessageService;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +18,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@Tag(name = "메세지 핸들러", description = "stomp(websocket)을 통해 받은 메세지를 처리하는 핸들러")
 public class MessageHandler {
     private final MessageService messageService;
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
@@ -25,45 +32,50 @@ public class MessageHandler {
         this.memberChannelSubscriptionService = memberChannelSubscriptionService;
         this.messagingTemplate = messagingTemplate;
     }
+    // public과 private를 나누면 된다.
 
-    @MessageMapping("/chat/{channelId}")
-    public void handleMessage(@DestinationVariable Long channelId, @Payload MessagePayLoad messagePayLoad) {
-        Long senderId = messagePayLoad.getSenderId();
+    // 공개 채널에 보내는 메시지 처리.
+    @MessageMapping("/chat/public/{channelId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "공개 채널의 메세지 처리", description = "공개 채널의 메세지를 처리하는 로직")
+    public void handlePublicMessage(@DestinationVariable Long channelId,
+                                    @Payload PublicMessagePayLoad publicMessagePayLoad,
+                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long senderId = principalDetails.getMember().getId();
 
-        if (messagePayLoad.isSubscribeRequest()) {
-            handleSubscriptionRequest(channelId, senderId);
-        } else if (messagePayLoad.isKickRequest()) {
-            handleKickRequest(channelId, senderId, messagePayLoad.getKickMemberId());
-        } else {
-            sendMessage(channelId, senderId, messagePayLoad.getContent());
-        }
-    }
-
-    // 구독 처리. 구독 정보가 있으면 정상적으로 구독해주고, 아니면 클라이언트에 오류 돌려줌
-    private void handleSubscriptionRequest(Long channelId, Long senderId) {
         if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
-            messagingTemplate.convertAndSend("/topic/chat/" + channelId, "Member" + senderId + " has joined the channel.");
-        } else {
-            messagingTemplate.convertAndSend("/topic/errors/" + senderId, "You are not subscribed to this channel.");
+            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.getContent());
+            sendPublicMessage(channelId, savedMessageDTO);
+        }
+        else {
+            sendErrorMessage(senderId);
         }
     }
 
-    // 강퇴 처리. 클라이언트에 메세지 송신
-    private void handleKickRequest(Long channelId, Long senderId, Long targetMemberId) {
-        // 권한 확인 아직 구현 안 됨.
-        memberChannelSubscriptionService.kickMember(channelId, targetMemberId);
-        messagingTemplate.convertAndSend("/topic/chat/" + channelId, "Member " + targetMemberId + " has been kicked from the channel.");
-        messagingTemplate.convertAndSend("/topic/errors/" + targetMemberId, "You have been kicked from the channel " + channelId + ".");
+    // 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.
+    @MessageMapping("/chat/private/{channelId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "비밀 채널의 메세지 처리", description = "비밀 채널의 메세지를 처리하는 로직")
+    public void handlePrivateMessage(@DestinationVariable Long channelId,
+                                     @Payload PrivateMessagePayLoad privateMessagePayLoad,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long senderId = principalDetails.getMember().getId();
+
+        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, privateMessagePayLoad.getContent());
+        sendPrivateMessage(channelId, savedMessageDTO);
     }
 
-    // 메세지 처리, sender가 구독자면 메세지를 보내고 아니면 클라이언트에 오류 메세지 돌려줌.
-    private void sendMessage(Long channelId, Long senderId, String content) {
-        if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
-            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, content);
-            messagingTemplate.convertAndSend("/topic/chat/" + channelId, savedMessageDTO);
-        } else {
-            messagingTemplate.convertAndSend("/topic/errors/" + senderId, "You are not subscribed to this channel.");
-        }
+    private void sendPublicMessage(Long channelId, MessageDTO savedMessageDTO) {
+        messagingTemplate.convertAndSend("/topic/chat/public/" + channelId, savedMessageDTO);
     }
+
+    private void sendPrivateMessage(Long channelId, MessageDTO savedMessageDTO) {
+        messagingTemplate.convertAndSend("/topic/chat/private/" + channelId, savedMessageDTO);
+    }
+
+    private void sendErrorMessage(Long senderId) {
+        messagingTemplate.convertAndSend("/topic/errors/" + senderId, "You have to subscribe from this channel.");
+    }
+
 }
 

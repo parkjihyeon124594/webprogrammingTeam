@@ -2,7 +2,6 @@ package webprogrammingTeam.matchingService.domain.subscription.service;
 
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
-import webprogrammingTeam.matchingService.domain.subscription.dto.ChannelDTO;
 import webprogrammingTeam.matchingService.domain.subscription.dto.MemberChannelSubscriptionDTO;
 import webprogrammingTeam.matchingService.domain.subscription.entity.MemberChannelSubscription;
 import webprogrammingTeam.matchingService.domain.subscription.repository.MemberChannelSubscriptionRepository;
@@ -45,7 +44,7 @@ public class MemberChannelSubscriptionService {
 
     private MemberChannelSubscriptionDTO convertSubscriptionToSubscriptionDTO(MemberChannelSubscription subscription) {
         MemberChannelSubscriptionDTO subscriptionDTO = new MemberChannelSubscriptionDTO();
-        subscriptionDTO.setMemberId(subscription.getMember().getId());
+        subscriptionDTO.setMemberName(subscription.getMember().getMemberName());
         subscriptionDTO.setChannelId(subscription.getChannel().getChannelId());
         return subscriptionDTO;
     }
@@ -57,40 +56,32 @@ public class MemberChannelSubscriptionService {
                 .collect(Collectors.toList());
     }
 
-    public List<Long> findMemberIdsByChannelId(Long channelId) {
+    public List<String> findMemberNamesByChannelId(Long channelId) {
         return memberChannelSubscriptionRepository.findByChannel_ChannelId(channelId)
                 .stream()
-                .map(subscription -> subscription.getMember().getId())
+                .map(subscription -> subscription.getMember().getMemberName())
                 .collect(Collectors.toList());
     }
 
-    public ChannelDTO createChannelWithSubscription(Long memberId, String channelTitle) throws IOException {
-        Member member = memberService.getMemberById(memberId);
-        Channel newChannel = channelService.createChannel(channelTitle);
+    public Long createPrivateChannelAndSubscription(String title, List<Long> memberIds) throws IOException {
+        Channel newPrivateChannel = channelService.createPrivateChannel(title);
 
-        createSubscription(member.getId(), newChannel.getChannelId());
+        for (Long memberId : memberIds) {
+            createSubscription(memberId, newPrivateChannel.getChannelId());
+        }
 
-        ChannelDTO channelDTO = convertChannelToChannelDTO(newChannel);
-
-        return channelDTO;
+        return newPrivateChannel.getChannelId();
     }
 
-    public void createSubscription(Long memberId, Long channelId) throws IOException {
+    public Long createSubscription(Long memberId, Long channelId) throws IOException {
         Member member = memberService.getMemberById(memberId);
         Channel channel = channelService.getChannelById(channelId);
         MemberChannelSubscription subscription = new MemberChannelSubscription();
         subscription.setMember(member);
         subscription.setChannel(channel);
-        memberChannelSubscriptionRepository.save(subscription);
-    }
 
-    private ChannelDTO convertChannelToChannelDTO(Channel channel) {
-        ChannelDTO channelDTO = new ChannelDTO();
-
-        channelDTO.setChannelId(channel.getChannelId());
-        channelDTO.setTitle(channelDTO.getTitle());
-
-        return channelDTO;
+        MemberChannelSubscription newSubscription =  memberChannelSubscriptionRepository.save(subscription);
+        return newSubscription.getSubscriptionId();
     }
 
     public void deleteSubscription(Long subscriptionId) {
@@ -108,20 +99,9 @@ public class MemberChannelSubscriptionService {
         memberChannelSubscriptionRepository.deleteByChannel_ChannelId(channelId);
     }
 
-    // 고쳐야 함
-    public void kickMember(Long channelId, Long targetMemberId) {
-        Channel channel = channelService.getChannelById(channelId);
-
-        Member member = memberService.getMemberById(targetMemberId);
-
-        memberChannelSubscriptionRepository.deleteByChannelAndMember(channel, member);
-    }
-
     public boolean isSubscriber(Long channelId, Long senderId) {
         return memberChannelSubscriptionRepository.existsByChannelAndMember(
                 channelService.getChannelById(channelId),
                 memberService.getMemberById(senderId));
     }
-
-
 }

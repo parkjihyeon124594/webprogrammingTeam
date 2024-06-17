@@ -17,19 +17,37 @@ public class ChannelService {
     @Autowired
     public ChannelService(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
-    } // 어차피 구독 클래스는 member와 channle의 service에 종속 되어 있으니, 그냥 거기서 만들면 되는 거 아닌가? 만들라고 하고 id만 반환하면 되지.
-    // createChannel을 createSubscription이 호출하면 됨.
-
-
-    public Channel createChannel(String title) {
-        Channel channel = new Channel();
-        channel.setTitle(title);
-        channelRepository.save(channel);
-        return channel;
     }
 
-    public List<ChannelTitleDTO> getAllChannelTitles() {
-        return channelRepository.findAllProjectedBy();
+    public List<ChannelTitleDTO> getAllPublicChannelTitles() {
+        return channelRepository.findAllProjectedByIsPublicTrue();
+    }
+
+    // getAllPrivateChannelTitles 는 user가 참여했는지를 확인해야하기 때문에, subscription에 있어야 됨.
+
+    public Channel createPublicChannel(String title) {
+        Channel channel = new Channel();
+        channel.setTitle(title);
+        channel.setPublic(true);
+
+        Channel newPublicChannel = channelRepository.save(channel);
+
+        return newPublicChannel;
+    }
+
+    public Channel createPrivateChannel(String title) {
+        Channel channel = new Channel();
+        channel.setTitle(title);
+        channel.setPublic(false);
+
+        Channel newPrivateChannel = channelRepository.save(channel);
+
+        return newPrivateChannel;
+    }
+
+    public Channel getChannelById(Long channelId) {
+        return channelRepository.findById(channelId)
+                .orElseThrow(() -> new EntityNotFoundException("Channel not found with id " + channelId));
     }
 
     public void deleteChannel(Long channelId) {
@@ -37,10 +55,5 @@ public class ChannelService {
             throw new IllegalArgumentException("Channel with ID " + channelId + " does not exist");
         }
         channelRepository.deleteById(channelId);
-    }
-
-    public Channel getChannelById(Long channelId) {
-        return channelRepository.findById(channelId)
-                .orElseThrow(() -> new EntityNotFoundException("Channel not found with id " + channelId));
     }
 }

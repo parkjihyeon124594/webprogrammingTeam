@@ -17,4 +17,9 @@ public class Channel extends BaseTimeEntity {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "is_public")
+    private boolean isPublic;
+
+    // 그냥 board를 가져와서 저장할까?
 }
