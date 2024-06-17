@@ -2,133 +2,137 @@ package webprogrammingTeam.matchingService.domain.message.config;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.socket.*;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
-import java.security.Principal;
+import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class SubscriptionInterceptorTest {
+class SubscriptionInterceptorTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionInterceptorTest.class);
 
     @Mock
     private MemberChannelSubscriptionService memberChannelSubscriptionService;
 
-    @InjectMocks
-    private SubscriptionInterceptor subscriptionInterceptor;
-
     @Mock
     private WebSocketSession session;
 
+    @Mock
     private WebSocketHandler webSocketHandler;
+
+    @InjectMocks
+    private SubscriptionInterceptor subscriptionInterceptor;
+
+    private WebSocketHandlerDecorator handlerDecorator;
+    private PrincipalDetails principalDetails;
+    private Member member;
 
     @BeforeEach
     void setUp() {
-        webSocketHandler = subscriptionInterceptor.decorate(new WebSocketHandler() {
-            @Override
-            public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-                // Do nothing
-            }
+        MockitoAnnotations.openMocks(this);
+        handlerDecorator = (WebSocketHandlerDecorator) subscriptionInterceptor.decorate(webSocketHandler);
 
-            @Override
-            public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-                // Do nothing
-            }
+        // Member와 PrincipalDetails 초기화
+        member = Member.builder()
+                .id(1L)
+                .memberName("Test Member")
+                .email("test@example.com")
+                .birth("1990-01-01")
+                .gender("Male")
+                .password("password")
+                .latitude(37.7749)
+                .longitude(-122.4194)
+                .build();
 
-            @Override
-            public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-                // Do nothing
-            }
-
-            @Override
-            public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-                // Do nothing
-            }
-
-            @Override
-            public boolean supportsPartialMessages() {
-                return false;
-            }
-        });
+        principalDetails = new PrincipalDetails(member);
     }
 
     @Test
-    @WithMockUser
-    void testSubscriptionToPrivateChannelDeniedForNonSubscriber() throws Exception {
+    void testHandleMessage_ValidSubscription() throws Exception {
         // Given
-        String destination = "/topic/chat/private/1";
+        Long memberId = 1L;
+        Long channelId = 2L;
+        String destination = "/topic/chat/private/2";
+
         StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.SUBSCRIBE);
         accessor.setDestination(destination);
-        accessor.setUser(mockPrincipal(1L));
-        Message<byte[]> message = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+        accessor.setUser(principalDetails);
 
-        when(memberChannelSubscriptionService.isSubscriber(1L, 1L)).thenReturn(false);
+        // 헤더를 포함한 내부 메시지 생성
+        accessor.setSessionId(session.getId());
+        accessor.setLeaveMutable(true);
+        Message<byte[]> internalMessage = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
-        // When / Then
-        assertThrows(AccessDeniedException.class, () -> {
-            webSocketHandler.handleMessage(session, new TextMessage((byte[]) message.getPayload()));
-        });
 
-        verify(memberChannelSubscriptionService, times(1)).isSubscriber(1L, 1L);
+        doReturn(true).when(memberChannelSubscriptionService).isSubscriber(channelId, memberId);
+
+        // When
+        handlerDecorator.handleMessage(session, new TextMessage(new String(internalMessage.getPayload(), StandardCharsets.UTF_8)));
+
+        // Then
+        verify(memberChannelSubscriptionService, times(1)).isSubscriber(channelId, memberId);
+        verify(session, never()).sendMessage(any());
+        verify(session, never()).close();
     }
 
     @Test
-    @WithMockUser
-    void testSubscriptionToPrivateChannelAllowedForSubscriber() throws Exception {
+    void testHandleMessage_InvalidSubscription() throws Exception {
         // Given
-        String destination = "/topic/chat/private/1";
+        Long memberId = 1L;
+        Long channelId = 2L;
+        String destination = "/topic/chat/private/2";
+
         StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.SUBSCRIBE);
         accessor.setDestination(destination);
-        accessor.setUser(mockPrincipal(1L));
-        Message<byte[]> message = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+        accessor.setUser(principalDetails);
 
-        when(memberChannelSubscriptionService.isSubscriber(1L, 1L)).thenReturn(true);
+        // 헤더를 포함한 내부 메시지 생성
+        Message<byte[]> internalMessage = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
-        // When / Then
-        assertDoesNotThrow(() -> {
-            webSocketHandler.handleMessage(session, new TextMessage((byte[]) message.getPayload()));
-        });
+        when(memberChannelSubscriptionService.isSubscriber(channelId, memberId)).thenReturn(false);
 
-        verify(memberChannelSubscriptionService, times(1)).isSubscriber(1L, 1L);
+        // When
+        handlerDecorator.handleMessage(session, new TextMessage(new String(internalMessage.getPayload(), StandardCharsets.UTF_8)));
+
+        // Then
+        verify(memberChannelSubscriptionService, times(1)).isSubscriber(channelId, memberId);
+        verify(session, times(1)).sendMessage(any(TextMessage.class));
+        verify(session, times(1)).close();
     }
 
-    private Principal mockPrincipal(Long memberId) {
-        Member member = mock(Member.class);
-        when(member.getId()).thenReturn(memberId);
+    @Test
+    void testHandleMessage_InvalidUser() throws Exception {
+        // Given
+        String destination = "/topic/chat/private/2";
 
-        PrincipalDetails principalDetails = mock(PrincipalDetails.class);
-        when(principalDetails.getMember()).thenReturn(member);
+        StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.SUBSCRIBE);
+        accessor.setDestination(destination);
 
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn(principalDetails);
+        // 헤더를 포함한 내부 메시지 생성
+        Message<byte[]> internalMessage = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
 
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
+        // When
+        handlerDecorator.handleMessage(session, new TextMessage(new String(internalMessage.getPayload(), StandardCharsets.UTF_8)));
 
-        return new Principal() {
-            @Override
-            public String getName() {
-                return memberId.toString();
-            }
-        };
+        // Then
+        verify(session, times(1)).sendMessage(any(TextMessage.class));
+        verify(session, times(1)).close();
     }
 }
-

@@ -1,10 +1,9 @@
 package webprogrammingTeam.matchingService.domain.message.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
@@ -14,8 +13,15 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class SubscriptionInterceptor implements WebSocketHandlerDecoratorFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionInterceptor.class);
+    private static final String PRIVATE_CHANNEL_PREFIX = "/topic/chat/private/";
 
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
 
@@ -29,16 +35,29 @@ public class SubscriptionInterceptor implements WebSocketHandlerDecoratorFactory
         return new WebSocketHandlerDecorator(handler) {
             @Override
             public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-                StompHeaderAccessor accessor = StompHeaderAccessor.wrap((Message<?>) message);
+                if (message instanceof org.springframework.web.socket.TextMessage) {
+                    org.springframework.web.socket.TextMessage textMessage = (org.springframework.web.socket.TextMessage) message;
+                    StompHeaderAccessor accessor = StompHeaderAccessor.wrap(
+                            MessageBuilder.withPayload(textMessage.getPayload()).build()
+                    );
 
-                if (isSubscribeCommandToPrivateChannel(accessor)) {
-                    PrincipalDetails principal = (PrincipalDetails) accessor.getUser();
-                    if (principal != null) {
-                        Long memberId = principal.getMember().getId();
-                        Long channelId = extractChannelIdFromDestination(accessor.getDestination());
 
-                        if (!memberChannelSubscriptionService.isSubscriber(channelId, memberId)) {
-                            throw new AccessDeniedException("You are not allowed to subscribe to this private channel.");
+                    if (isSubscribeCommandToPrivateChannel(accessor)) {
+                        Object user = accessor.getUser();
+                        if (user instanceof PrincipalDetails) {
+                            PrincipalDetails principal = (PrincipalDetails) user;
+                            Long memberId = principal.getMember().getId();
+                            Long channelId = extractChannelIdFromDestination(accessor.getDestination());
+
+                            logger.debug("Checking subscription for memberId: " + memberId + " and channelId: " + channelId);
+                            if (!memberChannelSubscriptionService.isSubscriber(channelId, memberId)) {
+                                sendErrorMessage(session, "You are not allowed to subscribe to this private channel.");
+                                return;
+                            }
+                        } else {
+                            logger.error("User is not an instance of PrincipalDetails.");
+                            sendErrorMessage(session, "Authentication error.");
+                            return;
                         }
                     }
                 }
@@ -49,14 +68,26 @@ public class SubscriptionInterceptor implements WebSocketHandlerDecoratorFactory
             private boolean isSubscribeCommandToPrivateChannel(StompHeaderAccessor accessor) {
                 return accessor.getCommand() == StompCommand.SUBSCRIBE &&
                         accessor.getDestination() != null &&
-                        accessor.getDestination().startsWith("/topic/chat/private/");
+                        accessor.getDestination().startsWith(PRIVATE_CHANNEL_PREFIX);
             }
 
             private Long extractChannelIdFromDestination(String destination) {
-                // 경로에서 채널 ID 추출
-                // 경로 형식이 /topic/chat/{channelType}/{channelId}라고 가정합니다.
                 String[] parts = destination.split("/");
-                return Long.parseLong(parts[parts.length - 1]);
+                try {
+                    return Long.parseLong(parts[parts.length - 1]);
+                } catch (NumberFormatException e) {
+                    logger.error("Invalid channel ID format in destination: " + destination);
+                    throw e;
+                }
+            }
+
+            private void sendErrorMessage(WebSocketSession session, String errorMessage) {
+                try {
+                    session.sendMessage(new org.springframework.web.socket.TextMessage(errorMessage));
+                    session.close();
+                } catch (IOException e) {
+                    logger.error("Error sending error message: " + errorMessage, e);
+                }
             }
         };
     }
