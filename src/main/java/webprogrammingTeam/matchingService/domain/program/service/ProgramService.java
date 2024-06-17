@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
+import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
@@ -37,6 +39,7 @@ public class ProgramService {
     private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
+    private final ChannelService channelService;
 
     public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
         List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
@@ -187,6 +190,8 @@ public class ProgramService {
 
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("member 이 없습니다"));
 
+        Channel newPublicChannel = channelService.createPublicChannel(programSaveRequest.title() + "public channel");
+
         Program program = Program.builder()
                 .member(member)// 글을 쓴 사람이다.
                 .title(programSaveRequest.title())
@@ -201,6 +206,7 @@ public class ProgramService {
                 .longitude(programSaveRequest.longitude())
                 .recruitment(0)
                 .programAddress(programSaveRequest.programAddress())
+                .publicChannel(newPublicChannel)
                 .build();
 
         imageService.uploadImages(program, imageList);
@@ -224,7 +230,7 @@ public class ProgramService {
                 String imageUrl = image.getUrl();
 
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program), ratingCnt(program.getId()))
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program), ratingCnt(program.getId()), program.getPublicChannel().getChannelId())
                 );
             }
             return responseList;
@@ -264,6 +270,7 @@ public class ProgramService {
                 .images(imageUrls)
                 .recruitment(program.getRecruitment())
                 .avgRating(calculateAvgRating(program))
+                .publicChannelId(program.getPublicChannel().getChannelId())
                 .build();
     }
     public double calculateAvgRating(Program program){
@@ -289,7 +296,7 @@ public class ProgramService {
                 Image image = imageRepository.findFirstImageByProgram(program.getId());
                 String imageUrl = image.getUrl();
                 responseList.add(
-                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program),ratingCnt(program.getId()))
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program),ratingCnt(program.getId()), program.getPublicChannel().getChannelId())
                 );
             }
             return responseList;

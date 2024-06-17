@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
+import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
@@ -76,8 +77,20 @@ public class Program extends BaseTimeEntity{
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Recruitment> recruitments = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "public_channel", nullable = false)
+    private Channel publicChannel;
+
+    /*@ManyToOne
+    @JoinColumn(name = "private_channel", nullable = true)
+    private Channel privateChannel;
+
+    @OneToMany
+    @JoinColumn(name = "inquiry_channel", nullable = true)
+    private List<Channel> inquiryChannels;*/
+
     @Builder
-    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude, int recruitment, String programAddress) {
+    public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude, int recruitment, String programAddress, Channel publicChannel) {
         this.member = member;
         this.title = title;
         this.content = content;
@@ -91,6 +104,7 @@ public class Program extends BaseTimeEntity{
         this.longitude=longitude;
         this.recruitment = recruitment;
         this.programAddress = programAddress;
+        this.publicChannel = publicChannel;
     }
 
     public void addImageList(Image image) {
