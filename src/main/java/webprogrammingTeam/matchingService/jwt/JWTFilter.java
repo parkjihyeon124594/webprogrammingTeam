@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.member.entity.Role;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
+    private final MemberRepository memberRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -123,11 +125,13 @@ public class JWTFilter extends OncePerRequestFilter {
         String role = jwtService.getRole(accessToken);
         log.info("jwt filer 의 이메일 {} ",email);
 
+/*
         Member member = Member.builder()
                 .email(email)
                 .role(Role.valueOf(String.valueOf(role)))
                 .build();
-
+*/
+        Member member=memberRepository.findByEmail(email).orElseThrow();
         // SecurityContextHolder에서 인증 정보 가져오기
         /*Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails currentUser = (PrincipalDetails) currentAuth.getPrincipal();

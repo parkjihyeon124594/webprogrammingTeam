@@ -50,7 +50,7 @@ public class ChannelController {
     // 채팅방 id로 채팅방 삭제 (단 실수를 방지하기 위해 연관된 메세지와 구독이 존재하면 삭제 거부 예외 구현해야함)
     @DeleteMapping("/{channelId}")
     @Operation(summary = "채널 삭제", description = "채널을 삭제하는 로직, 관련 메세지와 구독 삭제 필요")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteChat(@PathVariable Long channelId) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteChat(@PathVariable("channelId") Long channelId) {
         channelService.deleteChannel(channelId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
