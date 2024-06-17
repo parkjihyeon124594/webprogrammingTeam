@@ -85,7 +85,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/program/view/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/test")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/data/**")).permitAll()
-
+                                .requestMatchers(new AntPathRequestMatcher("/email/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
 
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
