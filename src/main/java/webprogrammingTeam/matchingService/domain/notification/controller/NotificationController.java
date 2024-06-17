@@ -28,9 +28,9 @@ public class NotificationController {
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                 @RequestHeader(value = "LastEventId", required = false, defaultValue = "") String lastEventId)
     {
+        log.info("알림 구독 하기 왔어용");
         return notificationService.subscribe(principalDetails.getEmail(), lastEventId);
     }
-
 
 }
 
