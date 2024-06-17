@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import webprogrammingTeam.matchingService.domain.notification.service.NotificationService;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.recruitment.dto.MemberProgramRecruitmentResponse;
 import webprogrammingTeam.matchingService.domain.recruitment.dto.ProgramRecruitmentResponse;
@@ -30,7 +31,7 @@ public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
-
+    private final NotificationService notificationService;
 
     //사용자가 프로그램에 지원하는 로직
     @Transactional
@@ -49,15 +50,6 @@ public class RecruitmentService {
         if(recruitmentRepository.findByProgramIdAndMemberId(program.getId(), member.getId()) != null){
             throw new AccessDeniedException("신청 하셨던 프로그램입니다.");
         }
-
-        /*
-        Long current_cnt = recruitmentRepository.countByProgramId(programId);
-        log.info("current_cnt {}", current_cnt);
-
-        if(current_cnt >= program.getMaximum() ){
-            throw new IllegalStateException("프로그램 정원이 초과되었습니다.");
-        }*/
-
         if(!program.getOpen().equals(Open.OPEN))
         {
             throw new IllegalStateException("프로그램 정원이 초과되었습니다.");
@@ -71,11 +63,15 @@ public class RecruitmentService {
         recruitmentRepository.save(recruitment);
         log.info("program.getMaximum(): {}",program.getMaximum());
         log.info("recruitmentRepository.countByProgramId(programId)),{}",recruitmentRepository.countByProgramId(programId));
-        program.updateRecruitment();
+        program.increaseRecruitment();
         if(program.getMaximum() == program.getRecruitment())
         {
             program.updateOpen(Open.CLOSED);
         }
+
+        String content = "프로그램 신청이 완료되었습니다.: " + program.getTitle();
+        String url = "http://localhost:8080/program/view/" + program.getId();
+        notificationService.send(member, content, url);
 
         return recruitment.getId();
     }
@@ -91,13 +87,22 @@ public class RecruitmentService {
         //지원자 목록에서 삭제하기
         recruitmentRepository.deleteById(recruitment.getId());
 
+
         //모집중 변경
         Program program = programRepository.findById(programId).orElseThrow();
+
+        program.decreaseRecruitment();
+
         log.info("program을 신청한 신청자 수 : {}",recruitmentRepository.countByProgramId(programId));
         if(recruitmentRepository.countByProgramId(programId)< program.getMaximum()){
             program.updateOpen(Open.OPEN);
         }
+
         programRepository.save(program);
+        String content = "프로그램 신청이 취소되었습니다.: " + program.getTitle();
+        String url = "http://localhost:8080/program/view/" + program.getId();
+        notificationService.send(member, content, url);
+
         log.info("모집중 변경 open {}",program.getOpen());
     }
 

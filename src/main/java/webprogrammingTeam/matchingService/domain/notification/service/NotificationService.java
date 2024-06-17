@@ -32,8 +32,9 @@ public class NotificationService {
 
         String emitterId = makeId(memberId);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(TIMEOUT));
-        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
+
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
 
         String eventId = makeId(memberId);
         sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + memberId + "]");
@@ -63,6 +64,7 @@ public class NotificationService {
     //메세지를 보낼 때, 불려지는 로직
     public void send(Member member, String content, String url) {
 
+        log.info("send 할건데 ! {}",content);
         //notification 객체 저장
         Notification notification = Notification.builder()
                 .member(member)
