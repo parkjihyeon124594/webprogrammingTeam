@@ -2,6 +2,7 @@ package webprogrammingTeam.matchingService.domain.channel.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import webprogrammingTeam.matchingService.domain.channel.dto.ChannelTitleDTO;
 import webprogrammingTeam.matchingService.domain.channel.dto.CreateChannelRequest;
@@ -18,7 +19,12 @@ import java.util.List;
 @Tag(name = "채팅 채널", description = "채팅 채널 관련 Api")
 public class ChannelController {
 
-    private ChannelService channelService;
+    private final ChannelService channelService;
+
+    @Autowired
+    public ChannelController(ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
     @GetMapping("/titles")
     @Operation(summary = "모든 공개 채널 조회", description = "모든 공개 채널을 조회하는 로직")
