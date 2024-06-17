@@ -40,8 +40,7 @@ public class MessageController {
     @Operation(summary = "비밀 채널의 모든 메세지 조회", description = "비밀 채널의 모든 메세지를 조회하는 로직, 채널 입장시 사용")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPrivateChannelId(@PathVariable Long channelId,
                                                                                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long memberId = principalDetails.getMember().getId();
-        List<MessageDTO> allMessages = messageService.findAllMessageByPrivateChannelId(channelId, memberId);
+        List<MessageDTO> allMessages = messageService.findAllMessageByPrivateChannelId(channelId, principalDetails);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allMessages));
     }
 

@@ -1,5 +1,6 @@
 package webprogrammingTeam.matchingService.domain.channel.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.channel.dto.ChannelTitleDTO;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.repository.ChannelRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class ChannelService {
 
     private final ChannelRepository channelRepository;

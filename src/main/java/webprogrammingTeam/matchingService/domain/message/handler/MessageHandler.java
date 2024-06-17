@@ -44,7 +44,7 @@ public class MessageHandler {
         Long senderId = principalDetails.getMember().getId();
 
         if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
-            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.getContent());
+            MessageDTO savedMessageDTO = messageService.addMessage(channelId, principalDetails, publicMessagePayLoad.getContent());
             sendPublicMessage(channelId, savedMessageDTO);
         }
         else {
@@ -59,9 +59,8 @@ public class MessageHandler {
     public void handlePrivateMessage(@DestinationVariable Long channelId,
                                      @Payload PrivateMessagePayLoad privateMessagePayLoad,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long senderId = principalDetails.getMember().getId();
 
-        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, privateMessagePayLoad.getContent());
+        MessageDTO savedMessageDTO = messageService.addMessage(channelId, principalDetails, privateMessagePayLoad.getContent());
         sendPrivateMessage(channelId, savedMessageDTO);
     }
 

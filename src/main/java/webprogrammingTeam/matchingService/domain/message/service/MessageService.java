@@ -2,7 +2,9 @@ package webprogrammingTeam.matchingService.domain.message.service;
 
 
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -43,8 +46,8 @@ public class MessageService {
         return messageDTOList;
     }
 
-    public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, Long memberId) {
-        if (memberChannelSubscriptionService.isSubscriber(channelId, memberId)) {
+    public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, PrincipalDetails principalDetails) {
+        if (memberChannelSubscriptionService.isSubscriber(channelId, principalDetails.getMember().getId())) {
             List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
 
             List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);
@@ -61,9 +64,9 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public MessageDTO addMessage(Long channelId, Long senderId, String content) {
+    public MessageDTO addMessage(Long channelId, PrincipalDetails principalDetails, String content) {
         Channel channel = channelService.getChannelById(channelId);
-        Member member = memberService.getMemberById(senderId);
+        Member member = memberService.getMemberById(principalDetails.getMember().getId());
 
         Message message = new Message();
         message.setChannel(channel);
@@ -82,7 +85,7 @@ public class MessageService {
 
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
-        messageDTO.setSenderName(message.getSender().getMemberName());
+        messageDTO.setSenderId(message.getSender().getId());
         messageDTO.setContent(message.getContent());
 
         return messageDTO;
