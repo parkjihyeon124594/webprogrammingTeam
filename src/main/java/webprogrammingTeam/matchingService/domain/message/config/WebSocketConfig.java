@@ -12,11 +12,11 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final SubscriptionInterceptor subscriptionInterceptor;
+    //private final SubscriptionInterceptor subscriptionInterceptor;
 
-    public WebSocketConfig(SubscriptionInterceptor subscriptionInterceptor) {
+    /*public WebSocketConfig(SubscriptionInterceptor subscriptionInterceptor) {
         this.subscriptionInterceptor = subscriptionInterceptor;
-    }
+    }*/
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -27,12 +27,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*");
-        //.withSockJS();
+                .setAllowedOrigins("*")
+                .withSockJS();
     }
 
-    @Override
+   /* @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
         registration.addDecoratorFactory(subscriptionInterceptor);
-    }
+    }*/
 }
