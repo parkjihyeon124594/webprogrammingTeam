@@ -2,9 +2,12 @@ package webprogrammingTeam.matchingService.domain.message.handler;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
 import webprogrammingTeam.matchingService.domain.message.dto.PrivateMessagePayLoad;
 import webprogrammingTeam.matchingService.domain.message.dto.PublicMessagePayLoad;
@@ -19,32 +22,38 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Tag(name = "메세지 핸들러", description = "stomp(websocket)을 통해 받은 메세지를 처리하는 핸들러")
+@RequiredArgsConstructor
+@Slf4j
 public class MessageHandler {
     private final MessageService messageService;
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
     private final SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    public MessageHandler(MessageService messageService,
-                          MemberChannelSubscriptionService memberChannelSubscriptionService,
-                          SimpMessagingTemplate messagingTemplate) {
-        this.messageService = messageService;
-        this.memberChannelSubscriptionService = memberChannelSubscriptionService;
-        this.messagingTemplate = messagingTemplate;
-    }
+    private final MemberRepository memberRepository;
+//    @Autowired
+//    public MessageHandler(MessageService messageService,
+//                          MemberChannelSubscriptionService memberChannelSubscriptionService,
+//                          SimpMessagingTemplate messagingTemplate) {
+//        this.messageService = messageService;
+//        this.memberChannelSubscriptionService = memberChannelSubscriptionService;
+//        this.messagingTemplate = messagingTemplate;
+//    }
     // public과 private를 나누면 된다.
 
     // 공개 채널에 보내는 메시지 처리.
     @MessageMapping("/chat/public/{channelId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "공개 채널의 메세지 처리", description = "공개 채널의 메세지를 처리하는 로직")
-    public void handlePublicMessage(@DestinationVariable Long channelId,
+    public void handlePublicMessage(@DestinationVariable("channelId") Long channelId,
                                     @Payload PublicMessagePayLoad publicMessagePayLoad,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long senderId = principalDetails.getMember().getId();
+        log.info("실행은 되고 있음" );
+        String senderEmail = principalDetails.getEmail();
 
+        Long senderId = memberRepository.findByEmail(senderEmail).get().getId();
+
+        log.info("들어는 왔는데, {}", senderEmail);
         if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
-            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.getContent());
+            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.content());
             sendPublicMessage(channelId, savedMessageDTO);
         }
         else {
@@ -56,7 +65,7 @@ public class MessageHandler {
     @MessageMapping("/chat/private/{channelId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀 채널의 메세지 처리", description = "비밀 채널의 메세지를 처리하는 로직")
-    public void handlePrivateMessage(@DestinationVariable Long channelId,
+    public void handlePrivateMessage(@DestinationVariable("channelId") Long channelId,
                                      @Payload PrivateMessagePayLoad privateMessagePayLoad,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long senderId = principalDetails.getMember().getId();

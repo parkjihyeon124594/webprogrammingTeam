@@ -30,15 +30,14 @@ public class MessageController {
     // 같은 채팅채널 id를 가진 메세지들을 반환. isPublic이 ture면 그냥 주고, isPublic이 false면 오류.
     @GetMapping("/public_channel/{channelId}")
     @Operation(summary = "공개 채널의 모든 메세지 조회", description = "공개 채널의 모든 메세지를 조회하는 로직, 채널 입장시 사용")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPublicChannelId(@PathVariable Long channelId) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPublicChannelId(@PathVariable("channelId") Long channelId) {
         List<MessageDTO> allMessages = messageService.findAllMessageByPublicChannelId(channelId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, allMessages));
     }
-
     @GetMapping("/private_channel/{channelId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀 채널의 모든 메세지 조회", description = "비밀 채널의 모든 메세지를 조회하는 로직, 채널 입장시 사용")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPrivateChannelId(@PathVariable Long channelId,
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<MessageDTO>>> getAllMessagesByPrivateChannelId(@PathVariable("channelId") Long channelId,
                                                                                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long memberId = principalDetails.getMember().getId();
         List<MessageDTO> allMessages = messageService.findAllMessageByPrivateChannelId(channelId, memberId);
@@ -52,7 +51,7 @@ public class MessageController {
     // sender 확인 필요
     @DeleteMapping("/{messageId}")
     @Operation(summary = "메세지 하나 삭제", description = "하나의 메세지를 삭제하는 로직")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteMessage(@PathVariable Long messageId) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteMessage(@PathVariable("messageId") Long messageId) {
         messageService.delete(messageId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
@@ -60,7 +59,7 @@ public class MessageController {
     // 같은 채팅채널 id를 가진 메세지들을 삭제
     @DeleteMapping("/channel/{channelId}")
     @Operation(summary = "채널의 모든 메세지 삭제", description = "하나의 채널에 있는 모든 메세지를 삭제하는 로직")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteAllMessagesByChannelId(@PathVariable Long channelId) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteAllMessagesByChannelId(@PathVariable("channelId") Long channelId) {
         messageService.deleteAllMessageByChannelId(channelId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
