@@ -43,7 +43,7 @@ public class ProgramController {
     private final BucketService bucketService;
 
 
-    @GetMapping("/data/city-category-age")
+    @PostMapping("/data/city-category-age")
     @Operation(summary = "도시와 카테고리를 파라미터로 받아 연령별 참여율 데이터 조회",description = "연령별 참여율 데이터 조회")
     public ResponseEntity<ApiUtil.ApiSuccessResult<CategoryAgeGroupListResponse>> getProgramAgeDataByCityAndCategory(
             // @RequestPart(value="ProgramSaveRequest") ProgramSaveRequest programSaveRequest,
