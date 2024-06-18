@@ -27,6 +27,7 @@ import webprogrammingTeam.matchingService.auth.handler.Itself.LoginFailureHandle
 import webprogrammingTeam.matchingService.auth.handler.Itself.LoginSuccessHandler;
 
 import webprogrammingTeam.matchingService.auth.service.LoginService;
+import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
 import webprogrammingTeam.matchingService.domain.refresh.repository.RefreshtokenRepository;
 import webprogrammingTeam.matchingService.domain.refresh.service.RefreshService;
 import webprogrammingTeam.matchingService.jwt.JWTFilter;
@@ -48,6 +49,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
     private final RefreshtokenRepository refreshtokenRepository;
+    private final MemberRepository memberRepository;
 /*
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -87,7 +89,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/program/data/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/email/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
-
+                                .requestMatchers(new AntPathRequestMatcher("/ws")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
 
 
@@ -117,7 +119,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080","http://localhost:3000/googleLogin"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080","http://localhost:3000/googleLogin","ws://localhost:8080"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));
@@ -161,6 +163,6 @@ public class SecurityConfig {
 
     @Bean
     public JWTFilter jwtFilter(){
-        return new JWTFilter(jwtService);
+        return new JWTFilter(jwtService,memberRepository);
     }
 }

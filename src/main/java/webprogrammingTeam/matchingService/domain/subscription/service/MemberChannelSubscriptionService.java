@@ -109,4 +109,16 @@ public class MemberChannelSubscriptionService {
                 channelService.getChannelById(channelId),
                 memberService.getMemberById(senderId));
     }
+
+    public Long createSubscription(Long memberId, Long channelId) {
+        // 임시
+        Member member = memberService.getMemberById(memberId);
+        Channel channel = channelService.getChannelById(channelId);
+        MemberChannelSubscription subscription = new MemberChannelSubscription();
+        subscription.setMember(member);
+        subscription.setChannel(channel);
+
+        MemberChannelSubscription newSubscription =  memberChannelSubscriptionRepository.save(subscription);
+        return newSubscription.getSubscriptionId();
+    }
 }

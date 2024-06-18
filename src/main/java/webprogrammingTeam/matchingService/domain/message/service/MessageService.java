@@ -1,6 +1,7 @@
 package webprogrammingTeam.matchingService.domain.message.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -64,9 +66,9 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public MessageDTO addMessage(Long channelId, PrincipalDetails principalDetails, String content) {
+    public MessageDTO addMessage(Long channelId, Long senderId, String content) {
         Channel channel = channelService.getChannelById(channelId);
-        Member member = memberService.getMemberById(principalDetails.getMember().getId());
+        Member member = memberService.getMemberById(senderId);
 
         Message message = new Message();
         message.setChannel(channel);
@@ -77,6 +79,8 @@ public class MessageService {
 
         MessageDTO messageDTO = convertMessageToMessageDTO(newMessage);
 
+        Message savedMessage = messageRepository.findById(newMessage.getMessageId()).orElseThrow();
+        log.info("저장된 메세지: " + savedMessage.getContent());
         return messageDTO;
     }
 
@@ -85,7 +89,7 @@ public class MessageService {
 
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
-        messageDTO.setSenderEmail(message.getSender().getEmail());
+        messageDTO.setSenderId(message.getSender().getId());
         messageDTO.setContent(message.getContent());
 
         return messageDTO;
