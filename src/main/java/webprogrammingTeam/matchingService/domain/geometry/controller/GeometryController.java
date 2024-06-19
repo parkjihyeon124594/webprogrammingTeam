@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.geometry.dto.request.GeometryRequest;
 import webprogrammingTeam.matchingService.domain.geometry.dto.response.GeometryResponse;
 import webprogrammingTeam.matchingService.domain.geometry.service.GeometryService;
 import webprogrammingTeam.matchingService.domain.member.dto.request.MemberCreateRequest;
@@ -33,13 +34,14 @@ public class GeometryController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<GeometryResponse>>> GemetryProgram(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody GeometryRequest geometryRequest
             )
     {
         Member member = memberRepository.findByEmail(principalDetails.getEmail())
                 .orElseThrow(()->new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        List<Program> programs = geometryService.findProgramsNearMember(member.getLatitude(),member.getLongitude());
+        List<Program> programs = geometryService.findProgramsNearMember(member.getLatitude(),member.getLongitude(), geometryRequest.radius());
 
         List<GeometryResponse> geometryResponses = geometryService.programToGeometryResponse(programs);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,geometryResponses));

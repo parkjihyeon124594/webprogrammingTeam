@@ -46,12 +46,10 @@ public class MessageHandler {
     public void handlePublicMessage(@DestinationVariable("channelId") Long channelId,
                                     @Payload PublicMessagePayLoad publicMessagePayLoad,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        log.info("실행은 되고 있음" );
         String senderEmail = principalDetails.getEmail();
 
         Long senderId = memberRepository.findByEmail(senderEmail).get().getId();
 
-        log.info("들어는 왔는데, {}", senderEmail);
         if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
             MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.content());
             sendPublicMessage(channelId, savedMessageDTO);

@@ -70,6 +70,8 @@ public class BatchConfig {
             List<Program> programList = programRepository.findProgramsToClose(now);
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
+                Long programId = program.getId();
+
             }
             programRepository.saveAll(programList);
             return RepeatStatus.FINISHED; //작업이 완료되었음
