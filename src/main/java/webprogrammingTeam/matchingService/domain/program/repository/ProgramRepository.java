@@ -3,13 +3,10 @@ package webprogrammingTeam.matchingService.domain.program.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.program.entity.Category;
-import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -140,7 +137,7 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
     List<Program> findProgramsToClose(@Param("now") String now);
 
 
-    Program findProgramByPrivateChannel_ChannelId(Long channelId);
+    Program findByPrivateChannel_ChannelId(Long channelId);
 
 }
 
