@@ -66,10 +66,10 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public MessageDTO addMessage(Long channelId, String senderEmail, String content) {
+    public MessageDTO addMessage(Long channelId, Long senderId, String content) {
         channelService.getAllPublicChannelTitles();
         Channel channel = channelService.getChannelById(channelId);
-        Member member = memberService.getMemberByEmail(senderEmail);
+        Member member = memberService.getMemberById(senderId);
 
         log.info("{}", channel.getChannelId());
         log.info("{}", member.getEmail());

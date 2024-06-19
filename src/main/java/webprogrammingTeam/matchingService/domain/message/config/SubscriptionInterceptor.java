@@ -1,4 +1,3 @@
-/*
 package webprogrammingTeam.matchingService.domain.message.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,4 +92,3 @@ public class SubscriptionInterceptor implements WebSocketHandlerDecoratorFactory
         };
     }
 }
-*/

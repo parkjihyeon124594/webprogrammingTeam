@@ -1,5 +1,7 @@
 package webprogrammingTeam.matchingService.domain.mail.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,12 +21,14 @@ import webprogrammingTeam.matchingService.global.util.RedisUtil;
 @RequiredArgsConstructor
 @RequestMapping("/email")
 @Slf4j
+@Tag(name = "이메일 인증", description = "이메일 인증 관련 Api")
 public class EmailController {
 
     private final EmailService emailService;
     private final RedisUtil redisUtil;
 
     @PostMapping("/mailsend")
+    @Operation(summary = "이메일 인증 요청",description = "이메일 인증 요청 보내는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<String>> mailSend(
             @RequestBody EmailRequestDto emailRequestDto){
       log.info("이메일 인증 요청 : {}", emailRequestDto.email());
@@ -36,6 +40,7 @@ public class EmailController {
     }
 
     @PostMapping("/mailAuthCheck")
+    @Operation(summary = "이메일 유효성 검사",description = "이메일 유효성 검사하는 로직")
     public ResponseEntity<ApiUtil.ApiSuccessResult<EmailCheckResponseDto>> mailAuthCheck(
             @RequestBody EmailCheckRequestDto emailCheckRequestDto
             ){

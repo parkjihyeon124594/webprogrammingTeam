@@ -31,12 +31,11 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-        log.info("custom logout filer test refersh token 1 {}",request.getHeader("Refreshtoken"));
+
 
         // logout path and method verify
         String requestUri = request.getRequestURI();
         if(!requestUri.matches("^\\/logout$")){
-
             filterChain.doFilter(request,response);
             return;
         }
@@ -90,6 +89,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //로그아웃 진행
         refreshtokenRepository.deleteByRefresh(refresh);
+        log.info("custom logout filer test refersh token 3 {}",request.getHeader("Refreshtoken"));
 
         response.setStatus(HttpServletResponse.SC_OK);
 
