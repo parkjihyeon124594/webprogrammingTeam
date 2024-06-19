@@ -31,12 +31,11 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-        log.info("custom logout filer test refersh token 1 {}",request.getHeader("Refreshtoken"));
+
 
         // logout path and method verify
         String requestUri = request.getRequestURI();
         if(!requestUri.matches("^\\/logout$")){
-            log.info("custom logout filer test refersh token 2 {}",request.getHeader("Refreshtoken"));
             filterChain.doFilter(request,response);
             return;
         }

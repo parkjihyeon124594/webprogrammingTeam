@@ -31,48 +31,56 @@ public class StompHandler implements ChannelInterceptor {
     private final MemberRepository memberRepository;
     private final ChannelService channelService;
 
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
+        log.info("stompHandler message {}",message);
+        String email = null;
         // CONNECT 명령어에 대해서만 로그를 출력
-        if (accessor.getCommand() == StompCommand.CONNECT) {
-            log.info("Handling CONNECT command");
+        if (accessor.getCommand() == StompCommand.CONNECT || accessor.getCommand() == StompCommand.SUBSCRIBE || accessor.getCommand() == StompCommand.SEND ) {
 
-            String email = null;
-            String accesstoken = accessor.getFirstNativeHeader("Accesstoken2");
+
+            String accesstoken = accessor.getFirstNativeHeader("Accesstoken");
             log.info("Accesstoken received: {}", accesstoken);
 
             if (accesstoken != null && !accesstoken.trim().isEmpty() && accesstoken.startsWith("Bearer ")) {
                 String bearerToken = accesstoken.trim().substring(7);
-                log.info("Extracted bearerToken: {}", bearerToken);
 
                 if (jwtService.validateToken(bearerToken)) {
                     email = jwtService.getEmail(bearerToken);
-                    log.info("Extracted email: {}", email);
 
-                    accessor.addNativeHeader("senderEmail", email);
+//                    accessor.addNativeHeader("senderEmail", email);
 
-                    Member member = memberRepository.findByEmail(email)
-                            .orElseThrow(() -> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
+//                    Member member = memberRepository.findByEmail(email)
+//                            .orElseThrow(() -> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
+//
+//                    PrincipalDetails principalDetails = new PrincipalDetails(member);
+//                    Authentication authToken = new UsernamePasswordAuthenticationToken(
+//                            principalDetails, null, principalDetails.getAuthorities());
+//
+//                    SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    PrincipalDetails principalDetails = new PrincipalDetails(member);
-                    Authentication authToken = new UsernamePasswordAuthenticationToken(
-                            principalDetails, null, principalDetails.getAuthorities());
-
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                    CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
-                            .title("안녕하세요 컴퓨터 배워가세요\n").build();
-                    Channel publicChannel = channelService.createPublicChannel(createChannelRequest.getTitle());
-                } else {
+                   } else {
                     log.info("Invalid access token.");
                 }
             } else {
                 log.info("Invalid token format.");
             }
         }
-        log.info("Completed processing message: {}", message);
+
+/*
+        Member member = memberRepository.findByEmail(email).orElseThrow(()->new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+
+        PrincipalDetails principalDetails = new PrincipalDetails(member);
+
+        Authentication authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+
+        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+*/
+
         return message;
     }
 }
