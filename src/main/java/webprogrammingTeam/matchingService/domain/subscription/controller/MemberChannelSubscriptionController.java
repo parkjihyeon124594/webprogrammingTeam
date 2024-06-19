@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/member-channel-subscription")
-@Tag(name = "구독(유저-채널 관계)", description = "유저와 채널의 관계를 저장하고 처리하는 Api. 공개 채팅은 개설 후에, 비밀 채팅은 개설 전에 추가된다.")
+@Tag(name = "구독(유저-채널 관계)", description = "유저와 채널의 관계를 저장하고 처리하는 Api. 공개 채팅은 저장하지 않고 참여자 채팅만 관계 저장함.")
 @Slf4j
 public class MemberChannelSubscriptionController {
 
@@ -32,7 +32,7 @@ public class MemberChannelSubscriptionController {
 
     @GetMapping("/member")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "한 유저가 참여한 모든 채널 조회", description = "유저의 토큰으로 참여한 채널을 조회하는 기능")
+    @Operation(summary = "한 유저의 참여 채팅방 조회", description = "유저의 토큰으로 참여한 채널을 조회하는 기능")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<Long>>> getChannelIdsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberId = principalDetails.getMember().getId();
@@ -43,7 +43,7 @@ public class MemberChannelSubscriptionController {
     }
 
     @GetMapping("/channel/{channelId}")
-    @Operation(summary = "한 채널에 참여한 모든 유저 이름 조회", description = "채널의 id로 참여한 유저의 이름을 조회하는 기능")
+    @Operation(summary = "한 참여자 채팅에 참여한 모든 유저 이름 조회", description = "채널의 id로 참여한 유저의 이름을 조회하는 기능")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<String>>> getMemberIdsByChannelId(@PathVariable Long channelId) {
         List<String> memberNames = memberChannelSubscriptionService.findMemberNamesByChannelId(channelId);
 

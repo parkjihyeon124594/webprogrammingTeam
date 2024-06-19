@@ -19,6 +19,7 @@ import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.recruitment.repository.RecruitmentRepository;
+import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -38,6 +39,8 @@ public class BatchConfig {
     private JobRepository jobRepository;
 
     private final ProgramRepository programRepository;
+
+    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
     @Autowired
     private PlatformTransactionManager transactionManager;
 
@@ -74,7 +77,7 @@ public class BatchConfig {
             List<Program> programList = programRepository.findProgramsToClose(now);
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
-                Long programId = program.getId();
+                memberChannelSubscriptionService.createPrivateChannelAndSubscriptions(program);
             }
             programRepository.saveAll(programList);
             return RepeatStatus.FINISHED; //작업이 완료되었음
