@@ -41,24 +41,27 @@ public class MessageHandler {
 
     // 공개 채널에 보내는 메시지 처리.
     @MessageMapping("/chat/public/{channelId}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @Operation(summary = "공개 채널의 메세지 처리", description = "공개 채널의 메세지를 처리하는 로직")
     public void handlePublicMessage(@DestinationVariable("channelId") Long channelId,
-                                    @Payload PublicMessagePayLoad publicMessagePayLoad,
-                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                    @Payload PublicMessagePayLoad publicMessagePayLoad
+                                    ) {
         log.info("실행은 되고 있음" );
-        String senderEmail = principalDetails.getEmail();
+        //String senderEmail = principalDetails.getEmail();
 
-        Long senderId = memberRepository.findByEmail(senderEmail).get().getId();
+       // Long senderId = memberRepository.findByEmail(senderEmail).get().getId();
 
-        log.info("들어는 왔는데, {}", senderEmail);
+        Long senderId = 1L;
+        //log.info("들어는 왔는데, {}", senderEmail);
         if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
+            log.info("1ㅋㅋ, {}",publicMessagePayLoad.content());
             MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.content());
             sendPublicMessage(channelId, savedMessageDTO);
         }
         else {
             sendErrorMessage(senderId);
         }
+        log.info("2ㅋㅋ, {}",publicMessagePayLoad.content());
     }
 
     // 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.

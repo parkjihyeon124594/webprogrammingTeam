@@ -82,7 +82,7 @@ public class MessageService {
 
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
-        messageDTO.setSenderName(message.getSender().getMemberName());
+        messageDTO.setSenderEmail(message.getSender().getEmail());
         messageDTO.setContent(message.getContent());
 
         return messageDTO;
