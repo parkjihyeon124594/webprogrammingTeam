@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
@@ -77,10 +78,13 @@ public class BatchConfig {
             List<Program> programList = programRepository.findProgramsToClose(now);
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
-                memberChannelSubscriptionService.createPrivateChannelAndSubscriptions(program);
+                Channel newPrivateChannel = memberChannelSubscriptionService.createPrivateChannelAndSubscriptions(program);
+                program.updatePrivateChannel(newPrivateChannel);
             }
             programRepository.saveAll(programList);
             return RepeatStatus.FINISHED; //작업이 완료되었음
         };
     }
+
+
 }
