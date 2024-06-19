@@ -35,12 +35,12 @@ public class MemberChannelSubscriptionController {
     @GetMapping("/member")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 유저의 참여 채팅방 조회", description = "유저의 토큰으로 참여한 채널을 조회하는 기능")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<PrivateChannelsResponse>>> getChannelIdsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<PrivateChannelsResponse>>> getProgramChannelsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberId = principalDetails.getMember().getId();
-        log.info("memberId {} ", memberId);
-        List<PrivateChannelsResponse> channels = memberChannelSubscriptionService.findChatIdsByMemberId(principalDetails);
 
+        log.info("memberId {} ", memberId);
+        List<PrivateChannelsResponse> channels = memberChannelSubscriptionService.findProgramChannelsByMemberId(principalDetails);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, channels));
     }
 

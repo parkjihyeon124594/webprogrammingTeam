@@ -140,7 +140,7 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
     List<Program> findProgramsToClose(@Param("now") String now);
 
 
-    Program findProgramByPrivateChannel_ChannelId(Long channelId);
-
+   // Program findProgramByPrivateChannel_ChannelId(Long channelId);
+   Program findByPrivateChannel_ChannelId(Long channelId);
 }
 

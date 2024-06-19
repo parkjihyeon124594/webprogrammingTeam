@@ -60,7 +60,7 @@ public class MemberChannelSubscriptionService {
         return subscriptionDTO;
     }
 
-    public List<PrivateChannelsResponse> findChatIdsByMemberId(PrincipalDetails principalDetails) {
+    public List<PrivateChannelsResponse> findProgramChannelsByMemberId(PrincipalDetails principalDetails) {
         List<Long> channelIds= memberChannelSubscriptionRepository.findByMember_Id(principalDetails.getMember().getId())
                 .stream()
                 .map(subscription -> subscription.getChannel().getChannelId())
@@ -69,12 +69,12 @@ public class MemberChannelSubscriptionService {
         List<PrivateChannelsResponse> programList = new ArrayList<>();
         for(Long channelId : channelIds){
             log.info("나온다1 ; {}", channelId);
-            Program program = programRepository.findProgramByPrivateChannel_ChannelId(channelId);
+            Program program = programRepository.findByPrivateChannel_ChannelId(channelId);
             Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
             String imageUrl = image.getUrl();
             log.info("나온다2 ; {}", program.getId());
             programList.add(
-                    new PrivateChannelsResponse(channelId, program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate(), imageUrl)
+                    new PrivateChannelsResponse(channelId, program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate(), imageUrl, program.getProgramAddress())
             );
         }
 
