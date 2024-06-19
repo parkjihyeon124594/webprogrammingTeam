@@ -34,8 +34,8 @@ public class MessageHandler {
     public void handleMessage(@DestinationVariable Long channelId,
                               @Payload PublicMessagePayLoad publicMessagePayload) {
         try {
-            Long senderId = publicMessagePayload.senderId();
-            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayload.content());
+            String senderEmail = publicMessagePayload.senderEmail();
+            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderEmail, publicMessagePayload.content());
 
             sendMessage(channelId, savedMessageDTO);
         } catch (Exception e) {

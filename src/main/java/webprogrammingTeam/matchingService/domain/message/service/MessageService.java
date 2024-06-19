@@ -66,9 +66,12 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public MessageDTO addMessage(Long channelId, Long senderId, String content) {
+    public MessageDTO addMessage(Long channelId, String senderEmail, String content) {
         Channel channel = channelService.getChannelById(channelId);
-        Member member = memberService.getMemberById(senderId);
+        Member member = memberService.getMemberByEmail(senderEmail);
+
+        log.info("{}", channel.getChannelId());
+        log.info("{}", member.getEmail());
 
         Message message = new Message();
         message.setChannel(channel);
@@ -89,7 +92,7 @@ public class MessageService {
 
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
-        messageDTO.setSenderId(message.getSender().getId());
+        messageDTO.setSenderEmail(message.getSender().getEmail());
         messageDTO.setContent(message.getContent());
 
         return messageDTO;
