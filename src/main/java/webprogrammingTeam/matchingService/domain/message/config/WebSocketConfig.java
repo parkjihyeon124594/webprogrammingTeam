@@ -16,9 +16,9 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 @RequiredArgsConstructor
 @Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
     private final StompHandler stompHandler;
     private final SubscriptionInterceptor subscriptionInterceptor;
-
 
 
     @Override
@@ -38,6 +38,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
         registration.addDecoratorFactory(subscriptionInterceptor);
+
     }
 
     @Override

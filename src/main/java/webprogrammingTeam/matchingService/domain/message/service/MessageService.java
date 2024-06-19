@@ -1,8 +1,11 @@
 package webprogrammingTeam.matchingService.domain.message.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.message.dto.MessageDTO;
@@ -18,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@Slf4j
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -43,8 +48,8 @@ public class MessageService {
         return messageDTOList;
     }
 
-    public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, Long memberId) {
-        if (memberChannelSubscriptionService.isSubscriber(channelId, memberId)) {
+    public List<MessageDTO> findAllMessageByPrivateChannelId(Long channelId, PrincipalDetails principalDetails) {
+        if (memberChannelSubscriptionService.isSubscriber(channelId, principalDetails.getMember().getId())) {
             List<Message> allMessages = messageRepository.getAllMessagesByChannel_ChannelId(channelId);
 
             List<MessageDTO> messageDTOList =  convertMessagesToMessagesDTO(allMessages);
@@ -62,8 +67,12 @@ public class MessageService {
     }
 
     public MessageDTO addMessage(Long channelId, Long senderId, String content) {
+        channelService.getAllPublicChannelTitles();
         Channel channel = channelService.getChannelById(channelId);
         Member member = memberService.getMemberById(senderId);
+
+        log.info("{}", channel.getChannelId());
+        log.info("{}", member.getEmail());
 
         Message message = new Message();
         message.setChannel(channel);
@@ -74,6 +83,8 @@ public class MessageService {
 
         MessageDTO messageDTO = convertMessageToMessageDTO(newMessage);
 
+        Message savedMessage = messageRepository.findById(newMessage.getMessageId()).orElseThrow();
+        log.info("저장된 메세지: " + savedMessage.getContent());
         return messageDTO;
     }
 
@@ -89,6 +100,7 @@ public class MessageService {
     }
     public void deleteAllMessageByChannelId(Long channelId) {
         messageRepository.deleteByChannel_ChannelId(channelId);
+        log.info("delete message");
     }
 
     public void delete(Long messageId) {

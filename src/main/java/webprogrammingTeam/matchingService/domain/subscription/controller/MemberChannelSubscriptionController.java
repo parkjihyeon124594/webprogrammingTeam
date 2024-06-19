@@ -30,21 +30,14 @@ public class MemberChannelSubscriptionController {
         this.memberChannelSubscriptionService = memberChannelSubscriptionService;
     }
 
-    // 모든 구독 반환 테스트용
-//    @GetMapping
-//    @Operation(summary = "", description = "")
-//    public ResponseEntity<List<MemberChannelSubscriptionDTO>> getAllSubscription() {
-//        List<MemberChannelSubscriptionDTO> allSubscription =  memberChannelSubscriptionService.getAllSubscription();
-//        return ResponseEntity.ok().body(allSubscription);
-//    }
-
     @GetMapping("/member")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 유저가 참여한 모든 채널 조회", description = "유저의 토큰으로 참여한 채널을 조회하는 기능")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<Long>>> getChannelIdsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
         Long memberId = principalDetails.getMember().getId();
         log.info("memberId {} ", memberId);
-        List<Long> channelIds = memberChannelSubscriptionService.findChatIdsByMemberId(memberId);
+        List<Long> channelIds = memberChannelSubscriptionService.findChatIdsByMemberId(principalDetails);
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, channelIds));
     }
@@ -57,13 +50,14 @@ public class MemberChannelSubscriptionController {
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, memberNames));
     }
 
-    @PostMapping
+    /*@PostMapping
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "공개 채팅방 구독", description = "토큰과 channel id로 이미 있는 공개 채팅방에 참여하는 기능.")
     public ResponseEntity<ApiUtil.ApiSuccessResult<Long>> createPublicChannelSubscription(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                                 @RequestBody AddSubscriptionRequest request) throws IOException {
-        Long memberId = principalDetails.getMember().getId();
         Long channelId = request.getChannelId();
+        Long memberId = principalDetails.getMember().getId();
+
         log.info("memberId {} ", memberId);
         Long subscriptionId = memberChannelSubscriptionService.createSubscription(memberId, channelId);
 
@@ -81,8 +75,7 @@ public class MemberChannelSubscriptionController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 유저의 모든 구독 관계 삭제", description = "유저 id로 연관된 채널-유저 구독을 삭제하는 기능")
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteSubscriptionByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long memberId = principalDetails.getMember().getId();
-        memberChannelSubscriptionService.deleteSubscriptionByMemberId(memberId);
+        memberChannelSubscriptionService.deleteSubscriptionByMemberId(principalDetails);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
     }
 
@@ -91,5 +84,5 @@ public class MemberChannelSubscriptionController {
     public ResponseEntity<ApiUtil.ApiSuccessResult<?>> deleteSubscriptionByChannelId(@PathVariable Long channelId) {
         memberChannelSubscriptionService.deleteSubscriptionByChannelId(channelId);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK));
-    }
+    }*/
 }

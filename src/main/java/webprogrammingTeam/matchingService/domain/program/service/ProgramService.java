@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
+import webprogrammingTeam.matchingService.domain.message.service.MessageService;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
@@ -40,6 +41,7 @@ public class ProgramService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final ChannelService channelService;
+    private final MessageService messageService;
 
     public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
         List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
@@ -334,6 +336,10 @@ public class ProgramService {
         if(!program.getMember().getEmail().equals(email)){
             throw new AccessDeniedException("program을 삭제할 권한이 없습니다.");
         }
+        // delete public chat
+        messageService.deleteAllMessageByChannelId(program.getPublicChannel().getChannelId());
+
+        // delete private chat
         programRepository.delete(program);
     }
 
