@@ -4,6 +4,8 @@ import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.subscription.dto.MemberChannelSubscriptionDTO;
 import webprogrammingTeam.matchingService.domain.subscription.entity.MemberChannelSubscription;
 import webprogrammingTeam.matchingService.domain.subscription.repository.MemberChannelSubscriptionRepository;
@@ -120,5 +122,21 @@ public class MemberChannelSubscriptionService {
 
         MemberChannelSubscription newSubscription =  memberChannelSubscriptionRepository.save(subscription);
         return newSubscription.getSubscriptionId();
+    }
+
+    @Transactional
+    public void createPrivateChannelAndSubscriptions(Program program) {
+        //private channel 생성
+        Channel newPrivateChannel = channelService.createPrivateChannel(program.getTitle() + "private channel");
+        Long newPrivateChannelId = newPrivateChannel.getChannelId();
+
+        //개최자를 참여자 채팅에 추가
+        createSubscription(program.getMember().getId(), newPrivateChannelId);
+
+        //참여자들을 참여자 채팅에 추가
+        List<Recruitment> recruitments = program.getRecruitments();
+        for (Recruitment recruitment: recruitments) {
+            createSubscription(recruitment.getMember().getId(), newPrivateChannelId);
+        }
     }
 }

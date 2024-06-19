@@ -34,13 +34,11 @@ import webprogrammingTeam.matchingService.jwt.JWTService;
 @Slf4j
 public class MessageHandler {
     private final MessageService messageService;
-    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
     private final SimpMessagingTemplate messagingTemplate;
     private final MemberRepository memberRepository;
     private final JWTService jwtService;
 
     @MessageMapping("/chat/public/{channelId}")
-
     @Operation(summary = "공개 채널의 메세지 처리", description = "공개 채널의 메세지를 처리하는 로직")
     public void handlePublicMessage(@DestinationVariable("channelId") Long channelId,
                                     @Payload PublicMessagePayLoad publicMessagePayLoad
@@ -50,29 +48,28 @@ public class MessageHandler {
         Member member = memberRepository.findByEmail(senderEmail).orElseThrow(()-> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
         Long senderId = member.getId();
 
-        if (memberChannelSubscriptionService.isSubscriber(channelId, senderId)) {
 
-            log.info("1ㅋㅋ, {}",publicMessagePayLoad.content());
-            MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.content());
-            sendPublicMessage(channelId, savedMessageDTO);
-        }
-        else {
-            sendErrorMessage(senderId);
-        }
+        log.info("1ㅋㅋ, {}",publicMessagePayLoad.content());
+        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, publicMessagePayLoad.content());
+        sendPublicMessage(channelId, savedMessageDTO);
+
         log.info("2ㅋㅋ, {}",publicMessagePayLoad.content());
     }
 
-    /*// 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.
+    // 비공개 채널에 보내는 메시지 처리. subscription과 session의 조합해서 private를 구현해야 함.
     @MessageMapping("/chat/private/{channelId}")
-    //@PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀 채널의 메세지 처리", description = "비밀 채널의 메세지를 처리하는 로직")
     public void handlePrivateMessage(@DestinationVariable("channelId") Long channelId,
-                                     @Payload PrivateMessagePayLoad privateMessagePayLoad,
-                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                     @Payload PrivateMessagePayLoad privateMessagePayLoad) {
 
-        MessageDTO savedMessageDTO = messageService.addMessage(channelId, principalDetails, privateMessagePayLoad.content());
+        String senderEmail =jwtService.getEmail(privateMessagePayLoad.Accesstoken());
+
+        Member member = memberRepository.findByEmail(senderEmail).orElseThrow(()-> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Long senderId = member.getId();
+
+        MessageDTO savedMessageDTO = messageService.addMessage(channelId, senderId, privateMessagePayLoad.content());
         sendPrivateMessage(channelId, savedMessageDTO);
-    }*/
+    }
 
     private void sendPublicMessage(Long channelId, MessageDTO savedMessageDTO) {
         messagingTemplate.convertAndSend("/topic/chat/public/" + channelId, savedMessageDTO);
