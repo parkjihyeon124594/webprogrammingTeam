@@ -31,7 +31,6 @@ public class StompHandler implements ChannelInterceptor {
     private final MemberRepository memberRepository;
     private final ChannelService channelService;
 
-
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
@@ -83,4 +82,5 @@ public class StompHandler implements ChannelInterceptor {
 
         return message;
     }
+
 }
