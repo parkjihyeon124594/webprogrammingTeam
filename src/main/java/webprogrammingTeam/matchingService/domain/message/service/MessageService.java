@@ -67,6 +67,7 @@ public class MessageService {
     }
 
     public MessageDTO addMessage(Long channelId, String senderEmail, String content) {
+        channelService.getAllPublicChannelTitles();
         Channel channel = channelService.getChannelById(channelId);
         Member member = memberService.getMemberByEmail(senderEmail);
 
@@ -99,6 +100,7 @@ public class MessageService {
     }
     public void deleteAllMessageByChannelId(Long channelId) {
         messageRepository.deleteByChannel_ChannelId(channelId);
+        log.info("delete message");
     }
 
     public void delete(Long messageId) {

@@ -338,7 +338,6 @@ public class ProgramService {
         }
         // delete public chat
         messageService.deleteAllMessageByChannelId(program.getPublicChannel().getChannelId());
-        channelService.deleteChannel(program.getPublicChannel().getChannelId());
 
         // delete private chat
         programRepository.delete(program);

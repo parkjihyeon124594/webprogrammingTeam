@@ -77,17 +77,13 @@ public class Program extends BaseTimeEntity{
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private List<Recruitment> recruitments = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "public_channel", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "public_channel_id", nullable = false)
     private Channel publicChannel;
 
-    /*@ManyToOne
-    @JoinColumn(name = "private_channel", nullable = true)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "private_channel_id", nullable = true)
     private Channel privateChannel;
-
-    @OneToMany
-    @JoinColumn(name = "inquiry_channel", nullable = true)
-    private List<Channel> inquiryChannels;*/
 
     @Builder
     public Program(Member member, String title, String content, Category category, int maximum, String recruitmentStartDate, String recruitmentEndDate, String programDate, Open open,Double latitude,Double longitude, int recruitment, String programAddress, Channel publicChannel) {
