@@ -2,12 +2,16 @@ package webprogrammingTeam.matchingService.domain.subscription.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
+import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.subscription.dto.AddSubscriptionRequest;
+import webprogrammingTeam.matchingService.domain.subscription.dto.PrivateChannelsResponse;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +25,23 @@ import java.util.List;
 @RequestMapping("/member-channel-subscription")
 @Tag(name = "구독(유저-채널 관계)", description = "유저와 채널의 관계를 저장하고 처리하는 Api. 공개 채팅은 저장하지 않고 참여자 채팅만 관계 저장함.")
 @Slf4j
+@RequiredArgsConstructor
 public class MemberChannelSubscriptionController {
 
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
+    private final ProgramRepository programRepository;
 
-    @Autowired
-    public MemberChannelSubscriptionController(MemberChannelSubscriptionService memberChannelSubscriptionService) {
-        this.memberChannelSubscriptionService = memberChannelSubscriptionService;
-    }
 
     @GetMapping("/member")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "한 유저의 참여 채팅방 조회", description = "유저의 토큰으로 참여한 채널을 조회하는 기능")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<Long>>> getChannelIdsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<PrivateChannelsResponse>>> getProgramChannelsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberId = principalDetails.getMember().getId();
-        log.info("memberId {} ", memberId);
-        List<Long> channelIds = memberChannelSubscriptionService.findChatIdsByMemberId(principalDetails);
 
-        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, channelIds));
+        log.info("memberId {} ", memberId);
+        List<PrivateChannelsResponse> channels = memberChannelSubscriptionService.findProgramChannelsByMemberId(principalDetails);
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, channels));
     }
 
     @GetMapping("/channel/{channelId}")

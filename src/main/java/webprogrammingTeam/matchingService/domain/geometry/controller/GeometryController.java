@@ -1,5 +1,7 @@
 package webprogrammingTeam.matchingService.domain.geometry.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/geometry")
 @Slf4j
+@Tag(name = "사용자 위치 기반 프로그램 ", description = "사용자 위치 기반 프로그램 검색")
 public class GeometryController {
 
     private final GeometryService geometryService;
@@ -33,6 +36,7 @@ public class GeometryController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "사용자 위치 기반 프로그램", description = "사용자 위치 기반 프로그램 검색")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<GeometryResponse>>> GemetryProgram(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody GeometryRequest geometryRequest
