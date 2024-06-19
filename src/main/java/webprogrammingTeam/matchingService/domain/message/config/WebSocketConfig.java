@@ -18,7 +18,7 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompHandler stompHandler;
-    private final SubscriptionInterceptor subscriptionInterceptor;
+    //private final SubscriptionInterceptor subscriptionInterceptor;
 
 
     @Override
@@ -35,11 +35,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         log.info("들어옴 2");
     }
 
-    @Override
+    /*@Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
         registration.addDecoratorFactory(subscriptionInterceptor);
 
-    }
+    }*/
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
