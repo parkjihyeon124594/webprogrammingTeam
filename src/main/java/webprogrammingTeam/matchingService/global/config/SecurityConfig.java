@@ -89,7 +89,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/program/data/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/email/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/{programId}/review/view/**")).permitAll()
-                                //.requestMatchers(new AntPathRequestMatcher("/ws")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/ws")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/program/category/**")).permitAll()
 
 
@@ -119,7 +119,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080","http://localhost:3000/googleLogin","ws://localhost:8080"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080","http://localhost:3000/googleLogin","ws://localhost:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));

@@ -36,7 +36,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // logout path and method verify
         String requestUri = request.getRequestURI();
         if(!requestUri.matches("^\\/logout$")){
-
+            log.info("custom logout filer test refersh token 2 {}",request.getHeader("Refreshtoken"));
             filterChain.doFilter(request,response);
             return;
         }
@@ -90,6 +90,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //로그아웃 진행
         refreshtokenRepository.deleteByRefresh(refresh);
+        log.info("custom logout filer test refersh token 3 {}",request.getHeader("Refreshtoken"));
 
         response.setStatus(HttpServletResponse.SC_OK);
 

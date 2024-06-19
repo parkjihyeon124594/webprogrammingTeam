@@ -86,6 +86,10 @@ dependencies {
 
 	// Spring Context Support
 	implementation 'org.springframework:spring-context-support:5.3.9'
+
+	// JWT Library
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 }
 
 tasks.named('test') {
