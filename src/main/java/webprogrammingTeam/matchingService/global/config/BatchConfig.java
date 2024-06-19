@@ -18,7 +18,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
+import webprogrammingTeam.matchingService.domain.recruitment.repository.RecruitmentRepository;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,8 @@ public class BatchConfig {
     private final ProgramRepository programRepository;
     @Autowired
     private PlatformTransactionManager transactionManager;
+
+    private final RecruitmentRepository recruitmentRepository;
 
     /*job은 여러개의 step으로 이루어짐.
     job은 하나의 완전한 배치의 작업 단위
@@ -71,7 +75,6 @@ public class BatchConfig {
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
                 Long programId = program.getId();
-
             }
             programRepository.saveAll(programList);
             return RepeatStatus.FINISHED; //작업이 완료되었음
