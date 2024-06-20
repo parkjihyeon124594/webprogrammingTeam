@@ -14,6 +14,8 @@ public class MessageDTO {
 
     private String senderEmail;
 
+    private String senderName;
+
     private String content;
 
     private String createTime;

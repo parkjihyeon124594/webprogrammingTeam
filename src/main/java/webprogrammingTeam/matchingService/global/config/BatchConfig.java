@@ -75,6 +75,7 @@ public class BatchConfig {
             log.info("=================updateProgramStatusTasklet 실행===============");
             // 모집기간이 끝난 프로그램의 상태를 "CLOSED"로 업데이트하는 로직
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
             List<Program> programList = programRepository.findProgramsToClose(now);
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
