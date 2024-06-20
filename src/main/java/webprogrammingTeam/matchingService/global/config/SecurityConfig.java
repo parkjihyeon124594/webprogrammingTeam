@@ -50,7 +50,8 @@ public class SecurityConfig {
     private final RefreshtokenRepository refreshtokenRepository;
     private final MemberRepository memberRepository;
 
-    private final String ADDRESS ="http://35.216.104.192";
+    private final String ADDRESS ="http://35.216.104.192:";
+    //private final String ADDRESS="htpp://localhost:";
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
