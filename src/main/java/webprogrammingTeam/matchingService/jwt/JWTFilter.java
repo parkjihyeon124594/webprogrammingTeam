@@ -33,7 +33,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String[] excludePathLists = {"/login", "/favicon.ico",
 
                 "/oauth2/authorization/google", "/login/oauth2/code/google","/member/signup","/login", "/program/view/**","/program/category/**",
-                "/test","program/data/**","/email/**"};
+                "/test","/program/data/**","/email/**","/program/search"};
 
         String path = request.getRequestURI();
 

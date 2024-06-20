@@ -17,6 +17,7 @@ import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramAgeDataByCityAndCategoryRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
+import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSearchRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
 import webprogrammingTeam.matchingService.domain.program.entity.Category;
@@ -41,6 +42,16 @@ public class ProgramController {
     private final ImageService imageService;
     private final ProgramRepository programRepository;
     private final BucketService bucketService;
+
+    @PostMapping("/search")
+    @Operation(summary = "title을 받아서 프로그램 조회",description = "제목으로 프로그램 검색")
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramAllReadResponse>>> findProgramBySearchTitle(
+            @RequestBody ProgramSearchRequest programSearchRequest
+            ){
+        List<ProgramAllReadResponse> allProgramBySearchTilte = programService.findAllProgramBySearchTilte(programSearchRequest.searchTitle());
+
+        return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,allProgramBySearchTilte));
+    }
 
 
     @PostMapping("/data/city-category-age")
