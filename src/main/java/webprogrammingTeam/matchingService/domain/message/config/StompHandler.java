@@ -51,11 +51,7 @@ public class StompHandler implements ChannelInterceptor {
                     email = jwtService.getEmail(bearerToken);
 
 
-
-                } else {
-
                     accessor.addNativeHeader("senderEmail", email);
-
 
                    } else {
 
