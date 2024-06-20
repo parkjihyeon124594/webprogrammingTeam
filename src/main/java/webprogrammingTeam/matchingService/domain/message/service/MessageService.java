@@ -106,6 +106,7 @@ public class MessageService {
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
         messageDTO.setSenderEmail(message.getSender().getEmail());
+        messageDTO.setSenderName(message.getSender().getMemberName());
         messageDTO.setContent(message.getContent());
         messageDTO.setCreateTime(writingTimeToString(message.getCreateDate()));
 

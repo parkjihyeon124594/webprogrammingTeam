@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
+import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.program.entity.Category;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Long> {
 
-    List<Program> findAllByMemberId(Long id);
+    List<Program> findAllByMember(Member member);
 
     // 0.제목 검색으로 프로그램 조회
     @Query("SELECT p FROM Program p WHERE p.title LIKE CONCAT('%', :searchTitle, '%')")

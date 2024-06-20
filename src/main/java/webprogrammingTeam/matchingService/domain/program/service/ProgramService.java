@@ -291,6 +291,7 @@ public class ProgramService {
                 .recruitmentStartDate(program.getRecruitmentStartDate())
                 .recruitmentEndDate(program.getRecruitmentEndDate())
                 .programDate(program.getProgramDate())
+                .programAddress(program.getProgramAddress())
                 .open(program.getOpen())
                 .images(imageUrls)
                 .recruitment(program.getRecruitment())
@@ -311,21 +312,24 @@ public class ProgramService {
     }
 
     public List<ProgramAllReadResponse> findAllMyPrograms(String email) throws IOException{
+
         try{
             Member member = memberRepository.findByEmail(email).orElseThrow();
-            List<Program> programList = programRepository.findAllByMemberId(member.getId());
+            List<Program> programList = programRepository.findAllByMember(member);
 
             List<ProgramAllReadResponse> responseList = new ArrayList<>();
 
             for(Program program : programList){
-                Image image = imageRepository.findFirstImageByProgram(program.getId());
+                Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
                 String imageUrl = image.getUrl();
+
                 responseList.add(
                         new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(),calculateAvgRating(program),ratingCnt(program.getId()), program.getPublicChannel().getChannelId())
                 );
             }
             return responseList;
         }catch(Exception e){
+            log.info("findAllMyPrograms 오류,{}",e);
         }
         return null;
     }
