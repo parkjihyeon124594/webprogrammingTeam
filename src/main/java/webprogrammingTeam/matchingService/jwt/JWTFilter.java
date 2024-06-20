@@ -133,7 +133,7 @@ public class JWTFilter extends OncePerRequestFilter {
 */
         Member member=memberRepository.findByEmail(email).orElseThrow();
         // SecurityContextHolder에서 인증 정보 가져오기
-        /*Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        /*AuthenticaticurrentAuth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails currentUser = (PrincipalDetails) currentAuth.getPrincipal();
 */
         // User 객체를 생성하고, PrincipalDetails 객체를 생성함.
