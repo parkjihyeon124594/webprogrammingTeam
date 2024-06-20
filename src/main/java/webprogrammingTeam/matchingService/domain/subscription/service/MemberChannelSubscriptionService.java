@@ -6,10 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
 import webprogrammingTeam.matchingService.domain.Image.entity.Image;
 import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
-import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
-import webprogrammingTeam.matchingService.domain.program.dto.response.ProgramAllReadResponse;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
@@ -19,7 +17,6 @@ import webprogrammingTeam.matchingService.domain.subscription.entity.MemberChann
 import webprogrammingTeam.matchingService.domain.subscription.repository.MemberChannelSubscriptionRepository;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
