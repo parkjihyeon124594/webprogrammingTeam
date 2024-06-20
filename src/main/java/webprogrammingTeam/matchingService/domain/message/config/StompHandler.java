@@ -54,16 +54,7 @@ public class StompHandler implements ChannelInterceptor {
 
                 } else {
 
-//                    accessor.addNativeHeader("senderEmail", email);
-
-//                    Member member = memberRepository.findByEmail(email)
-//                            .orElseThrow(() -> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//                    PrincipalDetails principalDetails = new PrincipalDetails(member);
-//                    Authentication authToken = new UsernamePasswordAuthenticationToken(
-//                            principalDetails, null, principalDetails.getAuthorities());
-//
-//                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    accessor.addNativeHeader("senderEmail", email);
 
                    } else {
 
@@ -74,17 +65,6 @@ public class StompHandler implements ChannelInterceptor {
             }
         }
 
-/*
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-
-        PrincipalDetails principalDetails = new PrincipalDetails(member);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-
-        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-*/
 
         return message;
     }
