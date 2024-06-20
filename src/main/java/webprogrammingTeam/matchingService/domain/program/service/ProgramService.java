@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.service.ChannelService;
 import webprogrammingTeam.matchingService.domain.member.repository.MemberRepository;
+import webprogrammingTeam.matchingService.domain.message.service.MessageService;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramSaveRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.request.ProgramUpdateRequest;
 import webprogrammingTeam.matchingService.domain.program.dto.response.*;
@@ -19,6 +20,7 @@ import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.review.respository.ReviewRepository;
+import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -40,6 +42,8 @@ public class ProgramService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final ChannelService channelService;
+    private final MessageService messageService;
+    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
 
     public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
         List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
@@ -355,6 +359,13 @@ public class ProgramService {
         if(!program.getMember().getEmail().equals(email)){
             throw new AccessDeniedException("program을 삭제할 권한이 없습니다.");
         }
+        // delete public chat
+        messageService.deleteAllMessageByChannelId(program.getPublicChannel().getChannelId());
+        if(program.getPrivateChannel() != null) {
+            messageService.deleteAllMessageByChannelId(program.getPrivateChannel().getChannelId());
+            memberChannelSubscriptionService.deleteSubscriptionByChannelId(program.getPrivateChannel().getChannelId());
+        }
+        // delete private chat
         programRepository.delete(program);
     }
 

@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
 import webprogrammingTeam.matchingService.domain.recruitment.repository.RecruitmentRepository;
+import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -38,6 +40,8 @@ public class BatchConfig {
     private JobRepository jobRepository;
 
     private final ProgramRepository programRepository;
+
+    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
     @Autowired
     private PlatformTransactionManager transactionManager;
 
@@ -74,18 +78,18 @@ public class BatchConfig {
             List<Program> programList = programRepository.findProgramsToClose(now);
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
-                Long programId = program.getId();
-                //recruitmentRepository.
 
-                // closed된 프로그램의 recruitment 테이블로 가서
-                // program_id == 1 인 member_id를 전부 가져옴
-                // member_id로 member를 모두 찾음
-                // 그 다음 memberList에 해당하는 멤버를 전부 만들고,
-                // membeer_list를 돌면서 그 멤버들의 채팅방을 만들어줌
+                Long programId = program.getId();
+     
+
+                Channel newPrivateChannel = memberChannelSubscriptionService.createPrivateChannelAndSubscriptions(program);
+                program.updatePrivateChannel(newPrivateChannel);
 
             }
             programRepository.saveAll(programList);
             return RepeatStatus.FINISHED; //작업이 완료되었음
         };
     }
+
+
 }

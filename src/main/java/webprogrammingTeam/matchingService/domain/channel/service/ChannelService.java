@@ -1,5 +1,7 @@
 package webprogrammingTeam.matchingService.domain.channel.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import webprogrammingTeam.matchingService.domain.channel.dto.ChannelTitleDTO;
 import webprogrammingTeam.matchingService.domain.channel.entity.Channel;
 import webprogrammingTeam.matchingService.domain.channel.repository.ChannelRepository;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
+@Slf4j
 public class ChannelService {
 
     private final ChannelRepository channelRepository;
@@ -20,7 +24,15 @@ public class ChannelService {
     }
 
     public List<ChannelTitleDTO> getAllPublicChannelTitles() {
-        return channelRepository.findAllProjectedByIsPublicTrue();
+        List<ChannelTitleDTO> channelTitles = channelRepository.findAllProjectedByIsPublicTrue();
+        logChannelTitles(channelTitles);
+        return channelTitles;
+    }
+
+    private void logChannelTitles(List<ChannelTitleDTO> channelTitles) {
+        for (ChannelTitleDTO dto : channelTitles) {
+            log.info("Channel ID: {}, Title: {}", dto.getChannelId(), dto.getTitle());
+        }
     }
 
     // getAllPrivateChannelTitles 는 user가 참여했는지를 확인해야하기 때문에, subscription에 있어야 됨.
@@ -55,5 +67,6 @@ public class ChannelService {
             throw new IllegalArgumentException("Channel with ID " + channelId + " does not exist");
         }
         channelRepository.deleteById(channelId);
+        log.info("delete channel");
     }
 }

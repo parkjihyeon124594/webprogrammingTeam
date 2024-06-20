@@ -31,10 +31,6 @@ public class StompHandler implements ChannelInterceptor {
     private final MemberRepository memberRepository;
     private final ChannelService channelService;
 
-    // onOpen
-    // onMessage
-    // onClose
-
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
@@ -55,22 +51,19 @@ public class StompHandler implements ChannelInterceptor {
                     email = jwtService.getEmail(bearerToken);
 
 
+                    accessor.addNativeHeader("senderEmail", email);
+
                 } else {
+
                     log.info("Invalid access token.");
                 }
             } else {
                 log.info("Invalid token format.");
             }
         }
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
 
 
-        PrincipalDetails principalDetails = new PrincipalDetails(member);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-
-        // 최종적으로 SecurityContextHolder에 유저의 세션을 등록시킴.
-        SecurityContextHolder.getContext().setAuthentication(authToken);
         return message;
     }
+
 }
