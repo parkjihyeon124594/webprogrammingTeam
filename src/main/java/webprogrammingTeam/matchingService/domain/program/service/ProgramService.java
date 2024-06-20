@@ -20,6 +20,7 @@ import webprogrammingTeam.matchingService.domain.Image.service.ImageService;
 import webprogrammingTeam.matchingService.domain.member.entity.Member;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.domain.review.respository.ReviewRepository;
+import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -42,6 +43,7 @@ public class ProgramService {
     private final ReviewRepository reviewRepository;
     private final ChannelService channelService;
     private final MessageService messageService;
+    private final MemberChannelSubscriptionService memberChannelSubscriptionService;
 
     public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
         List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
@@ -338,7 +340,10 @@ public class ProgramService {
         }
         // delete public chat
         messageService.deleteAllMessageByChannelId(program.getPublicChannel().getChannelId());
-
+        if(program.getPrivateChannel() != null) {
+            messageService.deleteAllMessageByChannelId(program.getPrivateChannel().getChannelId());
+            memberChannelSubscriptionService.deleteSubscriptionByChannelId(program.getPrivateChannel().getChannelId());
+        }
         // delete private chat
         programRepository.delete(program);
     }
