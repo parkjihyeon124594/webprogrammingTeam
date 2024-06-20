@@ -71,7 +71,7 @@ public class MemberChannelSubscriptionService {
             String imageUrl = image.getUrl();
             log.info("나온다2 ; {}", program.getId());
             programList.add(
-                    new PrivateChannelsResponse(channelId, program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate(), imageUrl)
+                    new PrivateChannelsResponse(channelId, program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate(), imageUrl, program.getProgramAddress())
             );
         }
 

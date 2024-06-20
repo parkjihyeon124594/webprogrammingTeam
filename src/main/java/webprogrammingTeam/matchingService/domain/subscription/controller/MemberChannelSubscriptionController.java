@@ -8,13 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import webprogrammingTeam.matchingService.auth.principal.PrincipalDetails;
+import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.program.repository.ProgramRepository;
+import webprogrammingTeam.matchingService.domain.subscription.dto.AddSubscriptionRequest;
 import webprogrammingTeam.matchingService.domain.subscription.dto.PrivateChannelsResponse;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import webprogrammingTeam.matchingService.global.util.ApiUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,9 +38,9 @@ public class MemberChannelSubscriptionController {
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<PrivateChannelsResponse>>> getProgramChannelsByMemberId(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberId = principalDetails.getMember().getId();
+
         log.info("memberId {} ", memberId);
         List<PrivateChannelsResponse> channels = memberChannelSubscriptionService.findProgramChannelsByMemberId(principalDetails);
-
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, channels));
     }
 
