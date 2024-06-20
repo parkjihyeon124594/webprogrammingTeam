@@ -217,11 +217,32 @@ public class ProgramService {
 
     }
 
+    public List<ProgramAllReadResponse> findAllProgramBySearchTilte(String searchTitle){
+        List<Program> programs = programRepository.searchProgramByTitle(searchTitle);
+
+        try{
+            List<ProgramAllReadResponse> responseList =new ArrayList<>();
+
+            for(Program program: programs){
+                Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
+                String imageUrl = image.getUrl();
+
+                responseList.add(
+                        new ProgramAllReadResponse(program.getId(), program.getTitle(), program.getCategory(), program.getOpen(), writingTimeToString(program.getCreateDate()), imageUrl, program.getRecruitment(), calculateAvgRating(program), ratingCnt(program.getId()), program.getPublicChannel().getChannelId())
+                );
+            }
+            return responseList;
+        }catch (Exception e){
+            log.info("불러오기 실패");
+        }
+        return null;
+
+    }
+
     public List<ProgramAllReadResponse> findAllProgram() {
 
          try{
             List<Program> programList = programRepository.findAll();
-            log.info("programList{} ", programList);
 
             List<ProgramAllReadResponse> responseList = new ArrayList<>();
 

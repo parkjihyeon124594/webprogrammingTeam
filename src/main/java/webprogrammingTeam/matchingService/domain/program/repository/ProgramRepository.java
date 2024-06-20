@@ -16,6 +16,11 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
     List<Program> findAllByMemberId(Long id);
 
+    // 0.제목 검색으로 프로그램 조회
+    @Query("SELECT p FROM Program p WHERE p.title LIKE CONCAT('%', :searchTitle, '%')")
+    List<Program> searchProgramByTitle(@Param("searchTitle") String searchTitle);
+
+
     // 1.특정 카테고리에 속하는 프로그램 검색
     @Query(value = "SELECT p FROM Program p WHERE p.category =:category")
     List<Program> findByCategory(@Param(value= "category") Category category);

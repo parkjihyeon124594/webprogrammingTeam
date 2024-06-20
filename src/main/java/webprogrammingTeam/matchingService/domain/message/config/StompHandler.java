@@ -40,6 +40,7 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         log.info("stompHandler message {}",message);
         String email = null;
+
         // CONNECT 명령어에 대해서만 로그를 출력
         if (accessor.getCommand() == StompCommand.CONNECT || accessor.getCommand() == StompCommand.SUBSCRIBE || accessor.getCommand() == StompCommand.SEND ) {
 
@@ -53,20 +54,7 @@ public class StompHandler implements ChannelInterceptor {
                 if (jwtService.validateToken(bearerToken)) {
                     email = jwtService.getEmail(bearerToken);
 
-                    accessor.addNativeHeader("senderEmail", email);
 
-                    Member member = memberRepository.findByEmail(email)
-                            .orElseThrow(() -> new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-                    PrincipalDetails principalDetails = new PrincipalDetails(member);
-                    Authentication authToken = new UsernamePasswordAuthenticationToken(
-                            principalDetails, null, principalDetails.getAuthorities());
-
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                    CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
-                            .title("규").build();
-                    Channel publicChannel = channelService.createPublicChannel(createChannelRequest.getTitle());
                 } else {
                     log.info("Invalid access token.");
                 }

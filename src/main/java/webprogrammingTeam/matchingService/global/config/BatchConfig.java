@@ -75,7 +75,13 @@ public class BatchConfig {
             for(Program program : programList){
                 program.updateOpen(Open.CLOSED);
                 Long programId = program.getId();
+                //recruitmentRepository.
 
+                // closed된 프로그램의 recruitment 테이블로 가서
+                // program_id == 1 인 member_id를 전부 가져옴
+                // member_id로 member를 모두 찾음
+                // 그 다음 memberList에 해당하는 멤버를 전부 만들고,
+                // membeer_list를 돌면서 그 멤버들의 채팅방을 만들어줌
 
             }
             programRepository.saveAll(programList);
