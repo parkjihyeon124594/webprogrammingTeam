@@ -2,6 +2,7 @@ package webprogrammingTeam.matchingService.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,8 +42,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    //private final CustomOAuth2UserService customOAuth2UserService;
-    //private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final JWTService jwtService;
     private final RefreshService refreshService;
     private final ObjectMapper objectMapper;
@@ -50,21 +49,8 @@ public class SecurityConfig {
     private final LoginService loginService;
     private final RefreshtokenRepository refreshtokenRepository;
     private final MemberRepository memberRepository;
-/*
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
-        return configuration.getAuthenticationManager();
-    }
-*/
-
-
-/*    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-
-        return new BCryptPasswordEncoder();
-    }*/
-
+    private final String ADDRESS ="http://35.216.104.192";
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -117,15 +103,18 @@ public class SecurityConfig {
                         .build();
     }
 
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080","http://localhost:3000/googleLogin","ws://localhost:3000"));
+        config.setAllowedOrigins(Arrays.asList(ADDRESS+"3000",
+                ADDRESS+"8080",
+                ADDRESS+"3000/googleLogin",
+                "ws://35.216.104.192:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("Accesstoken","Refreshtoken"));
-
 
         config.setMaxAge(3600L); //1시간
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

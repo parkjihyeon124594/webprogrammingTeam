@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final MemberRepository memberRepository;
+
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {

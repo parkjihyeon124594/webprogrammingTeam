@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,8 @@ public class MessageService {
         message.setChannel(channel);
         message.setSender(member);
         message.setContent(content);
+        message.setCreateDate(LocalDateTime.now());
+        message.setLastModifiedDate(LocalDateTime.now());
 
         Message newMessage = messageRepository.save(message);
 
