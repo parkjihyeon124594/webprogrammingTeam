@@ -176,6 +176,7 @@ public class ProgramController {
     @Operation(summary = "개최가자 연 모든 프로그램 조회", description = "내가 쓴 모든 프로그램 조회")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<ProgramAllReadResponse>>> getHeldPrograms(
             @RequestParam(name = "email") String email) throws IOException {
+        log.info("email {} 들어옴", email);
         List<ProgramAllReadResponse> programAllReadResponse = programService.findAllMyPrograms(email);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, programAllReadResponse));
     }
