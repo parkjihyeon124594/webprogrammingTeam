@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    SPORTS, COMPUTER, ART, DRAWING, COOKING, MUSIC, ETC;
+    SPORTS, COMPUTER, ART, COOKING, MUSIC, ETC;
 
     public static Category[] getAllCategories() {
         return values();
