@@ -280,9 +280,12 @@ public class ProgramService {
             imageUrls.add(image.getUrl());
         }
 
+        Member member = program.getMember();
         return ProgramIdReadResponse.builder()
                 .programId(program.getId())
-                .memberEmail(program.getMember().getEmail())
+                .memberEmail(member.getEmail())
+                .memberName(member.getMemberName())
+                .memberRating(calculateMemberAvgRating(member))
                 .title(program.getTitle())
                 .content(program.getContent())
                 .category(program.getCategory())
@@ -299,6 +302,22 @@ public class ProgramService {
                 .publicChannelId(program.getPublicChannel().getChannelId())
                 .build();
     }
+
+    public double calculateMemberAvgRating(Member member){
+        double avg = 0;
+        int review_cnt =0;
+        List<Program> programList = programRepository.findAllByMember(member);
+       for(Program program : programList) {
+           List<Review> reviewList = reviewRepository.findByProgram(program);
+
+           for (Review review : reviewList) {
+               avg += (double) review.getRating();
+               review_cnt ++;
+           }
+       }
+        return avg/(double)review_cnt;
+    }
+
     public double calculateAvgRating(Program program){
         double avg = 0;
 
