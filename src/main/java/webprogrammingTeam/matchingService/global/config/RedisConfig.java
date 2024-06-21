@@ -12,14 +12,15 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP,basePackages = {"webprogrammingTeam.matchingService.domain.refresh.repository"
+,"webprogrammingTeam.matchingService.domain.mail.repository"})
 //Redis는 TTL이 만료되는 시점에 보조 인덱스(@Indexed)는 삭제하지 않음.
 //Redis의 Key Space Notifications 기능을 활용하면, TTL이 만료되는 시점에 이벤트를 감지하고, 보조인덱스를 삭제할 수 있음
 
 public class RedisConfig {
 
     //@Value("${spring.data.redis.host")
-    private String host = "127.0.0.1";
+    private String host = "35.216.104.192";
 
     //@Value("%{spring.data.redis.port}")
     private int port = 6379;

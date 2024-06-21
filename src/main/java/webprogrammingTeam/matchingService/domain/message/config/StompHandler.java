@@ -53,7 +53,9 @@ public class StompHandler implements ChannelInterceptor {
 
                     accessor.addNativeHeader("senderEmail", email);
 
+
                    } else {
+
 
                     log.info("Invalid access token.");
                 }

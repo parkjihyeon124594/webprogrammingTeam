@@ -1,6 +1,7 @@
 package webprogrammingTeam.matchingService.domain.mail.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -8,16 +9,19 @@ import webprogrammingTeam.matchingService.global.util.RedisUtil;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.time.Duration;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;
-
     private int authNumber;
+
+
 
 
     /**
@@ -59,7 +63,9 @@ public class EmailService {
      */
     public String joinEmail(String email) {
         makeRandomNumber();
+
         String setFrom = "gwajegogeubwebpeulogeulaeming@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
+
         String toMail = email;
         String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
         String content =
@@ -69,6 +75,7 @@ public class EmailService {
                         "<br>" +
                         "인증번호를 제대로 입력해주세요"; //이메일 내용 삽입
         mailSend(setFrom, toMail, title, content);
+
         return Integer.toString(authNumber);
     }
 
