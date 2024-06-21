@@ -46,7 +46,7 @@ public class MemberChannelSubscriptionController {
 
     @GetMapping("/channel/{channelId}")
     @Operation(summary = "한 참여자 채팅에 참여한 모든 유저 이름 조회", description = "채널의 id로 참여한 유저의 이름을 조회하는 기능")
-    public ResponseEntity<ApiUtil.ApiSuccessResult<List<String>>> getMemberIdsByChannelId(@PathVariable Long channelId) {
+    public ResponseEntity<ApiUtil.ApiSuccessResult<List<String>>> getMemberIdsByChannelId(@PathVariable("channelId") Long channelId) {
         List<String> memberNames = memberChannelSubscriptionService.findMemberNamesByChannelId(channelId);
 
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK, memberNames));

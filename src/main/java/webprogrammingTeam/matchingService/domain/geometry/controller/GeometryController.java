@@ -34,18 +34,18 @@ public class GeometryController {
     private final GeometryService geometryService;
     private final MemberRepository memberRepository;
 
-    @GetMapping
+    @GetMapping()
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "사용자 위치 기반 프로그램", description = "사용자 위치 기반 프로그램 검색")
     public ResponseEntity<ApiUtil.ApiSuccessResult<List<GeometryResponse>>> GemetryProgram(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody GeometryRequest geometryRequest
-            )
+            @RequestParam double radius
+    )
     {
         Member member = memberRepository.findByEmail(principalDetails.getEmail())
                 .orElseThrow(()->new GlobalException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        List<Program> programs = geometryService.findProgramsNearMember(member.getLatitude(),member.getLongitude(), geometryRequest.radius());
+        List<Program> programs = geometryService.findProgramsNearMember(member.getLatitude(),member.getLongitude(), radius);
 
         List<GeometryResponse> geometryResponses = geometryService.programToGeometryResponse(programs);
         return ResponseEntity.ok().body(ApiUtil.success(HttpStatus.OK,geometryResponses));

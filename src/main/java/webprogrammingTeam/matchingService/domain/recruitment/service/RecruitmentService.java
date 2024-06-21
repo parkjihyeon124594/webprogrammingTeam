@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import webprogrammingTeam.matchingService.domain.Image.entity.Image;
+import webprogrammingTeam.matchingService.domain.Image.repository.ImageRepository;
 import webprogrammingTeam.matchingService.domain.notification.service.NotificationService;
 import webprogrammingTeam.matchingService.domain.program.entity.Open;
 import webprogrammingTeam.matchingService.domain.recruitment.dto.MemberProgramRecruitmentResponse;
@@ -32,6 +34,7 @@ public class RecruitmentService {
     private final MemberRepository memberRepository;
     private final ProgramRepository programRepository;
     private final NotificationService notificationService;
+    private final ImageRepository imageRepository;
 
     //사용자가 프로그램에 지원하는 로직
     @Transactional
@@ -149,8 +152,10 @@ public class RecruitmentService {
             List<MemberProgramRecruitmentResponse> responseList = new ArrayList<>();
 
             for(Program program : programList){
+                Image image = imageRepository.findAllByProgramId(program.getId()).get(0);
+                String imageUrl = image.getUrl();
                 responseList.add(
-                        new MemberProgramRecruitmentResponse(program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate())
+                        new MemberProgramRecruitmentResponse(program.getId(), program.getTitle(), program.getCategory(), program.getProgramDate(),imageUrl, program.getProgramAddress())
                 );
             }
             return responseList;

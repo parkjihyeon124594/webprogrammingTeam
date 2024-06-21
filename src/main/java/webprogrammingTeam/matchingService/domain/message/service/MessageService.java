@@ -17,7 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import webprogrammingTeam.matchingService.domain.subscription.service.MemberChannelSubscriptionService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,6 +86,7 @@ public class MessageService {
         message.setCreateDate(LocalDateTime.now());
         message.setLastModifiedDate(LocalDateTime.now());
 
+
         Message newMessage = messageRepository.save(message);
 
         MessageDTO messageDTO = convertMessageToMessageDTO(newMessage);
@@ -91,13 +96,22 @@ public class MessageService {
         return messageDTO;
     }
 
+    public static String writingTimeToString(LocalDateTime writingTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                .withZone(ZoneId.of("Asia/Seoul"));
+
+        log.info("시간 {}",writingTime.atZone(ZoneId.of("Asia/Seoul")).format(formatter));
+        return writingTime.atZone(ZoneId.of("Asia/Seoul")).format(formatter);
+    }
     private MessageDTO convertMessageToMessageDTO(Message message) {
         MessageDTO messageDTO = new MessageDTO();
 
         messageDTO.setMessageId(message.getMessageId());
         messageDTO.setChannelId(message.getChannel().getChannelId());
         messageDTO.setSenderEmail(message.getSender().getEmail());
+        messageDTO.setSenderName(message.getSender().getMemberName());
         messageDTO.setContent(message.getContent());
+        messageDTO.setCreateTime(writingTimeToString(message.getCreateDate()));
 
         return messageDTO;
     }

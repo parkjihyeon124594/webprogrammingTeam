@@ -30,7 +30,7 @@ public class GeometryService {
     private final ReviewRepository reviewRepository;
 
     @Transactional(readOnly = true)
-    public List<Program> findProgramsNearMember(Double memberLatitude, Double memberLongitude,double radius) {
+    public List<Program> findProgramsNearMember(Double memberLatitude, Double memberLongitude, double radius) {
         // 5km 반경 내에 있는 프로그램들을 찾기 위한 위도와 경도의 범위 계산
         //Double distanceKm = 5.0; // 반경 5km
 
@@ -74,6 +74,8 @@ public class GeometryService {
         return programs.stream()
                 .map(program -> new GeometryResponse(
                         program.getId(),
+                        program.getLatitude(),
+                        program.getLongitude(),
                         program.getTitle(),
                         program.getCategory(),
                         program.getOpen(),
