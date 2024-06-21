@@ -50,7 +50,10 @@ public class SecurityConfig {
     private final RefreshtokenRepository refreshtokenRepository;
     private final MemberRepository memberRepository;
 
-    private final String ADDRESS ="http://35.216.104.192:";
+    //지현35.216.104.192
+    //규리 34.64.250.226
+    //new 규리 34.64.201.129
+    private final String ADDRESS ="http://34.64.201.129:";
     //private final String ADDRESS="htpp://localhost:";
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -111,7 +114,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(ADDRESS+"3000",
                 ADDRESS+"8080",
                 ADDRESS+"3000/googleLogin",
-                "ws://35.216.104.192:3000"));
+                "ws://34.64.250.226:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));
