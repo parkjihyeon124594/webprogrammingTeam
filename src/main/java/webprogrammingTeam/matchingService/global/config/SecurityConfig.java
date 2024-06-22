@@ -51,7 +51,6 @@ public class SecurityConfig {
     private final MemberRepository memberRepository;
 
     //지현35.216.104.192
-    //규리 34.64.250.226
     //new 규리 34.64.201.129
     private final String ADDRESS ="http://34.64.201.129:";
     //private final String ADDRESS="htpp://localhost:";

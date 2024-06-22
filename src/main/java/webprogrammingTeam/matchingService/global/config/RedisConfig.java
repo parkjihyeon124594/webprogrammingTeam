@@ -19,7 +19,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
     //@Value("${spring.data.redis.host")
-    //규리 34.64.250.226
     //new규리  34.64.201.129
     private String host = "34.64.201.129";
 

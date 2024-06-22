@@ -45,20 +45,19 @@ public class ProgramService {
     private final MessageService messageService;
     private final MemberChannelSubscriptionService memberChannelSubscriptionService;
 
-    public CategoryAgeGroupListResponse findByCityAndCategory(String city,String parameterCategory) {
-        List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city,parameterCategory);
+    public CategoryAgeGroupListResponse findByCityAndCategory(String city, String parameterCategory) {
+        List<Object[]> rawData = programRepository.findAgeGroupCountsByCityAndCategory(city, parameterCategory);
         List<CategoryAgeGroupResponse> ageGroupDTOs = new ArrayList<>();
 
         for (Object[] row : rawData) {
-            //String category = (String) row[0];
-            int teen = ((Number) row[0]).intValue();
-            int twenties = ((Number) row[1]).intValue();
-            int thirties = ((Number) row[2]).intValue();
-            int forties = ((Number) row[3]).intValue();
-            int fifties = ((Number) row[4]).intValue();
-            int sixties = ((Number) row[5]).intValue();
-            int seventies = ((Number) row[6]).intValue();
-            int eighties = ((Number) row[7]).intValue();
+            int teen = row[0] != null ? ((Number) row[0]).intValue() : 0;
+            int twenties = row[1] != null ? ((Number) row[1]).intValue() : 0;
+            int thirties = row[2] != null ? ((Number) row[2]).intValue() : 0;
+            int forties = row[3] != null ? ((Number) row[3]).intValue() : 0;
+            int fifties = row[4] != null ? ((Number) row[4]).intValue() : 0;
+            int sixties = row[5] != null ? ((Number) row[5]).intValue() : 0;
+            int seventies = row[6] != null ? ((Number) row[6]).intValue() : 0;
+            int eighties = row[7] != null ? ((Number) row[7]).intValue() : 0;
 
             CategoryAgeGroupResponse categoryAgeGroupResponse = CategoryAgeGroupResponse.builder()
                     .city(city)
@@ -78,6 +77,7 @@ public class ProgramService {
 
         return new CategoryAgeGroupListResponse(ageGroupDTOs);
     }
+
 
 
 
@@ -142,12 +142,18 @@ public class ProgramService {
             int sports = ((Number) row[1]).intValue();
             int computer = ((Number) row[2]).intValue();
             int art = ((Number) row[3]).intValue();
+            int music = ((Number) row[4]).intValue();
+            int cooking = ((Number) row[5]).intValue();
+            int etc = ((Number) row[6]).intValue();
 
             Test test = Test.builder()
                     .age(age)
                     .sports(sports)
                     .computer(computer)
                     .art(art)
+                    .music(music)
+                    .cooking(cooking)
+                    .etc(etc)
                     .build();
 
             testList.add(test);

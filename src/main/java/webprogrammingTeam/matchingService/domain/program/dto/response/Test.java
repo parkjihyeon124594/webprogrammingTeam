@@ -7,6 +7,9 @@ public record Test(
         String age,
         int sports,
         int computer,
-        int art
+        int art,
+        int music,
+        int cooking,
+        int etc
 ) {
 }
