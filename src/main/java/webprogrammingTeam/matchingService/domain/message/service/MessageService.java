@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +84,8 @@ public class MessageService {
         message.setSender(member);
         message.setContent(content);
         message.setCreateDate(LocalDateTime.now());
+        message.setLastModifiedDate(LocalDateTime.now());
+
 
         Message newMessage = messageRepository.save(message);
 

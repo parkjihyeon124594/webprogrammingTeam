@@ -38,11 +38,6 @@ public class AccessTokenController {
             //@CookieValue(value="Authorization-refreshtoken", required = true)Cookie cookie
             HttpServletRequest request, HttpServletResponse response
     ) {
-        //**
-        //* 1.쿠키에 있는 refresh token을 가져와서 읽는다.
-        //* 2.refresh token으로 access token을 발급한다.
-        //* 3.refresh token은 쿠키에 담고, access token을 헤더에 담아서 응답을 내보낸다.
-        //*
 
         //String refreshToken = cookie.getAttribute("Authorization-Refreshtoken");
         String refreshToken = getRefreshTokenFromCookie(request.getCookies());

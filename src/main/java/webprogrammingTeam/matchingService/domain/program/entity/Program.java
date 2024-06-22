@@ -57,10 +57,10 @@ public class Program extends BaseTimeEntity{
     private Open open;
 
     @Column(name="latitude")
-    private double latitude;
+    private Double latitude;
 
     @Column(name="longitude")
-    private double longitude;
+    private Double longitude;
 
     @Column(name = "program_address")
     private String programAddress;
