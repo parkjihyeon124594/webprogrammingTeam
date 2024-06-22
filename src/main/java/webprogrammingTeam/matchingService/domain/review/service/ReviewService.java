@@ -53,8 +53,9 @@ public class ReviewService {
             throw new AccessDeniedException("참여한 프로그램에 리뷰를 쓸 수 있음.");
         }
 
-        //모집 기간이후인지 확인
-        if(LocalDateTime.now().isBefore(convertStringToLocalDateTime(program.getProgramDate()))){
+
+        // 모집 기간 이후인지 확인
+        if(LocalDateTime.now().plusHours(9).isBefore(convertStringToLocalDateTime(program.getProgramDate()))) {
             throw new AccessDeniedException("프로그램 참여를 한 후에 리뷰를 작성할 수 있습니다.");
         }
 

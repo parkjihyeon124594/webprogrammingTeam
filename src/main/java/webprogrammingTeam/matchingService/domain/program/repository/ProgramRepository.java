@@ -52,9 +52,9 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "       SUM(CASE WHEN m.age BETWEEN 60 AND 69 THEN 1 ELSE 0 END) AS sixties, " +
             "       SUM(CASE WHEN m.age BETWEEN 70 AND 79 THEN 1 ELSE 0 END) AS seventies, " +
             "       SUM(CASE WHEN m.age BETWEEN 80 AND 89 THEN 1 ELSE 0 END) AS eighties " +
-            "FROM Program p " +
-            "JOIN Recruitment r ON p.program_id = r.program_id " +
-            "JOIN Member m ON r.member_id = m.member_id " +
+            "FROM program p " +
+            "JOIN recruitment r ON p.program_id = r.program_id " +
+            "JOIN member m ON r.member_id = m.member_id " +
             "GROUP BY city,p.category", nativeQuery = true)
     List<Object[]> findAgeGroupCountsByCategory();
 
@@ -69,9 +69,9 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "SUM(CASE WHEN m.age BETWEEN 60 AND 69 THEN 1 ELSE 0 END) AS sixties, " +
             "SUM(CASE WHEN m.age BETWEEN 70 AND 79 THEN 1 ELSE 0 END) AS seventies, " +
             "SUM(CASE WHEN m.age BETWEEN 80 AND 89 THEN 1 ELSE 0 END) AS eighties " +
-            "FROM Program p " +
-            "JOIN Recruitment r ON p.program_id = r.program_id " +
-            "JOIN Member m ON r.member_id = m.member_id " +
+            "FROM program p " +
+            "JOIN recruitment r ON p.program_id = r.program_id " +
+            "JOIN member m ON r.member_id = m.member_id " +
             "WHERE SUBSTRING_INDEX(p.program_address, ' ', 1) LIKE CONCAT(:city, '%') " +
             "AND p.category = :category", nativeQuery = true)
     List<Object[]> findAgeGroupCountsByCityAndCategory(@Param("city") String city, @Param("category") String category);
@@ -86,9 +86,9 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "       SUM(CASE WHEN m.age BETWEEN 60 AND 69 THEN 1 ELSE 0 END) AS sixties, " +
             "       SUM(CASE WHEN m.age BETWEEN 70 AND 79 THEN 1 ELSE 0 END) AS seventies, " +
             "       SUM(CASE WHEN m.age BETWEEN 80 AND 89 THEN 1 ELSE 0 END) AS eighties " +
-            "FROM Program p " +
-            "JOIN Recruitment r ON p.program_id = r.program_id " +
-            "JOIN Member m ON r.member_id = m.member_id " +
+            "FROM program p " +
+            "JOIN recruitment r ON p.program_id = r.program_id " +
+            "JOIN member m ON r.member_id = m.member_id " +
             "GROUP BY p.category", nativeQuery = true)
     List<Object[]> findParticipantCountsByCategoryAndAgeGroup();
 
@@ -120,10 +120,13 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "   END AS age_group, " +
             "   SUM(CASE WHEN p.category = 'Sports' THEN 1 ELSE 0 END) AS sports, " +
             "   SUM(CASE WHEN p.category = 'Computer' THEN 1 ELSE 0 END) AS computer, " +
-            "   SUM(CASE WHEN p.category = 'Art' THEN 1 ELSE 0 END) AS art " +
-            "FROM Program p " +
-            "JOIN Recruitment r ON p.program_id = r.program_id " +
-            "JOIN Member m ON r.member_id = m.member_id " +
+            "   SUM(CASE WHEN p.category = 'Art' THEN 1 ELSE 0 END) AS art, " +
+            "   SUM(CASE WHEN p.category = 'Music' THEN 1 ELSE 0 END) AS music, " +
+            "   SUM(CASE WHEN p.category = 'Cooking' THEN 1 ELSE 0 END) AS cooking, " +
+            "   SUM(CASE WHEN p.category = 'Etc' THEN 1 ELSE 0 END) AS etc " +
+            "FROM program p " +
+            "JOIN recruitment r ON p.program_id = r.program_id " +
+            "JOIN member m ON r.member_id = m.member_id " +
             "GROUP BY age_group", nativeQuery = true)
     List<Object[]> findParticipantCountsByAgeGroupAndCategory();
 
@@ -134,7 +137,7 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "DATE_FORMAT(STR_TO_DATE(p.program_date, '%Y-%m-%d %H:%i'), '%Y-%m') AS month, " +
             "p.category AS category, " +
             "COUNT(*) AS program_count " +
-            "FROM Program p " +
+            "FROM program p " +
             "GROUP BY DATE_FORMAT(STR_TO_DATE(p.program_date, '%Y-%m-%d %H:%i'), '%Y-%m'), p.category " +
             "ORDER BY month, category", nativeQuery = true)
     List<Object[]> findMonthlyCategoryCounts();
