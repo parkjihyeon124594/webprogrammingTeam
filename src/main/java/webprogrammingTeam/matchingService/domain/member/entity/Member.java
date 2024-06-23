@@ -7,14 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 
-import webprogrammingTeam.matchingService.domain.geometry.entity.Location;
 import webprogrammingTeam.matchingService.domain.notification.entity.Notification;
 import webprogrammingTeam.matchingService.domain.program.entity.Program;
 import webprogrammingTeam.matchingService.domain.recruitment.entity.Recruitment;
 import webprogrammingTeam.matchingService.domain.review.entity.Review;
 import webprogrammingTeam.matchingService.global.entity.BaseTimeEntity;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,5 +79,9 @@ public class Member extends BaseTimeEntity {
         this.email=email;
         this.latitude=latitude;
         this.longitude=longitude;
+    }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
     }
 }

@@ -132,4 +132,11 @@ public class Program extends BaseTimeEntity{
     }
     public void increaseRecruitment(){ this.recruitment++;}
     public void decreaseRecruitment(){this.recruitment--;}
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+    public void setPublicChannelForTest(Channel newPublicChannel) {
+        this.publicChannel = newPublicChannel;
+    }
 }
