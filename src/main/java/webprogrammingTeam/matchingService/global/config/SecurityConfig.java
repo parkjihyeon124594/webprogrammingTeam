@@ -113,7 +113,11 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(ADDRESS+"3000",
                 ADDRESS+"8080",
                 ADDRESS+"3000/googleLogin",
-                "ws://34.64.250.226:3000"));
+                "http://giftshare.site:3000",
+                "http://giftshare.site",
+                "ws://giftshare.site",
+                "ws://giftshare.site:3000",
+                "ws://34.64.201.129:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("*"));
