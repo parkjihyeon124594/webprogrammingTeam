@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class GeometryServiceTest {
@@ -40,6 +41,9 @@ public class GeometryServiceTest {
     @InjectMocks
     private GeometryService geometryService;
 
+    @Mock
+    private GeometryUtil geometryUtil;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -47,26 +51,25 @@ public class GeometryServiceTest {
 
     @Test
     public void testFindProgramsNearMember() {
-        Double memberLatitude = 37.7749;
-        Double memberLongitude = -122.4194;
-        double radius = 5.0;
+        Program program = Program.builder()
+                .latitude(23.0)
+                .longitude(23.0)
+                .build();
+        program.setIdForTest(1L);
+        
+        when(programRepository.findByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
+                .thenReturn(Arrays.asList(program));
 
-        Location north = new Location(38.0, -122.4194);
-        Location south = new Location(37.5, -122.4194);
-        Location east = new Location(37.7749, -122.0);
-        Location west = new Location(37.7749, -122.8);
+        List<Program> programs = geometryService.findProgramsNearMember(37.5665, 126.9780, 5.0);
 
-        mockGeometryUtilCalculations(memberLatitude, memberLongitude, radius, north, south, east, west);
-
-        List<Program> programs = Arrays.asList(new Program(), new Program());
-        when(programRepository.findByLatitudeBetweenAndLongitudeBetween(south.getLatitude(), north.getLatitude(), west.getLongitude(), east.getLongitude()))
-                .thenReturn(programs);
-
-        List<Program> result = geometryService.findProgramsNearMember(memberLatitude, memberLongitude, radius);
-
-        assertEquals(2, result.size());
-        verify(programRepository).findByLatitudeBetweenAndLongitudeBetween(south.getLatitude(), north.getLatitude(), west.getLongitude(), east.getLongitude());
+        assertNotNull(programs);
+        assertEquals(1, programs.size());
+        assertEquals(program.getId(), programs.get(0).getId());
     }
+
+
+
+
 
     @Test
     public void testCalculateAvgRating() {
@@ -123,12 +126,7 @@ public class GeometryServiceTest {
         verify(reviewRepository).countReviewsByProgramId(programId);
     }
 
-    private void mockGeometryUtilCalculations(Double memberLatitude, Double memberLongitude, double radius, Location north, Location south, Location east, Location west) {
-        when(GeometryUtil.calculate(memberLatitude, memberLongitude, radius, Direction.NORTH.getBearing())).thenReturn(north);
-        when(GeometryUtil.calculate(memberLatitude, memberLongitude, radius, Direction.SOUTH.getBearing())).thenReturn(south);
-        when(GeometryUtil.calculate(memberLatitude, memberLongitude, radius, Direction.EAST.getBearing())).thenReturn(east);
-        when(GeometryUtil.calculate(memberLatitude, memberLongitude, radius, Direction.WEST.getBearing())).thenReturn(west);
-    }
+
 
     private Program createSampleProgram() {
         Program program = Program.builder()

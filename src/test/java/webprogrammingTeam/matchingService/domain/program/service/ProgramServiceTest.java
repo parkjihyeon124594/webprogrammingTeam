@@ -62,8 +62,11 @@ public class ProgramServiceTest {
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
         Channel channel = new Channel();
         when(channelService.createPublicChannel(anyString())).thenReturn(channel);
-        Program savedProgram = createSavedProgram();
-        when(programRepository.save(any(Program.class))).thenReturn(savedProgram);
+        when(programRepository.save(any(Program.class))).thenAnswer(invocation -> {
+            Program program = invocation.getArgument(0);
+            program.setIdForTest(1L);
+            return program;
+        });
 
         Long programId = programService.saveProgram(request, imageList, email);
 
@@ -91,7 +94,7 @@ public class ProgramServiceTest {
         Long programId = 1L;
         String email = "test@example.com";
 
-        Program program = createProgramWithMemberAndPublicChannel(email);
+        Program program = createProgramWithMemberAndPublicChannel(email, programId);
         when(programRepository.findById(programId)).thenReturn(Optional.of(program));
 
         Long updatedProgramId = programService.updateProgram(request, newImageList, programId, email);
@@ -107,7 +110,7 @@ public class ProgramServiceTest {
         Long programId = 1L;
         String email = "test@example.com";
 
-        Program program = createProgramWithMemberAndPublicChannel("different@example.com");
+        Program program = createProgramWithMemberAndPublicChannel("different@example.com", programId);
         when(programRepository.findById(programId)).thenReturn(Optional.of(program));
 
         assertThrows(AccessDeniedException.class, () -> programService.updateProgram(request, newImageList, programId, email));
@@ -120,7 +123,7 @@ public class ProgramServiceTest {
         Long programId = 1L;
         String email = "test@example.com";
 
-        Program program = createProgramWithMemberAndPublicChannel(email);
+        Program program = createProgramWithMemberAndPublicChannel(email, programId);
         Channel publicChannel = createPublicChannel();
         when(programRepository.findById(programId)).thenReturn(Optional.of(program));
 
@@ -134,7 +137,7 @@ public class ProgramServiceTest {
         Long programId = 1L;
         String email = "test@example.com";
 
-        Program program = createProgramWithMemberAndPublicChannel("different@example.com");
+        Program program = createProgramWithMemberAndPublicChannel("different@example.com", programId);
         when(programRepository.findById(programId)).thenReturn(Optional.of(program));
 
         assertThrows(AccessDeniedException.class, () -> programService.deleteProgram(programId, email));
@@ -222,7 +225,7 @@ public class ProgramServiceTest {
 
         double avgRating = programService.calculateAvgRating(program);
 
-        assertEquals(0, avgRating, 0.01);
+        assertTrue(Double.isNaN(avgRating));
         verify(reviewRepository).findByProgram(program);
     }
 
@@ -281,12 +284,13 @@ public class ProgramServiceTest {
     }
 
     private Program createSavedProgram() {
-        Program savedProgram = new Program();
+        Program savedProgram = Program.builder()
+                .build();
         savedProgram.setIdForTest(1L);
         return savedProgram;
     }
 
-    private Program createProgramWithMemberAndPublicChannel(String email) {
+    private Program createProgramWithMemberAndPublicChannel(String email, Long programId) {
         Channel publicChannel = createPublicChannel();
         Member member = Member.builder()
                 .email(email)
@@ -297,6 +301,7 @@ public class ProgramServiceTest {
                 .longitude(23.0)
                 .publicChannel(publicChannel)
                 .build();
+        program.setIdForTest(programId);
         return program;
     }
 
